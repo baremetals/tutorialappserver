@@ -1,6 +1,7 @@
-import { IResolvers } from "apollo-server-express";
-import { QueryArrayResult, QueryOneResult } from "../controllers/QuerryArrayResult"
 
-interface EntityResult {
-    messages: Array<string>;
+
+export const STANDARD_ERROR = "An error has occurred";
+
+export interface EntityResult {
+  messages: Array<string> | string;
 }

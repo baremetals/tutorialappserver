@@ -1,5 +1,5 @@
 import { QueryArrayResult } from "./QuerryArrayResult";
-import { PostCategory } from "../entities/PostCategory";
+import { PostCategory } from "../entities/Category";
 
 export const getAllCategories = async (): Promise<
   QueryArrayResult<PostCategory>

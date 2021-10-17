@@ -1,7 +1,9 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany } from "typeorm";
 import { Length } from "class-validator";
 import { SharedEntity } from "./SharedEntity";
-import { User } from "./User";
+import { Admin } from "./Admin";
+import { RecoLike } from "./RecoLike";
+import { Category } from "./Category";
 
 @Entity({ name: "Recommendations" })
 export class Recommendation extends SharedEntity {
@@ -26,7 +28,12 @@ export class Recommendation extends SharedEntity {
   @Length(10, 2500)
   body: string;
 
-  @ManyToOne(() => User, (user: User) => user.recommendations)
-  user: User;
+  @ManyToOne(() => Admin, (admin: Admin) => admin.recommendations)
+  admin: Admin;
 
+  @OneToMany(() => RecoLike, (recoLike) => recoLike.recommendation)
+  recoLikes: RecoLike[];
+
+  @ManyToOne(() => Category, (category) => category.recommendations)
+  category: Category;
 }

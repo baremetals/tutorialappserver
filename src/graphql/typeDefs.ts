@@ -12,16 +12,17 @@ const typeDefs = gql`
     id: ID!
     email: String!
     userName: String!
+    fullName: String!
     password: String!
     confirmed: Boolean!
     isAdmin: Boolean!
     isDisabled: Boolean!
     posts: [Post!]
     comments: [Comment!]
-    courses: [Course!]
-    courseNotes: [CourseNote!]
-    books: [Book!]
-    recommendations: [Recommendation!]
+    # courses: [Course!]
+    # courseNotes: [CourseNote!]
+    # books: [Book!]
+    # recommendations: [Recommendation!]
     createdBy: String!
     createdOn: Date!
     lastModifiedBy: String!
@@ -36,6 +37,7 @@ const typeDefs = gql`
     isDisabled: Boolean!
     title: String!
     body: String!
+    postType: String!
     user: User!
     comments: [Comment!]
     category: PostCategory!
@@ -79,8 +81,65 @@ const typeDefs = gql`
     lastModifiedOn: Date!
   }
 
+  type Like {
+    id: ID!
+    isDecrement: Boolean!
+    user: User!
+    post: Post!
+    createdBy: String!
+    createdOn: Date!
+    lastModifiedBy: String!
+    lastModifiedOn: Date!
+  }
+
+  type CategoryPost {
+    postId: ID!
+    categoryId: ID!
+    categoryName: String!
+    title: String!
+    titleCreatedOn: Date!
+  }
+
   type Query {
+    # Users Query
+    me: UserResult!
+
+    # Post Query
     getPostById(id: ID!): PostResult
+    getPostsByCategoryId(categoryId: ID!): PostArrayResult!
+    getAllCategories: [PostCategory!]
+    getLatestPosts: PostArrayResult!
+    getTopCategoryPost: [CategoryPost!]
+
+    # Comment Query
+    getCommentsByPostId(postId: ID!): CommentArrayResult!
+  }
+
+  type Mutation {
+    # Users Mutation
+    register(
+      email: String!
+      userName: String!
+      fullName: String!
+      password: String!
+    ): String!
+    login(userNameOrEmail: String!, password: String!): String!
+    logout(userName: String!): String!
+    changePassword(newPassword: String!): String!
+
+    # Post Mutation
+    createPost(
+      userId: ID!
+      categoryId: ID!
+      title: String!
+      body: String!
+    ): EntityResult
+
+    # Comment Mutation
+    createComment(userId: ID!, postId: ID!, body: String): EntityResult
+
+    # Likes Mutation
+    updateLike(postId: ID!, increment: Boolean!): String!
   }
 `;
 

@@ -1,11 +1,11 @@
 import {
   isPostBodyValid,
-} from "src/utils/validators/PostValidators";
+} from "../utils/validators/PostValidators";
 
 import { QueryArrayResult } from "./QuerryArrayResult";
-import { User } from "src/entities/User";
-import { Comment } from "src/entities/Comment";
-import { Post } from "src/entities/Post";
+import { User } from "../entities/User";
+import { Comment } from "../entities/Comment";
+import { Post } from "../entities/Post";
 
 export const createComment = async (
   userId: string | undefined | null,
@@ -18,8 +18,6 @@ export const createComment = async (
       messages: [bodyMsg],
     };
   }
-
-
   if (!userId) {
     return {
       messages: ["User not logged in."],

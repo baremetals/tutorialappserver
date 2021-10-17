@@ -11,8 +11,10 @@ module.exports = [
     synchronize: process.env.PG_SYNCHRONIZE,
     logging: process.env.PG_LOGGING,
     entities: [process.env.PG_ENTITIES],
+    migrations: [process.env.PG_MIGRATIONS],
     cli: {
       entitiesDir: process.env.PG_ENTITIES_DIR,
+      migrationsDir: process.env.PG_MIGRATIONS_DIR,
     },
   },
 ];

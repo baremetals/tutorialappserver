@@ -1,7 +1,8 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToOne } from "typeorm";
 import { SharedEntity } from "./SharedEntity";
-import { User } from "./User";
 import { CourseStudent } from "./CourseStudent";
+import { Admin } from "./Admin";
+import { Category } from "./Category";
 
 @Entity({ name: "Courses" })
 export class Course extends SharedEntity {
@@ -10,7 +11,7 @@ export class Course extends SharedEntity {
 
   @Column("varchar", {
     name: "Title",
-    length: 1000,
+    length: 250,
     unique: false,
     nullable: false,
   })
@@ -34,23 +35,26 @@ export class Course extends SharedEntity {
 
   @Column("varchar", {
     name: "Image",
-    length: 2500,
-    unique: true,
+    length: 250,
+    unique: false,
     nullable: false,
   })
-  author: string;
+  image: string;
 
   @Column("varchar", {
     name: "StartDate",
-    length: 2500,
-    unique: true,
+    length: 100,
+    unique: false,
     nullable: false,
   })
   startDate: string;
 
-  @ManyToOne(() => User, (user: User) => user.courses)
-  user: User;
+  @ManyToOne(() => Admin, (admin: Admin) => admin.courses)
+  admin: Admin;
 
   @OneToMany(() => CourseStudent, (courseStudent) => courseStudent.course)
   courseStudents: CourseStudent[];
+
+  @ManyToOne(() => Category, (category) => category.books)
+  category: Category;
 }

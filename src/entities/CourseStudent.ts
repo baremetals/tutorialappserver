@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, ManyToOne } from "typeorm";
 import { User } from "./User";
 import { Course } from "./Course";
 import { SharedEntity } from "./SharedEntity";
@@ -7,9 +7,6 @@ import { SharedEntity } from "./SharedEntity";
 export class CourseStudent extends SharedEntity {
   @PrimaryGeneratedColumn({ name: "Id", type: "bigint" }) // for typeorm
   id: string;
-
-  @Column("boolean", { name: "IsDecrement", default: false, nullable: false })
-  isDecrement: boolean;
 
   @ManyToOne(() => User, (user) => user.courseStudents)
   user: User;

@@ -6,13 +6,17 @@ import {
 } from "../utils/validators/UserValidator";
 import { isPasswordValid } from "../utils/validators/PasswordValidator";
 
+
+
+
 export class UserResult {
   constructor(public messages?: Array<string>, public user?: User) {}
 }
 
+
 export const register = async (
   email: string,
-  userName: string,
+  username: string,
   fullName: string,
   password: string
 ): Promise<UserResult> => {
@@ -25,17 +29,17 @@ export const register = async (
     };
   }
 
-  const usernameResult = isUserNameValid(userName);
+  const usernameResult = isUserNameValid(username);
   if (!usernameResult.isValid) {
     return {
       messages: [
-        "Username must have min 2 characters and must only contain letters, numbers, hyphens or an underscore(a-z0-9/_)"
+        "Username must have min 2 characters and must only contain letters, numbers, hyphens or an underscore(a-z0-9/_)",
       ],
     };
   }
 
   const trimmedEmail = email.trim().toLowerCase();
-  const trimmedUsername = userName.trim().toLowerCase();
+  const trimmedUsername = username.trim().toLowerCase();
   const emailErrorMsg = isEmailValid(trimmedEmail);
   if (emailErrorMsg) {
     return {
@@ -47,33 +51,31 @@ export const register = async (
 
   const userEntity = await User.create({
     email: trimmedEmail,
-    userName: trimmedUsername,
-    fullName,
+    username: trimmedUsername,
+    fullName: fullName,
     password: hashedPassword,
   }).save();
 
   userEntity.password = ""; // blank out for security
+
   return {
     user: userEntity,
   };
 };
-export interface UserNameOrEmail {
-  email?: string,
-  userName?: string
-}
+
 
 export const login = async (
-  userName: string,
+  usernameOrEmail: string,
   password: string
-  // email?: string
 ): Promise<UserResult> => {
-  const user = await User.findOne({
-    where: { userName }
-  });
-  console.log(userName)
+  const user = await User.findOne(
+    usernameOrEmail.includes("@")
+      ? { where: { email: usernameOrEmail } }
+      : { where: { username: usernameOrEmail } }
+  );
   if (!user) {
     return {
-      messages: [userNotFound(userName)],
+      messages: [userNotFound(usernameOrEmail)],
     };
   }
 
@@ -95,18 +97,72 @@ export const login = async (
   };
 };
 
-export const logout = async (userName: string): Promise<string> => {
+export const logout = async (username: string): Promise<string> => {
   const user = await User.findOne({
-    where: { userName },
+    where: { username },
   });
 
   if (!user) {
-    return userNotFound(userName);
+    return userNotFound(username);
   }
 
   return "User logged off.";
 };
 
-function userNotFound(userName: string) {
-  return `User with userName ${userName} not found.`;
+export const me = async (id: string): Promise<UserResult> => {
+  const user = await User.findOne({
+    where: { id },
+    relations: [
+      "posts",
+      "posts.comments",
+      "comments",
+      "comments.post",
+    ],
+  });
+
+  if (!user) {
+    return {
+      messages: ["User not found."]
+    };
+  }
+
+  if (!user.confirmed) {
+    return {
+      messages: ["User has not confirmed their registration email yet."]
+    };
+  }
+
+  user.password = "";
+  return {
+    user: user,
+  };
+};
+
+export const changePassword = async (
+  id: string,
+  newPassword: string
+): Promise<string> => {
+  const user = await User.findOne({
+    where: { id },
+  });
+
+  if (!user) {
+    return "User not found.";
+  }
+
+  if (!user.confirmed) {
+    return "User has not confirmed their registration email yet.";
+  }
+
+ 
+  const hashedPassword = await argon2.hash(newPassword);
+  user.password = hashedPassword;
+  user.save();
+  return "Password changed successfully.";
+};
+
+function userNotFound(usernameOrEmail: string) {
+  return usernameOrEmail.includes("@")
+    ? `User with email ${usernameOrEmail} not found.`
+    : `User with username ${usernameOrEmail} not found.`;
 }

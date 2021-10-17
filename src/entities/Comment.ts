@@ -16,7 +16,7 @@ export class Comment extends SharedEntity {
   @Length(10, 2500)
   body: string;
 
-  @ManyToOne(() => User, (user) => user.posts)
+  @ManyToOne(() => User, (user) => user.comments)
   user: User;
 
   @ManyToOne(() => Post, (post) => post.comments)

@@ -16,7 +16,7 @@ export const isPasswordValid = (password: string): PasswordTestResult => {
   }
 
   const strongPassword = new RegExp(
-    "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})"
+    "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*)(?=.{8,})"
   );
   if (!strongPassword.test(password)) {
     passwordTestResult.message =

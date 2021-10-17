@@ -1,7 +1,8 @@
 import { Length } from "class-validator";
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from "typeorm";
+import { Admin } from "./Admin";
 import { SharedEntity } from "./SharedEntity";
-import { User } from "./User";
+
 
 
 @Entity({ name: "CourseNotes" })
@@ -27,6 +28,6 @@ export class CourseNote extends SharedEntity {
   @Length(10, 2500)
   body: string;
 
-  @ManyToOne(() => User, (user: User) => user.courseNotes)
-  user: User;
+  @ManyToOne(() => Admin, (admin: Admin) => admin.courseNotes)
+  admin: Admin;
 }

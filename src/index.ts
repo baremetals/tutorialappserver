@@ -1,15 +1,29 @@
 import express from "express";
 import session from "express-session";
+
+import { ApolloServer } from "apollo-server-express";
 import { createConnection } from "typeorm";
-// import { ApolloServer } from "apollo-server-express";
-// import { buildSchema } from "type-graphql";
+import {
+  makeExecutableSchema,
+} from "@graphql-tools/schema";
+
+import typeDefs from "./graphql/typeDefs"
+import PostResolver from "./graphql/resolvers/postResolver";
+import userResolver from "./graphql/resolvers/userResolver";
+import commentResolver from "./graphql/resolvers/commentResolver";
 import connectRedis from "connect-redis";
 import Redis from "ioredis";
 import cors from "cors";
-import { register } from "./controllers/UserController"
 
+// This is requied to extend the  express-session type.
+declare module "express-session" {
+  interface Session {
+    userId: string;
+    userName: string;
+  }
+}
 
-
+// console.log("stuffs")
 require("dotenv").config();
 
 const main = async () => {
@@ -26,14 +40,17 @@ const main = async () => {
     client: redis,
   });
 
-  app.use(express.json());
-  app.use(express.urlencoded({ extended: true }));
+  
   app.use(
     cors({
-      origin: "*",
+      origin: "http://localhost:3000",
       credentials: true,
     })
   );
+  
+  app.use(express.json());
+  app.use(express.urlencoded({ extended: true }));
+  
   app.use(
     session({
       store: redisStore,
@@ -43,73 +60,34 @@ const main = async () => {
       resave: false,
       saveUninitialized: false,
       cookie: {
-        path: "/",
+        // path: "/",
         httpOnly: true,
         secure: false,
-        maxAge: 1000 * 60 * 60 * 24,
+        maxAge: 1000 * 60 * 60 * 24, // 24 hrs
       },
     } as any)
   );
+  
 
-  // const apolloServer = new ApolloServer({
-  //   schema: await buildSchema({
-  //     resolvers: [],
-  //     validate: false,
-  //   }),
-  // });
-
-  // apolloServer.applyMiddleware({ app });
-    
-  app.post("/register", async (req, res, next) => {
-    console.log("isit here?");
-    try {
-      console.log("params", req.body);
-      const userResult = await register(
-        req.body.email,
-        req.body.userName,
-        req.body.fullName,
-        req.body.password
-      );
-      if (userResult && userResult.user) {
-        res.send(`new user created, userId: ${userResult.user.id}`);
-      } else if (userResult && userResult.messages) {
-        res.send(userResult.messages[0]);
-      } else {
-        next();
-      }
-    } catch (ex) {
-      console.log(ex)
-      res.send(ex.message);
-    }
+  
+  const schema = makeExecutableSchema({
+    typeDefs,
+    resolvers: [PostResolver, userResolver, commentResolver],
   });
 
-  // app.post("/login", async (req, res, next) => {
+  const apolloServer = new ApolloServer({
+    schema,
+    context: ({ req, res }: any) => ({ req, res }),
+  });
 
-  //   try {
-
-  //     const userResult = await login(
-  //       req.body.userName,
-  //       req.body.password
-  //     );
-
-  //     if (userResult && userResult.user) {
-
-  //       req.session.userId = userResult.user?.id;
-  //       res.send(`user logged in, userId: ${req.session!.id}`);
-  //     } else if (userResult && userResult.messages) {
-
-  //       res.send(userResult.messages[0]);
-  //     } else {
-  //       next();
-  //     }
-  //   } catch (ex) {
-  //     // console.log(ex);
-  //     res.send(ex.message);
-  //   }
-  // });
+  await apolloServer.start();
+  apolloServer.applyMiddleware({ app, cors: false });
+  
 
   app.listen({ port: process.env.SERVER_PORT }, () => {
-    console.log(`Server ready on port ${process.env.SERVER_PORT}`);
+    console.log(
+      `Server ready on port ${process.env.SERVER_PORT}${apolloServer.graphqlPath}`
+    );
   });
 };
 

@@ -1,7 +1,7 @@
-import { Post } from "src/entities/Post";
-import { PostCategory } from "src/entities/PostCategory";
-import { User } from "src/entities/User";
-import { isPostBodyValid, isPostTitleValid } from "src/utils/validators/PostValidators";
+import { Post } from "../entities/Post";
+import { PostCategory } from "../entities/Category";
+import { User } from "../entities/User";
+import { isPostBodyValid, isPostTitleValid } from "../utils/validators/PostValidators";
 import { QueryArrayResult, QueryOneResult } from "./QuerryArrayResult";
 
 export const createPost = async (
@@ -88,6 +88,26 @@ export const getPostsByCategoryId = async (
   if (!posts || posts.length === 0) {
     return {
       messages: ["Posts of category not found."],
+    };
+  }
+  console.log(posts);
+  return {
+    entities: posts,
+  };
+};
+
+export const getLatestPosts = async (): Promise<QueryArrayResult<Post>> => {
+  const posts = await Post.createQueryBuilder("post")
+    .leftJoinAndSelect("post.category", "category")
+    .leftJoinAndSelect("post.user", "user")
+    .leftJoinAndSelect("post.comments", "comments")
+    .orderBy("post.createdOn", "DESC")
+    .take(10)
+    .getMany();
+
+  if (!posts || posts.length === 0) {
+    return {
+      messages: ["No threads found."],
     };
   }
   console.log(posts);

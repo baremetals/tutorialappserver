@@ -1,9 +1,12 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm";
+import { Book } from "./Book";
+import { Course } from "./Course";
 import { Post } from "./Post";
+import { Recommendation } from "./Recommendation";
 import { SharedEntity } from "./SharedEntity";
 
-@Entity({ name: "PostCategories" })
-export class PostCategory extends SharedEntity {
+@Entity({ name: "Categories" })
+export class Category extends SharedEntity {
   @PrimaryGeneratedColumn({ name: "Id", type: "bigint" }) // for typeorm
   id: string;
 
@@ -24,4 +27,13 @@ export class PostCategory extends SharedEntity {
 
   @OneToMany(() => Post, (post) => post.category)
   posts: Post[];
+
+  @OneToMany(() => Recommendation, (recommendation) => recommendation.category)
+  recommendations: Recommendation[];
+
+  @OneToMany(() => Book, (book) => book.category)
+  books: Book[];
+
+  @OneToMany(() => Course, (course) => course.category)
+  courses: Course[];
 }
