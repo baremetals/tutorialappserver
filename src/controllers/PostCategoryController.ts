@@ -1,10 +1,10 @@
 import { QueryArrayResult } from "./QuerryArrayResult";
-import { PostCategory } from "../entities/Category";
+import { Category } from "../entities/Category";
 
 export const getAllCategories = async (): Promise<
-  QueryArrayResult<PostCategory>
+  QueryArrayResult<Category>
 > => {
-  const categories = await PostCategory.find();
+  const categories = await Category.find();
 
   return {
     entities: categories,

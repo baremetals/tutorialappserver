@@ -1,14 +1,20 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm"
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToMany, JoinTable } from "typeorm"
 import { Length } from "class-validator";
 import { Post } from "./Post"
 import { Like } from "./Like";
-import { SharedEntity } from "./SharedEntity";
 import { Comment } from "./Comment";
 import { CourseStudent } from "./CourseStudent";
 import { RecoLike } from "./RecoLike";
+import { Book } from "./Book";
+import { Course } from "./Course";
+import { Recommendation } from "./Recommendation";
+import { CourseNote } from "./CourseNote";
+import { Group } from "./Group";
+import { SharedEntity } from "./SharedEntity";
+// import { Group } from "./Group";
 
 @Entity({ name: "Users" })
-export class User extends SharedEntity {
+export class User extends SharedEntity{
   @PrimaryGeneratedColumn({ name: "Id", type: "bigint" })
   id: string;
 
@@ -50,7 +56,7 @@ export class User extends SharedEntity {
   @Column("varchar", {
     name: "BackgroundImage",
     length: 250,
-    nullable: false,
+    nullable: true,
   })
   backgroundImg: string;
 
@@ -60,8 +66,12 @@ export class User extends SharedEntity {
   @Column("boolean", { name: "IsDisabled", default: false, nullable: false })
   isDisabled: boolean;
 
-  @Column("boolean", { name: "IsAdmin", default: false, nullable: false })
-  isAdmin: boolean;
+  // @ManyToOne(() => Group, (group: Group) => group.users)
+  // group: Group;
+
+  @ManyToMany(() => Group)
+  @JoinTable()
+  groups: Group[];
 
   @OneToMany(() => Post, (post) => post.user)
   posts: Post[];
@@ -77,4 +87,16 @@ export class User extends SharedEntity {
 
   @OneToMany(() => RecoLike, (recoLike) => recoLike.user)
   recoLikes: RecoLike[];
+
+  @OneToMany(() => Book, (book) => book.user)
+  books: Book[];
+
+  @OneToMany(() => Course, (course) => course.user)
+  courses: Course[];
+
+  @OneToMany(() => Recommendation, (recommendation) => recommendation.user)
+  recommendations: Recommendation[];
+
+  @OneToMany(() => CourseNote, (courseNote) => courseNote.user)
+  courseNotes: CourseNote[];
 }

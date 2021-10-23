@@ -11,13 +11,16 @@ const typeDefs = gql`
   type User {
     id: ID!
     email: String!
-    userName: String!
+    username: String!
     fullName: String!
     password: String!
     confirmed: Boolean!
-    isAdmin: Boolean!
+    # isAdmin: Boolean!
     isDisabled: Boolean!
+    profileImage: String!
+    backgroundImg: String!
     posts: [Post!]
+    groups: [Group!]
     comments: [Comment!]
     # courses: [Course!]
     # courseNotes: [CourseNote!]
@@ -29,6 +32,27 @@ const typeDefs = gql`
     lastModifiedOn: Date!
   }
   union UserResult = User | EntityResult
+
+  type Group {
+    id: ID!
+    name: String!
+    codename: String!
+    permissions: [Permission!]
+    createdBy: String!
+    createdOn: Date!
+    lastModifiedBy: String!
+    lastModifiedOn: Date!
+  }
+
+  type Permission {
+    id: ID!
+    name: String!
+    codename: String!
+    createdBy: String!
+    createdOn: Date!
+    lastModifiedBy: String!
+    lastModifiedOn: Date!
+  }
 
   type Post {
     id: ID!
@@ -119,13 +143,16 @@ const typeDefs = gql`
     # Users Mutation
     register(
       email: String!
-      userName: String!
+      username: String!
       fullName: String!
       password: String!
     ): String!
-    login(userNameOrEmail: String!, password: String!): String!
+    login(usernameOrEmail: String!, password: String!): String!
     logout(userName: String!): String!
     changePassword(newPassword: String!): String!
+    activateAccount(token: String!): String!
+    forgotPassword(usernameOrEmail: String!): String!
+    resetPassword(token: String!, newPassword: String!): String!
 
     # Post Mutation
     createPost(

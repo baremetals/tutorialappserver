@@ -1,17 +1,15 @@
-import CategoryPost from "../entities/CategoryPost";
+import { PostCategory } from "../entities/EntityCategory";
 import { Post } from "../entities/Post";
-import { PostCategory } from "../entities/Category";
+import { Category } from "../entities/Category";
 
-export const getTopCategoryPost = async (): Promise<
-  Array<CategoryPost>
-> => {
-  const categories = await PostCategory.createQueryBuilder("postCategory")
-    .leftJoinAndSelect("postCategory.posts", "post")
+export const getTopCategoryPost = async (): Promise<Array<PostCategory>> => {
+  const categories = await Category.createQueryBuilder("category")
+    .leftJoinAndSelect("category.posts", "post")
     .getMany();
 
-  const categoryPosts: Array<CategoryPost> = [];
+  const categoryPosts: Array<PostCategory> = [];
   // sort categories with most posts on top then desc
-  categories.sort((a: PostCategory, b: PostCategory) => {
+  categories.sort((a: Category, b: Category) => {
     if (a.posts.length > b.posts.length) return -1;
     if (a.posts.length < b.posts.length) return 1;
     return 0;
@@ -26,7 +24,7 @@ export const getTopCategoryPost = async (): Promise<
     });
     cat.posts.forEach((po) => {
       categoryPosts.push(
-        new CategoryPost(po.id, cat.id, cat.name, po.title, po.createdOn)
+        new PostCategory(po.id, cat.id, cat.name, po.title, po.createdOn)
       );
     });
   });

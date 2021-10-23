@@ -15,6 +15,8 @@ import connectRedis from "connect-redis";
 import Redis from "ioredis";
 import cors from "cors";
 
+// import creatGroup from "./controllers/GroupController"
+
 // This is requied to extend the  express-session type.
 declare module "express-session" {
   interface Session {
@@ -27,6 +29,7 @@ declare module "express-session" {
 require("dotenv").config();
 
 const main = async () => {
+  
   const app = express();
   
   await createConnection();
@@ -43,7 +46,7 @@ const main = async () => {
   
   app.use(
     cors({
-      origin: "http://localhost:3000",
+      origin: "*", //"http://localhost:3000",
       credentials: true,
     })
   );
@@ -78,12 +81,14 @@ const main = async () => {
   const apolloServer = new ApolloServer({
     schema,
     context: ({ req, res }: any) => ({ req, res }),
+    
   });
+  
 
   await apolloServer.start();
   apolloServer.applyMiddleware({ app, cors: false });
   
-
+  // creatGroup(12);
   app.listen({ port: process.env.SERVER_PORT }, () => {
     console.log(
       `Server ready on port ${process.env.SERVER_PORT}${apolloServer.graphqlPath}`

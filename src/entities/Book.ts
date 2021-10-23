@@ -1,7 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from "typeorm";
-import { Admin } from "./Admin";
 import { Category } from "./Category";
 import { SharedEntity } from "./SharedEntity";
+import { User } from "./User";
 
 @Entity({ name: "Books" })
 export class Book extends SharedEntity {
@@ -48,8 +48,8 @@ export class Book extends SharedEntity {
   })
   link: string;
 
-  @ManyToOne(() => Admin, (admin: Admin) => admin.books)
-  admin: Admin;
+  @ManyToOne(() => User, (user: User) => user.books)
+  user: User;
 
   @ManyToOne(() => Category, (category) => category.courses)
   category: Category;

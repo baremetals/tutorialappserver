@@ -14,20 +14,20 @@ export interface UserNameTestResult {
   isValid: boolean;
 }
 
-export const isUserNameValid = (userName: string): UserNameTestResult => {
+export const isUserNameValid = (username: string): UserNameTestResult => {
   const userNameTestResult: UserNameTestResult = {
     message: "",
     isValid: true,
   };
 
-  if (userName.length < 2) {
+  if (username.length < 2) {
     userNameTestResult.message = "UserName must be at least 2 characters";
     userNameTestResult.isValid = false;
     return userNameTestResult;
   }
 
   const regex = /^[a-zA-Z0-9\d-_]*$/;
-  if (regex.test(userName.trim()) !== true) {
+  if (regex.test(username.trim()) !== true) {
     userNameTestResult.message =
       "Username must only contain letters, numbers, hyphens or an underscore(a-z0-9/_)";
     userNameTestResult.isValid = false;

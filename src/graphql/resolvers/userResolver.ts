@@ -5,10 +5,14 @@ import {
   me,
   register,
   UserResult,
+  activateUser,
+  forgotPassword,
+  resetPassword
 } from "../../controllers/UserController";
 import { User } from "../../entities/User";
 import { GqlContext } from "../GqlContext";
 import { STANDARD_ERROR, EntityResult } from "../resolvers";
+import Redis from "ioredis";
 
 const userResolver = {
   UserResult: {
@@ -75,13 +79,41 @@ const userResolver = {
 
         return user && user.messages ? user.messages[0] : STANDARD_ERROR;
       } catch (ex) {
-        if (ex.code === "23505" && ex.detail.includes("Email")) {
-          return "This email is already registered";
-        } else {
-          return "this username is already taken";
-        }
+        // console.log(ex)
+        // if (ex.code === "23505" && ex.detail.includes("Email")) {
+        //   return "This email is already registered";
+        // } else {
+        //   return "this username is already taken";
+        // }
+        throw ex;
       }
     },
+
+    activateAccount: async (
+      _obj: any,
+      args: { token: string },
+      _ctx: GqlContext,
+      _info: any
+    ): Promise<string> => {
+      const redis = new Redis();
+      try {
+        const key = "ACTIVATE_ACCOUNT" + args.token;
+        const userId = await redis.get(key);
+        if (!userId) {
+          return "this token has expired";
+        }
+
+        let result = await activateUser(userId);
+
+        await redis.del(key);
+
+        return result;
+      } catch (ex) {
+        console.log(ex.message);
+        throw ex;
+      }
+    },
+
     login: async (
       _obj: any,
       args: { usernameOrEmail: string; password: string },
@@ -137,6 +169,44 @@ const userResolver = {
         return await changePassword(ctx.req.session!.userId, args.newPassword);
 
         // return result;
+      } catch (ex) {
+        console.error(ex);
+        throw ex;
+      }
+    },
+    forgotPassword: async (
+      _obj: any,
+      args: { usernameOrEmail: string },
+      _ctx: GqlContext,
+      _info: any
+    ): Promise<string> => {
+      try {
+        return await forgotPassword(args.usernameOrEmail);
+      } catch (ex) {
+        console.error(ex);
+        throw ex;
+      }
+    },
+
+    resetPassword: async (
+      _obj: any,
+      args: { token: string, newPassword: string },
+      _ctx: GqlContext,
+      _info: any
+    ): Promise<string> => {
+      const redis = new Redis();
+      try {
+        const key = "RESET_PASSWORD" + args.token;
+        const userId = await redis.get(key);
+        if (!userId) {
+          return "this token has expired";
+        }
+
+        let result = await resetPassword(args.newPassword, userId);
+
+        await redis.del(key);
+
+        return result;
       } catch (ex) {
         console.error(ex);
         throw ex;

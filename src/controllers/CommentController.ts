@@ -7,11 +7,16 @@ import { User } from "../entities/User";
 import { Comment } from "../entities/Comment";
 import { Post } from "../entities/Post";
 
+import { getRepository } from "typeorm";
+
+
+
 export const createComment = async (
   userId: string | undefined | null,
   postId: string,
   body: string
 ): Promise<QueryArrayResult<Comment>> => {
+  const userRepository = getRepository(User);
   const bodyMsg = isPostBodyValid(body);
   if (bodyMsg) {
     return {
@@ -23,7 +28,7 @@ export const createComment = async (
       messages: ["User not logged in."],
     };
   }
-  const user = await User.findOne({
+  const user = await userRepository.findOne({
     id: userId,
   });
 

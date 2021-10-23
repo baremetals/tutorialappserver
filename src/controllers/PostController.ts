@@ -1,8 +1,9 @@
 import { Post } from "../entities/Post";
-import { PostCategory } from "../entities/Category";
+import { Category } from "../entities/Category";
 import { User } from "../entities/User";
 import { isPostBodyValid, isPostTitleValid } from "../utils/validators/PostValidators";
 import { QueryArrayResult, QueryOneResult } from "./QuerryArrayResult";
+import { getRepository } from "typeorm";
 
 export const createPost = async (
     userId: string | undefined | null,
@@ -10,6 +11,7 @@ export const createPost = async (
   title: string,
   body: string
 ): Promise<QueryArrayResult<Post>> => {
+  const userRepository = getRepository(User);
    const titleMsg = isPostTitleValid(title);
    if (titleMsg) {
      return {
@@ -29,11 +31,11 @@ export const createPost = async (
      };
    }
 
-   const user = await User.findOne({
+   const user = await userRepository.findOne({
      id: userId,
    });
 
-   const category = await PostCategory.findOne({
+   const category = await Category.findOne({
      id: categoryId,
    });
 

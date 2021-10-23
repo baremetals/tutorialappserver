@@ -1,4 +1,4 @@
-import { getManager } from "typeorm";
+import { getManager, getRepository } from "typeorm";
 import { User } from "../entities/User";
 import { Like } from "../entities/Like";
 import { Post } from "../entities/Post";
@@ -8,6 +8,7 @@ export const updateLike = async (
   postId: string,
   increment: boolean
 ): Promise<string> => {
+  const userRepository = getRepository(User);
   if (!userId || userId === "0") {
     return "User is not authenticated";
   }
@@ -22,7 +23,7 @@ export const updateLike = async (
     console.log("inclike", message);
     return message;
   }
-  const user = await User.findOne({ where: { id: userId } });
+  const user = await userRepository.findOne({ where: { id: userId } });
 
   const existingPoint = await Like.findOne({
     where: {
@@ -37,7 +38,7 @@ export const updateLike = async (
         if (existingPoint.isDecrement) {
           console.log("remove dec");
           await Like.remove(existingPoint);
-          post!.total = Number(post!.total) + 1;
+          post!.points = Number(post!.points) + 1;
           post!.lastModifiedOn = new Date();
           await post!.save();
         }
@@ -45,7 +46,7 @@ export const updateLike = async (
         if (!existingPoint.isDecrement) {
           console.log("remove inc");
           await Like.remove(existingPoint);
-          post!.total = Number(post!.total) - 1;
+          post!.points = Number(post!.points) - 1;
           post!.lastModifiedOn = new Date();
           await post!.save();
         }
@@ -58,9 +59,9 @@ export const updateLike = async (
         user,
       }).save();
       if (increment) {
-        post!.total = Number(post!.total) + 1;
+        post!.points = Number(post!.points) + 1;
       } else {
-        post!.total = Number(post!.total) - 1;
+        post!.points = Number(post!.points) - 1;
       }
       post!.lastModifiedOn = new Date();
       await post!.save();

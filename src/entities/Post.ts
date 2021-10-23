@@ -21,7 +21,7 @@ export class Post extends SharedEntity {
   views: number;
 
   @Column("int", { name: "Likes", default: 0, nullable: false })
-  total: number;
+  points: number;
 
   @Column("boolean", { name: "IsDisabled", default: false, nullable: false })
   isDisabled: boolean;
@@ -48,4 +48,5 @@ export class Post extends SharedEntity {
 
   @ManyToOne(() => Category, (category) => category.posts)
   category: Category;
+  
 }
