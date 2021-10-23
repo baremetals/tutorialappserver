@@ -1,0 +1,32 @@
+query Me {
+  me {
+    ... on EntityResult {
+      messages
+    }
+    ... on User {
+      email
+      username
+      fullName
+      confirmed
+      isDisabled
+      profileImage
+      backgroundImg
+      createdOn
+      groups {
+        codename
+      }
+      posts {
+        views
+        likes
+        title
+        body
+        postType
+        comments {
+          body
+          createdBy
+          createdOn
+        }
+      }
+    }
+  }
+}
