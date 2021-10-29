@@ -1,9 +1,9 @@
 import { getManager, getRepository } from "typeorm";
 import { User } from "../entities/User";
-import { Like } from "../entities/Like";
+import { PostPoint } from "../entities/PostPoint";
 import { Post } from "../entities/Post";
 
-export const updateLike = async (
+export const updatePostPoint = async (
   userId: string,
   postId: string,
   increment: boolean
@@ -13,19 +13,19 @@ export const updateLike = async (
     return "User is not authenticated";
   }
 
-  let message = "Failed to increment like";
+  let message = "Failed to increment points";
   const post = await Post.findOne({
     where: { id: postId },
     relations: ["user"],
   });
-  if (post!.user!.id === userId) {
+  if (post!.creator!.id === userId) {
     message = "Error: users cannot like their own post";
-    console.log("inclike", message);
+    console.log("incPostPoint", message);
     return message;
   }
   const user = await userRepository.findOne({ where: { id: userId } });
 
-  const existingPoint = await Like.findOne({
+  const existingPoint = await PostPoint.findOne({
     where: {
       post: { id: postId },
       user: { id: userId },
@@ -37,7 +37,7 @@ export const updateLike = async (
       if (increment) {
         if (existingPoint.isDecrement) {
           console.log("remove dec");
-          await Like.remove(existingPoint);
+          await PostPoint.remove(existingPoint);
           post!.points = Number(post!.points) + 1;
           post!.lastModifiedOn = new Date();
           await post!.save();
@@ -45,7 +45,7 @@ export const updateLike = async (
       } else {
         if (!existingPoint.isDecrement) {
           console.log("remove inc");
-          await Like.remove(existingPoint);
+          await PostPoint.remove(existingPoint);
           post!.points = Number(post!.points) - 1;
           post!.lastModifiedOn = new Date();
           await post!.save();
@@ -53,7 +53,7 @@ export const updateLike = async (
       }
     } else {
       console.log("new point");
-      await Like.create({
+      await PostPoint.create({
         post,
         isDecrement: !increment,
         user,

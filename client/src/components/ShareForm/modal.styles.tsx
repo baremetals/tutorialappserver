@@ -167,7 +167,7 @@ export const UploadInput = styled.input`
   }
 `;
 
-export const Category = styled.select`
+export const CategorySecetion = styled.select`
   background: rgb(255, 255, 255);
   box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
   border-radius: .2rem;

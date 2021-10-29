@@ -19,6 +19,7 @@ import {
 } from "./course.styles";
 
 function CoursesPage() {
+
     return (
       <>
         <Topbar />

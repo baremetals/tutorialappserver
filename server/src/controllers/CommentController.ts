@@ -31,6 +31,7 @@ export const createComment = async (
   const user = await userRepository.findOne({
     id: userId,
   });
+  // console.log(user?.username);
 
   const post = await Post.findOne({
     id: postId,
@@ -44,6 +45,7 @@ export const createComment = async (
     body,
     user,
     post,
+    createdBy: user?.username
   }).save();
   if (!comment) {
     return {
@@ -62,6 +64,7 @@ export const getCommentsByPostId = async (
   const comments = await Comment.createQueryBuilder("c")
     .where(`c."postId" = :postId`, { postId })
     .leftJoinAndSelect("c.post", "post")
+    .leftJoinAndSelect("c.user", "comments")
     .orderBy("c.createdOn", "DESC")
     .getMany();
 
@@ -70,7 +73,7 @@ export const getCommentsByPostId = async (
       messages: ["Comments of post not found."],
     };
   }
-  console.log(comments);
+  // console.log(comments);
   return {
     entities: comments,
   };

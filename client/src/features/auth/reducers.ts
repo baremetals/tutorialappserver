@@ -5,6 +5,7 @@ const isBrowser = typeof window !== "undefined";
 
 const initialState: AuthState = {
   user: null,
+  // me: {},
   authenticated: isBrowser && !!localStorage.getItem("maguyvathegreat"),
   loading: false,
 };

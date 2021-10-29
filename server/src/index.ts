@@ -14,6 +14,8 @@ import commentResolver from "./graphql/resolvers/commentResolver";
 import connectRedis from "connect-redis";
 import Redis from "ioredis";
 import cors from "cors";
+import courseResolver from "./graphql/resolvers/courseResolver";
+import bookResolver from "./graphql/resolvers/bookResolver";
 
 // import creatGroup from "./controllers/GroupController"
 
@@ -71,11 +73,15 @@ const main = async () => {
     } as any)
   );
   
-
-  
   const schema = makeExecutableSchema({
     typeDefs,
-    resolvers: [PostResolver, userResolver, commentResolver],
+    resolvers: [
+      PostResolver,
+      userResolver,
+      commentResolver,
+      courseResolver,
+      bookResolver,
+    ],
   });
 
   const apolloServer = new ApolloServer({

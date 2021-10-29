@@ -8,6 +8,7 @@ export default class Post {
     public views: number,
     public title: string,
     public body: string,
+    public postType: string,
     public user: User,
     public points: number,
     public createdOn: Date,

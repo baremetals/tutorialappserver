@@ -49,12 +49,23 @@ export class Course extends SharedEntity {
   })
   startDate: string;
 
+  @Column("varchar", {
+    name: "EndDate",
+    length: 100,
+    unique: false,
+    nullable: false,
+  })
+  endDate: string;
+
+  @Column("int", { name: "Students", default: 0, nullable: false })
+  students: number;
+
   @ManyToOne(() => User, (user: User) => user.courses)
-  user: User;
+  adminUser: User;
 
   @OneToMany(() => CourseStudent, (courseStudent) => courseStudent.course)
   courseStudents: CourseStudent[];
 
-  @ManyToOne(() => Category, (category) => category.books)
+  @ManyToOne(() => Category, (category) => category.courses)
   category: Category;
 }

@@ -14,9 +14,11 @@ export function requireAuthentication(gssp: GetServerSideProps) {
       };
     } else {
       const accessToken = cookie.parse(req.headers.cookie);
-      const tokens = Object.keys(accessToken)
-      const token = tokens[0]
-      if (token !== "maguyvathegreat") {
+      // console.log(accessToken);
+      const tokens = Object.keys(accessToken).includes("maguyvathegreat");
+      console.log(tokens);
+      const token = tokens
+      if (!token) {
         return {
           redirect: {
             permanent: false,

@@ -57,14 +57,14 @@ const typeDefs = gql`
   type Post {
     id: ID!
     views: Int!
-    likes: Int!
+    points: Int!
     isDisabled: Boolean!
     title: String!
     body: String!
     postType: String!
-    user: User!
+    creator: User!
     comments: [Comment!]
-    category: PostCategory!
+    category: Category!
     createdBy: String!
     createdOn: Date!
     lastModifiedBy: String!
@@ -78,7 +78,6 @@ const typeDefs = gql`
 
   type Comment {
     id: ID!
-    views: Int!
     isDisabled: Boolean!
     body: String!
     user: User!
@@ -94,7 +93,7 @@ const typeDefs = gql`
   }
   union CommentArrayResult = CommentArray | EntityResult
 
-  type PostCategory {
+  type Category {
     id: ID!
     name: String!
     description: String
@@ -105,7 +104,7 @@ const typeDefs = gql`
     lastModifiedOn: Date!
   }
 
-  type Like {
+  type PostPoint {
     id: ID!
     isDecrement: Boolean!
     user: User!
@@ -124,6 +123,67 @@ const typeDefs = gql`
     titleCreatedOn: Date!
   }
 
+  type Course {
+    id: ID!
+    title: String!
+    duration: String!
+    description: String!
+    image: String!
+    startDate: String!
+    endDate: String!
+    students: Int!
+    adminUser: User!
+    courseStudents: CourseStudent!
+    category: Category!
+    createdBy: String!
+    createdOn: Date!
+    lastModifiedBy: String!
+    lastModifiedOn: Date!
+  }
+
+  union CourseResult = Course | EntityResult
+
+  type CourseArray {
+    courses: [Course!]
+  }
+  union CourseArrayResult = CourseArray | EntityResult
+
+  type CourseStudent {
+    id: ID!
+    student: [User!]
+    course: Course!
+    hasJoined: Boolean!
+    createdBy: String!
+    createdOn: Date!
+    lastModifiedBy: String!
+    lastModifiedOn: Date!
+  }
+
+  type CourseStudentArray {
+    students: [User!]
+  }
+
+  type Book {
+    id: ID!
+    title: String!
+    description: String!
+    image: String!
+    author: String!
+    link: String!
+    adminUser: User!
+    category: Category!
+    createdBy: String!
+    createdOn: Date!
+    lastModifiedBy: String!
+    lastModifiedOn: Date!
+  }
+
+  union BookResult = Book | EntityResult
+  type BookArray {
+    books: [Book!]
+  }
+  union BookArrayResult = BookArray | EntityResult
+
   type Query {
     # Users Query
     me: UserResult!
@@ -131,12 +191,23 @@ const typeDefs = gql`
     # Post Query
     getPostById(id: ID!): PostResult
     getPostsByCategoryId(categoryId: ID!): PostArrayResult!
-    getAllCategories: [PostCategory!]
+    getAllCategories: [Category!]
     getLatestPosts: PostArrayResult!
     getTopCategoryPost: [CategoryPost!]
 
     # Comment Query
     getCommentsByPostId(postId: ID!): CommentArrayResult!
+
+    # Course Query
+    getCourseById(id: ID!): CourseResult!
+    getLatestCourses: CourseArrayResult!
+    getCoursesByCategoryId(categoryId: ID!): CourseArrayResult!
+
+    # Book Query
+    getBooks: BookArrayResult!
+    getBooksByCategoryId(categoryId: ID!): BookArrayResult!
+
+    # Notification Query
   }
 
   type Mutation {
@@ -148,7 +219,7 @@ const typeDefs = gql`
       password: String!
     ): String!
     login(usernameOrEmail: String!, password: String!): String!
-    logout(userName: String!): String!
+    logout(username: String!): String!
     changePassword(newPassword: String!): String!
     activateAccount(token: String!): String!
     forgotPassword(usernameOrEmail: String!): String!
@@ -160,13 +231,43 @@ const typeDefs = gql`
       categoryId: ID!
       title: String!
       body: String!
-    ): EntityResult
+      postType: String!
+    ): EntityResult!
 
     # Comment Mutation
-    createComment(userId: ID!, postId: ID!, body: String): EntityResult
+    createComment(userId: ID!, postId: ID!, body: String): EntityResult!
 
     # Likes Mutation
-    updateLike(postId: ID!, increment: Boolean!): String!
+    updatePostPoint(postId: ID!, increment: Boolean!): String!
+
+    # Course Mutation
+    createCourse(
+      userId: ID!
+      categoryId: ID!
+      title: String!
+      duration: String!
+      description: String!
+      image: String!
+      startDate: String!
+      endDate: String!
+      group: String!
+    ): EntityResult!
+
+    # Book Mutation
+    addABook(
+      userId: ID!
+      categoryId: ID!
+      title: String!
+      description: String!
+      image: String!
+      link: String!
+      author: String!
+      group: String!
+    ): EntityResult!
+
+    joinOrLeaveCourse(courseId: ID!, join: Boolean!): String!
+
+    # Notification Mutation
   }
 `;
 

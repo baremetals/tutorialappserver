@@ -1,4 +1,7 @@
 import React from "react";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+dayjs.extend(relativeTime);
 import {
   PostTop,
   PostLeftWrap,
@@ -39,7 +42,7 @@ const VideoPostCard = ({
         <PostLeftWrap>
           <PostProfileImge src={image} alt="user profile image" />
           <UserName>{username}</UserName>
-          <PostDate>{date}</PostDate>
+          <PostDate>{dayjs(date).fromNow()}</PostDate>
         </PostLeftWrap>
         <PostTopRightWrap>
           <ExpandIcon />

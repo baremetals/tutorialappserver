@@ -120,7 +120,7 @@ export const login = async (
   usernameOrEmail: string,
   password: string
 ): Promise<UserResult> => {
-  console.log(usernameOrEmail);
+  // console.log(usernameOrEmail);
   const user = await User.findOne(
     usernameOrEmail.includes("@")
       ? { where: { email: usernameOrEmail } }

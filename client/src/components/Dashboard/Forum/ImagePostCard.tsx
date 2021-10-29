@@ -19,15 +19,17 @@ import {
   CommentText,
   ForumWrapper,
 } from "./forum.styles";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+dayjs.extend(relativeTime);
 
 interface ForumPost {
   username: string;
   image: string;
-  date: string;
+  date: any;
   title: string;
   body?: string;
   likeCount: number;
-  viewCount?: number;
   commentCount: number;
 }
 
@@ -38,9 +40,7 @@ const ImagePostCard = ({
   title,
   body,
   likeCount = 0,
-  viewCount = 0,
   commentCount = 0,
-  ...props
 }: ForumPost) => {
   return (
     <ForumWrapper>
@@ -48,7 +48,7 @@ const ImagePostCard = ({
         <PostLeftWrap>
           <PostProfileImge src={image} alt="user profile image" />
           <UserName>{username}</UserName>
-          <PostDate>{date}</PostDate>
+          <PostDate>{dayjs(date).fromNow()}</PostDate>
         </PostLeftWrap>
         <PostTopRightWrap>
           <ExpandIcon />

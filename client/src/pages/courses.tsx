@@ -1,26 +1,34 @@
-// import { ErrorMsg } from 'components/Input';
-// import { useMeQuery } from 'generated/graphql';
+import { ErrorMsg } from 'components/Input';
+import { MeDocument, MeQueryResult, useMeQuery } from 'generated/graphql';
 import { requireAuthentication } from 'lib/requireAuthentication';
 import { GetServerSideProps } from 'next';
-import React from 'react'
+import React, { useEffect } from 'react'
 import CoursesPage from '../components/Courses'
 
-// import { useAppDispatch } from "app/hooks";
-// import { setUser} from "features/auth/reducers";
+import { useAppDispatch } from "app/hooks";
+import { setUser} from "features/auth/reducers";
+import { client } from './_app';
 
 function courses() {
     // const dispatch = useAppDispatch()
-
+    
     // const { data, loading, error } = useMeQuery();
+    // console.log(data?.me);
     // if (!data || loading) {
     //   return <div>loading...</div>;
     // }
     // if (error) return <ErrorMsg>{error}</ErrorMsg>;
     // dispatch(setUser(data.me))
+    // const getMe = async () => {
+    //     const { data } = await client.query<MeQueryResult>({
+    //       query: MeDocument,
+    //     })
+    //     console.log(data);
+    // }
     // useEffect(() => {
-    //     dispatch()
-    // })
-    // console.log(data);
+    //     getMe()
+    // }, [])
+    
     return (
         <>
         <CoursesPage />
@@ -28,7 +36,7 @@ function courses() {
     )
 }
 
-export default courses;
+
 
 export const getServerSideProps: GetServerSideProps = requireAuthentication(
     async  (_ctx) => {
@@ -38,3 +46,5 @@ export const getServerSideProps: GetServerSideProps = requireAuthentication(
         }
     }
 )
+
+export default courses;

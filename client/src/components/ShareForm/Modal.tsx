@@ -9,7 +9,7 @@ import {
   FormWrap,
   MainContainer,
   TitleInput,
-  Category,
+  CategorySecetion,
   CategoryOptions,
   BodyText,
   ButtonContainer,
@@ -25,6 +25,9 @@ import { AiFillCloseCircle } from "react-icons/ai";
 // import Uploader from "components/Uploader";
 import { uploadBytes, ref, getDownloadURL } from "firebase/storage";
 import { storage } from "lib/admin"
+import { useCategoryQuery } from "generated/graphql";
+import { useAppDispatch } from "app/hooks";
+import { setCategory } from "features/ui/reducers";
 
 type FormInput = {
   title: string;
@@ -33,14 +36,20 @@ type FormInput = {
   upload?: string;
 };
 
-const categories = [
-  { value: "grocery", name: "Grocery", id: "1" },
-  { value: "women-cloths", name: "Women Cloths", id: "2" },
-  { value: "bags", name: "Bags", id: "3" },
-  { value: "makeup", name: "Makeup", id: "4" },
-];
+// const categories = [
+//   { value: "grocery", name: "Grocery", id: "1" },
+//   { value: "women-cloths", name: "Women Cloths", id: "2" },
+//   { value: "bags", name: "Bags", id: "3" },
+//   { value: "makeup", name: "Makeup", id: "4" },
+// ];
 
 export const Modal = ({ closeM, showModal, setShowModal, ...props }: any) => {
+  const dispatch = useAppDispatch();
+
+  const { data } = useCategoryQuery();
+  dispatch(setCategory(data?.getAllCategories));
+  // console.log(data?.getAllCategories);
+  const categories = data?.getAllCategories as any;
   const {
     register,
     handleSubmit,
@@ -121,14 +130,36 @@ export const Modal = ({ closeM, showModal, setShowModal, ...props }: any) => {
                       {...props}
                     />
                     {errors.title && <span>Title is required</span>}
-                    <Category {...register("category", { required: true })}>
-                      <CategoryOptions >Please select a category</CategoryOptions>
-                      {categories.map((c, id) => (
-                        <CategoryOptions key={id} value={c.value}>
-                          {c.name}
-                        </CategoryOptions>
-                      ))}
-                    </Category>
+                    <CategorySecetion
+                      {...register("category", { required: true })}
+                    >
+                      <CategoryOptions>
+                        Please select a category
+                      </CategoryOptions>
+                      {categories?.map(
+                        (
+                          c: {
+                            value:
+                              | string
+                              | number
+                              | readonly string[]
+                              | undefined;
+                            name:
+                              | boolean
+                              | React.ReactChild
+                              | React.ReactFragment
+                              | React.ReactPortal
+                              | null
+                              | undefined;
+                          },
+                          id: string
+                        ) => (
+                          <CategoryOptions key={id} value={c.value}>
+                            {c.name}
+                          </CategoryOptions>
+                        )
+                      )}
+                    </CategorySecetion>
                     {errors.category && <span>Category is required</span>}
                     <UploadWrapper>
                       <UploadLabel

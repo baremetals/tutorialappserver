@@ -1,0 +1,19 @@
+query GetCommentsByPostId($postId: ID!) {
+  getCommentsByPostId(postId: $postId) {
+    ... on CommentArray {
+      comments {
+        id
+        body
+        isDisabled
+        user {
+          username
+          id
+        }
+        createdOn
+      }
+    }
+    ... on EntityResult {
+      messages
+    }
+  }
+}

@@ -52,13 +52,13 @@ const commentResolver = {
   Mutation: {
     createComment: async (
       _obj: any,
-      args: { userId: string; threadId: string; body: string },
+      args: { userId: string; postId: string; body: string },
       _ctx: GqlContext,
       _info: any
     ): Promise<EntityResult> => {
       let result: QueryOneResult<Comment>;
       try {
-        result = await createComment(args.userId, args.threadId, args.body);
+        result = await createComment(args.userId, args.postId, args.body);
         return {
           messages: result.messages ? result.messages : [STANDARD_ERROR],
         };

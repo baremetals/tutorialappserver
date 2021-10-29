@@ -32,6 +32,7 @@ const userResolver = {
       _info: any
     ): Promise<User | EntityResult> => {
       let user: UserResult;
+      // console.log(ctx.req.session.userId);
       try {
         if (!ctx.req.session?.userId) {
           console.log("Session not available");
@@ -39,8 +40,11 @@ const userResolver = {
             messages: ["User not logged in."],
           };
         }
+        // console.log("user")
+        // const userId = "46"
         user = await me(ctx.req.session.userId);
         if (user && user.user) {
+          // console.log(user.user)
           return user.user;
         }
         return {
@@ -125,6 +129,7 @@ const userResolver = {
         user = await login(args.usernameOrEmail, args.password);
         if (user && user.user) {
           ctx.req.session!.userId = user.user.id;
+          // console.log(ctx.req.session);
 
           return `Login successful for username ${user.user.username}.`;
         }

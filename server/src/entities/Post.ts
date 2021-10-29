@@ -8,7 +8,7 @@ import {
 import { Length } from "class-validator";
 import { User } from "./User";
 import { Comment } from "./Comment";
-import { Like } from "./Like";
+import { PostPoint } from "./PostPoint";
 import { Category } from "./Category";
 import { SharedEntity } from "./SharedEntity";
 
@@ -20,7 +20,7 @@ export class Post extends SharedEntity {
   @Column("int", { name: "Views", default: 0, nullable: false })
   views: number;
 
-  @Column("int", { name: "Likes", default: 0, nullable: false })
+  @Column("int", { name: "Points", default: 0, nullable: false })
   points: number;
 
   @Column("boolean", { name: "IsDisabled", default: false, nullable: false })
@@ -30,7 +30,12 @@ export class Post extends SharedEntity {
   @Length(5, 150)
   title: string;
 
-  @Column("varchar", { name: "PostType", length: 15, nullable: false })
+  @Column("varchar", {
+    name: "PostType",
+    default: "text",
+    length: 15,
+    nullable: false,
+  })
   postType: string;
 
   @Column("varchar", { name: "Body", length: 2500, nullable: true })
@@ -38,15 +43,14 @@ export class Post extends SharedEntity {
   body: string;
 
   @ManyToOne(() => User, (user: User) => user.posts)
-  user: User;
+  creator: User;
 
   @OneToMany(() => Comment, (comments) => comments.post)
   comments: Comment[];
 
-  @OneToMany(() => Like, (like) => like.post)
-  likes: Like[];
+  @OneToMany(() => PostPoint, (postPoint) => postPoint.post)
+  postPoints: PostPoint[];
 
   @ManyToOne(() => Category, (category) => category.posts)
   category: Category;
-  
 }

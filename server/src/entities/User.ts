@@ -1,20 +1,19 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToMany, JoinTable } from "typeorm"
 import { Length } from "class-validator";
 import { Post } from "./Post"
-import { Like } from "./Like";
+import { PostPoint } from "./PostPoint";
 import { Comment } from "./Comment";
 import { CourseStudent } from "./CourseStudent";
-import { RecoLike } from "./RecoLike";
 import { Book } from "./Book";
 import { Course } from "./Course";
-import { Recommendation } from "./Recommendation";
+import { Notification } from "./Notifications";
 import { CourseNote } from "./CourseNote";
 import { Group } from "./Group";
 import { SharedEntity } from "./SharedEntity";
 // import { Group } from "./Group";
 
 @Entity({ name: "Users" })
-export class User extends SharedEntity{
+export class User extends SharedEntity {
   @PrimaryGeneratedColumn({ name: "Id", type: "bigint" })
   id: string;
 
@@ -73,29 +72,26 @@ export class User extends SharedEntity{
   @JoinTable()
   groups: Group[];
 
-  @OneToMany(() => Post, (post) => post.user)
+  @OneToMany(() => Post, (post) => post.creator)
   posts: Post[];
 
   @OneToMany(() => Comment, (comment) => comment.user)
   comments: Comment[];
 
-  @OneToMany(() => Like, (like) => like.user)
-  likes: Like[];
+  @OneToMany(() => PostPoint, (postPoint) => postPoint.user)
+  postPoints: PostPoint[];
 
-  @OneToMany(() => CourseStudent, (courseStudent) => courseStudent.user)
+  @OneToMany(() => CourseStudent, (courseStudent) => courseStudent.student)
   courseStudents: CourseStudent[];
 
-  @OneToMany(() => RecoLike, (recoLike) => recoLike.user)
-  recoLikes: RecoLike[];
-
-  @OneToMany(() => Book, (book) => book.user)
+  @OneToMany(() => Book, (book) => book.adminUser)
   books: Book[];
 
-  @OneToMany(() => Course, (course) => course.user)
+  @OneToMany(() => Course, (course) => course.adminUser)
   courses: Course[];
 
-  @OneToMany(() => Recommendation, (recommendation) => recommendation.user)
-  recommendations: Recommendation[];
+  @OneToMany(() => Notification, (notification) => notification.user)
+  notifications: Notification[];
 
   @OneToMany(() => CourseNote, (courseNote) => courseNote.user)
   courseNotes: CourseNote[];

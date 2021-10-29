@@ -1,0 +1,17 @@
+mutation CreatePost(
+  $userId: ID!
+  $categoryId: ID!
+  $title: String!
+  $body: String!
+  $postType: String!
+) {
+  createPost(
+    userId: $userId
+    categoryId: $categoryId
+    title: $title
+    body: $body
+    postType: $postType
+  ) {
+    messages
+  }
+}

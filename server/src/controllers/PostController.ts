@@ -6,62 +6,66 @@ import { QueryArrayResult, QueryOneResult } from "./QuerryArrayResult";
 import { getRepository } from "typeorm";
 
 export const createPost = async (
-    userId: string | undefined | null,
+  userId: string | undefined | null,
   categoryId: string,
   title: string,
-  body: string
+  body: string,
+  postType: string
 ): Promise<QueryArrayResult<Post>> => {
   const userRepository = getRepository(User);
-   const titleMsg = isPostTitleValid(title);
-   if (titleMsg) {
-     return {
-       messages: [titleMsg],
-     };
-   }
-   const bodyMsg = isPostBodyValid(body);
-   if (bodyMsg) {
-     return {
-       messages: [bodyMsg],
-     };
-   }
-   
-   if (!userId) {
-     return {
-       messages: ["User not logged in."],
-     };
-   }
+  const titleMsg = isPostTitleValid(title);
+  if (titleMsg) {
+    return {
+      messages: [titleMsg],
+    };
+  }
+  const bodyMsg = isPostBodyValid(body);
+  if (bodyMsg) {
+    return {
+      messages: [bodyMsg],
+    };
+  }
 
-   const user = await userRepository.findOne({
-     id: userId,
-   });
+  if (!userId) {
+    return {
+      messages: ["User not logged in."],
+    };
+  }
 
-   const category = await Category.findOne({
-     id: categoryId,
-   });
+  const creator = await userRepository.findOne({
+    id: userId,
+  });
 
-   if (!category) {
-     return {
-       messages: ["category not found."],
-     };
-   }
+  
 
-   const post = await Post.create({
-     title,
-     body,
-     user,
-     category,
-   }).save();
-   
-   if (!post) {
-     return {
-       messages: ["Failed to create post."],
-     };
-   }
+  const category = await Category.findOne({
+    id: categoryId,
+  });
 
-   return {
-     messages: ["Post created successfully."],
-   };
-}
+  if (!category) {
+    return {
+      messages: ["category not found."],
+    };
+  }
+
+  const post = await Post.create({
+    title,
+    body,
+    creator,
+    category,
+    postType,
+  }).save();
+
+  if (!post) {
+    return {
+      messages: ["Failed to create post."],
+    };
+  }
+
+  return {
+    messages: ["Post created successfully."],
+  };
+};
 
 export const getPostById = async (
   id: string
@@ -101,7 +105,7 @@ export const getPostsByCategoryId = async (
 export const getLatestPosts = async (): Promise<QueryArrayResult<Post>> => {
   const posts = await Post.createQueryBuilder("post")
     .leftJoinAndSelect("post.category", "category")
-    .leftJoinAndSelect("post.user", "user")
+    .leftJoinAndSelect("post.creator", "creator")
     .leftJoinAndSelect("post.comments", "comments")
     .orderBy("post.createdOn", "DESC")
     .take(10)
@@ -109,10 +113,10 @@ export const getLatestPosts = async (): Promise<QueryArrayResult<Post>> => {
 
   if (!posts || posts.length === 0) {
     return {
-      messages: ["No threads found."],
+      messages: ["No posts found."],
     };
   }
-  console.log(posts);
+  // console.log(posts);
   return {
     entities: posts,
   };

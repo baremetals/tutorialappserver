@@ -2,11 +2,11 @@ import React from 'react'
 import Link from "next/link";
 
 // for data fetching
-import { ErrorMsg } from "components/Input";
 import { useMeQuery } from "generated/graphql";
-import { useAppDispatch } from "app/hooks";
+import { useAppDispatch} from "app/hooks";
 import { setUser } from "features/auth/reducers";
 
+// styled components
 import {
   TopbarContainer,
   TopLeftWrap,
@@ -27,24 +27,28 @@ import {
 import { BsFillChatSquareFill } from "react-icons/bs";
 import { RiNotification2Fill, RiHome4Fill } from "react-icons/ri";
 import { Logo } from "../../../../public/assets/images/Logo";
+import { ErrorMsg } from 'components/Input';
+import User from 'models/User';
 
 
 const Topbar = () => {
-  const dispatch = useAppDispatch();
-
-  const { data, loading, error } = useMeQuery();
+  const dispatch = useAppDispatch()
+  const { data, loading, error } = useMeQuery(); 
+  // console.log(data)
   if (!data || loading) {
-    return <div>loading...</div>;
+      return <div>loading...</div>;
   }
+  
   if (error) return <ErrorMsg>{error}</ErrorMsg>;
-  dispatch(setUser(data.me));
-  const me: any = data.me as {};
+  
+  const me = data?.me as User;
+  dispatch(setUser(me));
 
     return (
       <TopbarContainer>
         <TopLeftWrap>
           <TopBarLogo>
-            <Link href={`/user-profile/`}>
+            <Link href={`/courses`}>
               <TopBarLogo>
                 <Logo color="white" width="50" height="50" />
               </TopBarLogo>

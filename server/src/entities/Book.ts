@@ -49,7 +49,7 @@ export class Book extends SharedEntity {
   link: string;
 
   @ManyToOne(() => User, (user: User) => user.books)
-  user: User;
+  adminUser: User;
 
   @ManyToOne(() => Category, (category) => category.courses)
   category: Category;

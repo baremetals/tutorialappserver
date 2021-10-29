@@ -2,7 +2,6 @@ import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm";
 import { Book } from "./Book";
 import { Course } from "./Course";
 import { Post } from "./Post";
-import { Recommendation } from "./Recommendation";
 import { SharedEntity } from "./SharedEntity";
 
 @Entity({ name: "Categories" })
@@ -27,9 +26,6 @@ export class Category extends SharedEntity {
 
   @OneToMany(() => Post, (post) => post.category)
   posts: Post[];
-
-  @OneToMany(() => Recommendation, (recommendation) => recommendation.category)
-  recommendations: Recommendation[];
 
   @OneToMany(() => Book, (book) => book.category)
   books: Book[];

@@ -4,27 +4,33 @@ query Me {
       messages
     }
     ... on User {
-      email
+      id
       username
       fullName
       confirmed
-      isDisabled
       profileImage
       backgroundImg
+      isDisabled
       createdOn
       groups {
+        id
         codename
       }
       posts {
+        id
         views
-        likes
+        points
+        isDisabled
         title
         body
         postType
+        createdOn
         comments {
+          id
           body
-          createdBy
+          isDisabled
           createdOn
+          createdBy
         }
       }
     }

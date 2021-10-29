@@ -11,6 +11,7 @@ import Footer from "../components/Footer/Footer";
 import NavBar from "../components/NavBar/NavBar";
 import NavDropDown from "../components/NavDropDown";
 
+
 import "../styles/globals.css";
 
 export const client = new ApolloClient({

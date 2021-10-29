@@ -1,4 +1,4 @@
-import { updateLike } from './../../controllers/LikeController';
+import { updatePostPoint } from "../../controllers/PostPointController";
 import { getTopCategoryPost } from './../../controllers/CategoryPostController';
 import { Post } from "../../entities/Post";
 import { QueryArrayResult, QueryOneResult } from "../../controllers/QuerryArrayResult";
@@ -6,7 +6,7 @@ import { GqlContext } from "../GqlContext";
 import { createPost, getLatestPosts, getPostById, getPostsByCategoryId } from "../../controllers/PostController";
 import { STANDARD_ERROR, EntityResult } from "../resolvers"
 import { Category } from "../../entities/Category";
-import { getAllCategories } from "../../controllers/PostCategoryController";
+import { getAllCategories } from "../../controllers/CategoryController";
 import { PostCategory } from "../../entities/EntityCategory";
 
 const postResolvers = {
@@ -131,10 +131,17 @@ const postResolvers = {
       }
     },
   },
+  
   Mutation: {
     createPost: async (
       _obj: any,
-      args: { userId: string; categoryId: string; title: string; body: string },
+      args: {
+        userId: string;
+        categoryId: string;
+        title: string;
+        body: string;
+        postType: string;
+      },
       _ctx: GqlContext,
       _info: any
     ): Promise<EntityResult> => {
@@ -144,7 +151,8 @@ const postResolvers = {
           args.userId,
           args.categoryId,
           args.title,
-          args.body
+          args.body,
+          args.postType
         );
         return {
           messages: result.messages ? result.messages : [STANDARD_ERROR],
@@ -155,7 +163,7 @@ const postResolvers = {
       }
     },
 
-    updateLike: async (
+    updatePostPoint: async (
       _obj: any,
       args: { postId: string; increment: boolean },
       ctx: GqlContext,
@@ -164,9 +172,9 @@ const postResolvers = {
       let result = "";
       try {
         if (!ctx.req.session || !ctx.req.session?.userId) {
-          return "You must be logged in to set likes.";
+          return "You must be logged in to like this post.";
         }
-        result = await updateLike(
+        result = await updatePostPoint(
           ctx.req.session!.userId,
           args.postId,
           args.increment

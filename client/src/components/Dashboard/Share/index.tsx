@@ -15,24 +15,20 @@ import {
 } from "./share.styles";
 import { MdPermMedia, MdOndemandVideo, MdTextsms } from "react-icons/md";
 import Modal from "components/ShareForm/Modal";
+import { useAppSelector } from "app/hooks";
+import { isUser } from "features/auth/selectors";
 
-
-
-
-
-const username = "frank";
 const Share = () => {
-
+  const { user: user } = useAppSelector(isUser);
   const [showModal, setShowModal] = useState(false);
-
 
   return (
     <>
       <ShareContainer>
         <ShareWrapper>
           <ShareTop>
-            <ProfileImage src="/D.jpg" alt="user profile image" />
-            <Title placeholder={`what's on your mind ${username}?`} />
+            <ProfileImage src={user?.profileImage} />
+            <Title onClick={() => setShowModal(true)} placeholder={`what's on your mind ${user?.username}?`} />
           </ShareTop>
           <ShareHr />
           <ShareBottomWrap>
