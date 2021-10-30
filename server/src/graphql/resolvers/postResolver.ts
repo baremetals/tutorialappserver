@@ -2,12 +2,15 @@ import { updatePostPoint } from "../../controllers/PostPointController";
 import { getTopCategoryPost } from './../../controllers/CategoryPostController';
 import { Post } from "../../entities/Post";
 import { QueryArrayResult, QueryOneResult } from "../../controllers/QuerryArrayResult";
-import { GqlContext } from "../GqlContext";
+import { GqlContext, pubsub } from "../GqlContext";
+import { withFilter } from "graphql-subscriptions";
 import { createPost, getLatestPosts, getPostById, getPostsByCategoryId } from "../../controllers/PostController";
 import { STANDARD_ERROR, EntityResult } from "../resolvers"
 import { Category } from "../../entities/Category";
 import { getAllCategories } from "../../controllers/CategoryController";
 import { PostCategory } from "../../entities/EntityCategory";
+import { Message } from "../../entities/Message";
+import { LIKED_POST } from "../../lib/constants";
 
 const postResolvers = {
   PostResult: {
@@ -25,6 +28,23 @@ const postResolvers = {
       }
       return "PostArray";
     },
+  },
+
+  MsgResult: {
+    __resolveType(obj: any, _context: GqlContext, _info: any) {
+      if (obj.messages) {
+        return "EntityResult";
+      }
+      return "Message";
+    },
+  },
+
+  Subscription: {
+    newLike: {
+      subscribe: withFilter(
+        () => pubsub.asyncIterator(LIKED_POST),(payload, args) => payload.postId ===args.postId,
+      )
+    }
   },
 
   Query: {
@@ -131,7 +151,7 @@ const postResolvers = {
       }
     },
   },
-  
+
   Mutation: {
     createPost: async (
       _obj: any,
@@ -166,20 +186,25 @@ const postResolvers = {
     updatePostPoint: async (
       _obj: any,
       args: { postId: string; increment: boolean },
-      ctx: GqlContext,
+      _ctx: GqlContext,
       _info: any
-    ): Promise<string> => {
-      let result = "";
+    ): Promise<Message | EntityResult> => {
       try {
-        if (!ctx.req.session || !ctx.req.session?.userId) {
-          return "You must be logged in to like this post.";
+        // if (!ctx.req.session || !ctx.req.session?.userId) {
+        //   return {
+        //     messages: ["You must be logged in to like this post."],
+        //   };
+        // }
+        const userId = "51";
+        const msg = await updatePostPoint(userId, args.postId, args.increment);
+        if (msg && msg.msg) {
+          // console.log(msg.msg);
+          return msg.msg;
         }
-        result = await updatePostPoint(
-          ctx.req.session!.userId,
-          args.postId,
-          args.increment
-        );
-        return result;
+        pubsub.publish(LIKED_POST, { postId: args.postId, msg });
+        return {
+          messages: msg.messages ? msg.messages : [STANDARD_ERROR],
+        };
       } catch (ex) {
         console.error(ex);
         throw ex;

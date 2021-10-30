@@ -6,7 +6,7 @@ import { Comment } from "./Comment";
 import { CourseStudent } from "./CourseStudent";
 import { Book } from "./Book";
 import { Course } from "./Course";
-import { Notification } from "./Notifications";
+import { Message } from "./Message";
 import { CourseNote } from "./CourseNote";
 import { Group } from "./Group";
 import { SharedEntity } from "./SharedEntity";
@@ -90,8 +90,8 @@ export class User extends SharedEntity {
   @OneToMany(() => Course, (course) => course.adminUser)
   courses: Course[];
 
-  @OneToMany(() => Notification, (notification) => notification.user)
-  notifications: Notification[];
+  @OneToMany(() => Message, (message) => message.user)
+  messages: Message[];
 
   @OneToMany(() => CourseNote, (courseNote) => courseNote.user)
   courseNotes: CourseNote[];

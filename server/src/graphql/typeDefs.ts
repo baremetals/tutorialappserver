@@ -184,6 +184,23 @@ const typeDefs = gql`
   }
   union BookArrayResult = BookArray | EntityResult
 
+  type Message {
+    id: ID!
+    from: String!
+    image: String!
+    isRead: Boolean!
+    title: String!
+    body: String!
+    type: String!
+    user: User!
+    createdBy: String!
+    createdOn: Date!
+    lastModifiedBy: String!
+    lastModifiedOn: Date!
+  }
+
+  union MsgResult = Message | EntityResult
+
   type Query {
     # Users Query
     me: UserResult!
@@ -221,7 +238,7 @@ const typeDefs = gql`
     login(usernameOrEmail: String!, password: String!): String!
     logout(username: String!): String!
     changePassword(newPassword: String!): String!
-    activateAccount(token: String!): String!
+    activateAccount(token: String!): MsgResult!
     forgotPassword(usernameOrEmail: String!): String!
     resetPassword(token: String!, newPassword: String!): String!
 
@@ -238,7 +255,7 @@ const typeDefs = gql`
     createComment(userId: ID!, postId: ID!, body: String): EntityResult!
 
     # Likes Mutation
-    updatePostPoint(postId: ID!, increment: Boolean!): String!
+    updatePostPoint(postId: ID!, increment: Boolean!): MsgResult!
 
     # Course Mutation
     createCourse(
@@ -268,6 +285,11 @@ const typeDefs = gql`
     joinOrLeaveCourse(courseId: ID!, join: Boolean!): String!
 
     # Notification Mutation
+  }
+
+  type Subscription {
+    accountActivated: Message!
+    newLike: Message!
   }
 `;
 

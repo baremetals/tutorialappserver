@@ -26,11 +26,13 @@
     "express-session": "^1.17.2",
     "graphql": "^15.6.1",
     "graphql-middleware": "^6.1.7",
+    "graphql-subscriptions": "^1.2.1",
     "graphql-tools": "^8.2.0",
     "ioredis": "^4.27.10",
     "nodemailer-sendgrid": "^1.0.3",
     "pg": "^8.7.1",
     "reflect-metadata": "^0.1.13",
+    "subscriptions-transport-ws": "^0.9.19",
     "type-graphql": "^1.1.1",
     "typeorm": "^0.2.38",
     "uuid": "^8.3.2"

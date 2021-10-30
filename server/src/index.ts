@@ -1,11 +1,14 @@
 import express from "express";
 import session from "express-session";
-
+import { createServer } from "http";
 import { ApolloServer } from "apollo-server-express";
 import { createConnection } from "typeorm";
 import {
   makeExecutableSchema,
 } from "@graphql-tools/schema";
+import { SubscriptionServer } from "subscriptions-transport-ws";
+import { execute, subscribe } from "graphql";
+
 
 import typeDefs from "./graphql/typeDefs"
 import PostResolver from "./graphql/resolvers/postResolver";
@@ -48,7 +51,7 @@ const main = async () => {
   
   app.use(
     cors({
-      origin: "*", //"http://localhost:3000",
+      origin: "http://localhost:3000", //"http://localhost:3000",
       credentials: true,
     })
   );
@@ -93,9 +96,22 @@ const main = async () => {
 
   await apolloServer.start();
   apolloServer.applyMiddleware({ app, cors: false });
+
+  const server = createServer(app);
   
   // creatGroup(12);
-  app.listen({ port: process.env.SERVER_PORT }, () => {
+  server.listen({ port: process.env.SERVER_PORT }, () => {
+    new SubscriptionServer(
+      {
+        execute,
+        subscribe,
+        schema,
+      },
+      {
+        server: server,
+        path: "/subscriptions",
+      }
+    );
     console.log(
       `Server ready on port ${process.env.SERVER_PORT}${apolloServer.graphqlPath}`
     );

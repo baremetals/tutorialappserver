@@ -9,10 +9,19 @@ import { Group } from "../entities/Group";
 import { sendEmail } from "../utils/sendEmail";
 import { v4 } from "uuid";
 import Redis from "ioredis";
+import { Message } from "../entities/Message";
+import {
+  ACCOUNT_ACTIVATED,
+  profileImage,
+  backgroundImg,
+} from "../lib/constants";
+import { MsgResult } from "./MsgController";
 
 export class UserResult {
   constructor(public messages?: Array<string>, public user?: User) {}
 }
+
+
 
 
 export const register = async (
@@ -67,10 +76,8 @@ export const register = async (
     username: trimmedUsername,
     fullName: fullName,
     password: hashedPassword,
-    profileImage:
-      "https://firebasestorage.googleapis.com/v0/b/tutorial-app-hosting-server.appspot.com/o/default.jpg?alt=media&token=14d2cfe9-ebd3-49dd-9e6e-9ffe443a79ab",
-    backgroundImg:
-      "https://firebasestorage.googleapis.com/v0/b/tutorial-app-hosting-server.appspot.com/o/background.jpg?alt=media&token=a8f437bf-9f3c-4f4e-80bc-00865f69de01",
+    profileImage,
+    backgroundImg,
     groups: [group],
   }).save();
 
@@ -79,7 +86,7 @@ export const register = async (
   const token = v4();
 
   await redis.set(
-    "ACTIVATE_ACCOUNT" + token,
+    ACCOUNT_ACTIVATED + token,
     userEntity.id,
     "ex",
     1000 * 60 * 60 * 24 * 2
@@ -91,28 +98,50 @@ export const register = async (
     `Thanks for signing up ${username}`
   );
 
+  console.log(token)
+
   return {
     user: userEntity,
   };
 };
 
-export const activateUser = async (id: string): Promise<string> => {
-  
+export const activateUser = async (id: string): Promise<MsgResult> => {
   const user = await User.findOne({
     where: { id },
   });
 
   if (!user) {
-    return "User not found.";
+    return {
+      messages: ["User not found."],
+    };
   }
-  
+
   if (user.confirmed) {
-    return "Your account is already confirmed.";
+    return {
+      messages: ["Your account is already confirmed."],
+    };
   }
 
   user.confirmed = true;
   user.save();
-  return "Your account is now confirmed.";
+
+  // notification code goes here
+  const msg = await Message.create({
+    user,
+    title: `Welcome ${user.username}`,
+    body: "Thanks for joining the Baremetals tutorial community. Your account is now activated and you may register for courses.",
+    type: ACCOUNT_ACTIVATED,
+  }).save();
+
+  if (!msg) {
+    return {
+      messages: ["Message was not created."],
+    };
+  }
+
+  return {
+    msg: msg
+  };
 };
 
 
@@ -207,10 +236,11 @@ export const changePassword = async (
     return "User has not confirmed their registration email yet.";
   }
 
- 
   const hashedPassword = await argon2.hash(newPassword);
   user.password = hashedPassword;
   user.save();
+
+  // notification code goes here
   return "Password changed successfully.";
 };
 
@@ -229,6 +259,8 @@ export const resetPassword = async (
   const hashedPassword = await argon2.hash(newPassword);
   user.password = hashedPassword;
   user.save();
+
+  // notification code goes here
   return "Password changed successfully.";
 };
 
@@ -272,3 +304,6 @@ function userNotFound(usernameOrEmail: string) {
     ? `User with email ${usernameOrEmail} not found.`
     : `User with username ${usernameOrEmail} not found.`;
 }
+
+// To do 
+// add notifications for reset password, activation and change password.

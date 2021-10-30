@@ -10,9 +10,14 @@ import {
   resetPassword
 } from "../../controllers/UserController";
 import { User } from "../../entities/User";
-import { GqlContext } from "../GqlContext";
+import { GqlContext, pubsub } from "../GqlContext";
 import { STANDARD_ERROR, EntityResult } from "../resolvers";
+import { ACCOUNT_ACTIVATED } from "../../lib/constants"
+// import { PubSub } from "graphql-subscriptions";
 import Redis from "ioredis";
+import { Message } from "../../entities/Message";
+
+// const pubsub = new PubSub();
 
 const userResolver = {
   UserResult: {
@@ -21,6 +26,21 @@ const userResolver = {
         return "EntityResult";
       }
       return "User";
+    },
+  },
+
+  MsgResult: {
+    __resolveType(obj: any, _context: GqlContext, _info: any) {
+      if (obj.messages) {
+        return "EntityResult";
+      }
+      return "Message";
+    },
+  },
+
+  Subscription: {
+    accountActivated: {
+      subscribe: () => pubsub.asyncIterator(ACCOUNT_ACTIVATED),
     },
   },
 
@@ -98,20 +118,31 @@ const userResolver = {
       args: { token: string },
       _ctx: GqlContext,
       _info: any
-    ): Promise<string> => {
+    ): Promise<Message | EntityResult> => {
       const redis = new Redis();
       try {
-        const key = "ACTIVATE_ACCOUNT" + args.token;
+        const key = ACCOUNT_ACTIVATED + args.token;
         const userId = await redis.get(key);
         if (!userId) {
-          return "this token has expired";
+          return {
+            messages: ["this token has expired"],
+          };
         }
 
-        let result = await activateUser(userId);
+        let msg = await activateUser(userId);
+        // pubsub.publish(ACCOUNT_ACTIVATED, { msg });
 
+        if (msg && msg.msg) {
+          // console.log(msg.msg);
+          // pubsub.publish(ACCOUNT_ACTIVATED, { msg });
+          return msg.msg;
+        }
+        pubsub.publish(ACCOUNT_ACTIVATED, { msg });
         await redis.del(key);
 
-        return result;
+        return {
+          messages: msg.messages ? msg.messages : [STANDARD_ERROR],
+        };
       } catch (ex) {
         console.log(ex.message);
         throw ex;
@@ -195,7 +226,7 @@ const userResolver = {
 
     resetPassword: async (
       _obj: any,
-      args: { token: string, newPassword: string },
+      args: { token: string; newPassword: string },
       _ctx: GqlContext,
       _info: any
     ): Promise<string> => {
