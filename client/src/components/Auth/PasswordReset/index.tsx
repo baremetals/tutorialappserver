@@ -7,15 +7,15 @@ import { ErrorMsg, Input, Error, SuccessMsg } from "../../Input";
 import Button from "../Button";
 
 import {
-  RPContainer,
-  FormWrap,
   MainContainer,
-  HeaderText,
+  WelcomeText,
   InputContainer,
   ButtonContainer,
-  HorizontalRule,
   BackToLogin,
-} from "./passwordreset.styles";
+  PageContainer,
+  FormWrap,
+  HorizontalRule,
+} from "../auth-styles";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/router";
@@ -65,7 +65,7 @@ const ResetPassword = () => {
   };
   return (
     <>
-      <RPContainer>
+      <PageContainer>
         <Formik
           initialValues={initialValues}
           onSubmit={handleSubmit}
@@ -74,26 +74,30 @@ const ResetPassword = () => {
           {({ isSubmitting, errors, touched }) => (
             <FormWrap>
               <MainContainer>
-                <HeaderText>reset password</HeaderText>
+                <WelcomeText>reset password</WelcomeText>
                 {errorMsg && <ErrorMsg>{initialValues.error}</ErrorMsg>}
                 {successMsg && <SuccessMsg>{initialValues.success}</SuccessMsg>}
                 <InputContainer>
-                  <Input
-                    type="password"
-                    placeholder="New Password"
-                    name="newPassword"
-                  />
-                  {errors.newPassword && touched.newPassword && (
-                    <Error>{errors.newPassword}</Error>
-                  )}
-                  <Input
-                    type="password"
-                    placeholder="Confirm Password"
-                    name="confirmPassword"
-                  />
-                  {errors.confirmPassword && touched.confirmPassword && (
-                    <Error>{errors.confirmPassword}</Error>
-                  )}
+                  <div className="form-group">
+                    <Input
+                      type="password"
+                      placeholder="New Password"
+                      name="newPassword"
+                    />
+                    {errors.newPassword && touched.newPassword && (
+                      <Error>{errors.newPassword}</Error>
+                    )}
+                  </div>
+                  <div className="form-group">
+                    <Input
+                      type="password"
+                      placeholder="Confirm Password"
+                      name="confirmPassword"
+                    />
+                    {errors.confirmPassword && touched.confirmPassword && (
+                      <Error>{errors.confirmPassword}</Error>
+                    )}
+                  </div>
                 </InputContainer>
                 <ButtonContainer>
                   <Button
@@ -110,7 +114,7 @@ const ResetPassword = () => {
             </FormWrap>
           )}
         </Formik>
-      </RPContainer>
+      </PageContainer>
       <ToastContainer />
     </>
   );

@@ -1,6 +1,6 @@
 import { getManager, getRepository } from "typeorm";
 import { User } from "../entities/User";
-import { CourseStudent } from "../entities/CourseStudent";
+import { Student } from "../entities/Student";
 import { Course } from "../entities/Course";
 
 export const joinOrLeaveCourse = async (
@@ -26,7 +26,7 @@ export const joinOrLeaveCourse = async (
   }
   const student = await userRepository.findOne({ where: { id: userId } });
 
-  const existingUser = await CourseStudent.findOne({
+  const existingUser = await Student.findOne({
     where: {
       course: { id: courseId },
       student: { id: userId },
@@ -38,31 +38,31 @@ export const joinOrLeaveCourse = async (
       if (join) {
         if (existingUser.hasJoined) {
           console.log("remove dec");
-          await CourseStudent.remove(existingUser);
-          course!.students = Number(course!.students) + 1;
+          await Student.remove(existingUser);
+          course!.totalStudents = Number(course!.students) + 1;
           course!.lastModifiedOn = new Date();
           await course!.save();
         }
       } else {
         if (!existingUser.hasJoined) {
           console.log("remove inc");
-          await CourseStudent.remove(existingUser);
-          course!.students = Number(course!.students) - 1;
+          await Student.remove(existingUser);
+          course!.totalStudents = Number(course!.students) - 1;
           course!.lastModifiedOn = new Date();
           await course!.save();
         }
       }
     } else {
       console.log("new student has joined the course");
-      await CourseStudent.create({
+      await Student.create({
         course,
         hasJoined: !join,
         student,
       }).save();
       if (join) {
-        course!.students = Number(course!.students) + 1;
+        course!.totalStudents = Number(course!.students) + 1;
       } else {
-        course!.students = Number(course!.students) - 1;
+        course!.totalStudents = Number(course!.students) - 1;
       }
       course!.lastModifiedOn = new Date();
       await course!.save();

@@ -9,7 +9,7 @@ import { Formik} from "formik";
 import Button from "../Button";
 import { Input, Error, ErrorMsg } from "../../Input";
 import { getRegisterValidationSchema } from "../../../utils/formValidation";
-import AuthModal from "../../Modal"
+// import AuthModal from "../../Modal"
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -31,7 +31,7 @@ import {
   Terms,
   PageContainer,
   FormWrap,
-} from "./styles";
+} from "../auth-styles";
 
 
 const Register = () => {
@@ -65,7 +65,6 @@ const Register = () => {
 
   return (
     <>
-      <AuthModal isOpen={false}>{initialValues.error}</AuthModal>;
       <PageContainer>
         <Formik
           initialValues={initialValues}
@@ -78,31 +77,43 @@ const Register = () => {
                 <WelcomeText>Register</WelcomeText>
                 {errorMsg && <ErrorMsg>{initialValues.error}</ErrorMsg>}
                 <InputContainer>
-                  <Input type="text" placeholder="Full Name" name="fullName" />
-                  {errors.fullName && touched.fullName && (
-                    <Error>{errors.fullName}</Error>
-                  )}
-                  <Input
-                    type="text"
-                    placeholder="username"
-                    name="username"
-                    values="username"
-                  />
-                  {errors.username && touched.username && (
-                    <Error>{errors.username}</Error>
-                  )}
-                  <Input type="email" placeholder="Email" name="email" />
-                  {errors.email && touched.email && (
-                    <Error>{errors.email}</Error>
-                  )}
-                  <Input
-                    type="password"
-                    placeholder="Password"
-                    name="password"
-                  />
-                  {errors.password && touched.password && (
-                    <Error>{errors.password}</Error>
-                  )}
+                  <div className="form-group">
+                    <Input
+                      type="text"
+                      placeholder="Full Name"
+                      name="fullName"
+                    />
+                    {errors.fullName && touched.fullName && (
+                      <Error>{errors.fullName}</Error>
+                    )}
+                  </div>
+                  <div className="form-group">
+                    <Input
+                      type="text"
+                      placeholder="username"
+                      name="username"
+                      values="username"
+                    />
+                    {errors.username && touched.username && (
+                      <Error>{errors.username}</Error>
+                    )}
+                  </div>
+                  <div className="form-group">
+                    <Input type="email" placeholder="Email" name="email" />
+                    {errors.email && touched.email && (
+                      <Error>{errors.email}</Error>
+                    )}
+                  </div>
+                  <div className="form-group">
+                    <Input
+                      type="password"
+                      placeholder="Password"
+                      name="password"
+                    />
+                    {errors.password && touched.password && (
+                      <Error>{errors.password}</Error>
+                    )}
+                  </div>
                 </InputContainer>
                 <ButtonContainer>
                   <Button
@@ -118,7 +129,7 @@ const Register = () => {
                 <Terms>
                   By creating your account you agree to the{" "}
                   <Link href="/terms">terms</Link> and
-                  <Link href="/privacy">privacy policy</Link>
+                  <Link href="/privacy"> privacy policy</Link>
                 </Terms>
               </MainContainer>
             </FormWrap>

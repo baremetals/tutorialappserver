@@ -1,7 +1,7 @@
 import { getRepository } from "typeorm";
 import { Category } from "../entities/Category";
 import { Course } from "../entities/Course";
-import { CourseStudent } from "../entities/CourseStudent";
+import { Student } from "../entities/Student";
 import { User } from "../entities/User";
 import { QueryArrayResult, QueryOneResult } from "./QuerryArrayResult";
 
@@ -111,8 +111,8 @@ export const getCoursesByCategoryId = async (
 
 export const getCourseStudentsByCourseId = async (
   courseId: string
-): Promise<QueryArrayResult<CourseStudent>> => {
-  const students = await CourseStudent.createQueryBuilder("cs")
+): Promise<QueryArrayResult<Student>> => {
+  const students = await Student.createQueryBuilder("cs")
     .where(`cs."courseId" = :courseId`, { courseId })
     .leftJoinAndSelect("cs.course", "course")
     .leftJoinAndSelect("cs.user", "courses")

@@ -8,7 +8,7 @@ import {
 import { STANDARD_ERROR, EntityResult } from "../resolvers";
 import { createCourse, getCourseById, getCoursesByCategoryId, getLatestCourses } from "../../controllers/CourseController";
 import { Course } from "../../entities/Course";
-import { joinOrLeaveCourse } from "../../controllers/CourseStudentController";
+import { joinOrLeaveCourse } from "../../controllers/StudentController";
 
 const courseResolver = {
   CourseResult: {

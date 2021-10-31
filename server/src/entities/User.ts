@@ -3,11 +3,11 @@ import { Length } from "class-validator";
 import { Post } from "./Post"
 import { PostPoint } from "./PostPoint";
 import { Comment } from "./Comment";
-import { CourseStudent } from "./CourseStudent";
+import { Student } from "./Student";
 import { Book } from "./Book";
 import { Course } from "./Course";
 import { Message } from "./Message";
-import { CourseNote } from "./CourseNote";
+import { Note } from "./Note";
 import { Group } from "./Group";
 import { SharedEntity } from "./SharedEntity";
 // import { Group } from "./Group";
@@ -81,8 +81,8 @@ export class User extends SharedEntity {
   @OneToMany(() => PostPoint, (postPoint) => postPoint.user)
   postPoints: PostPoint[];
 
-  @OneToMany(() => CourseStudent, (courseStudent) => courseStudent.student)
-  courseStudents: CourseStudent[];
+  @OneToMany(() => Student, (student) => student.student)
+  students: Student[];
 
   @OneToMany(() => Book, (book) => book.adminUser)
   books: Book[];
@@ -93,6 +93,6 @@ export class User extends SharedEntity {
   @OneToMany(() => Message, (message) => message.user)
   messages: Message[];
 
-  @OneToMany(() => CourseNote, (courseNote) => courseNote.user)
-  courseNotes: CourseNote[];
+  @OneToMany(() => Note, (note) => note.adminUser)
+  notes: Note[];
 }

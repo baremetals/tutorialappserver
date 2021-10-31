@@ -6,16 +6,15 @@ import { useForgotPasswordMutation } from "generated/graphql";
 import { ErrorMsg, Input, Error, SuccessMsg } from "../../Input";
 import Button from "../Button";
 import {
-  FPContainer,
-  
   MainContainer,
-  HeaderText,
+  WelcomeText,
   InputContainer,
   ButtonContainer,
-  HorizontalRule,
   BackToLogin,
+  PageContainer,
   FormWrap,
-} from "./changepassword.styles";
+  HorizontalRule,
+} from "../auth-styles";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -60,7 +59,7 @@ const ChangePassword = () => {
 
     return (
       <>
-        <FPContainer>
+        <PageContainer>
           <Formik
             initialValues={initialValues}
             onSubmit={handleSend}
@@ -69,21 +68,23 @@ const ChangePassword = () => {
             {({ isSubmitting, errors, touched }) => (
               <FormWrap>
                 <MainContainer>
-                  <HeaderText>forgot password</HeaderText>
+                  <WelcomeText>forgot password</WelcomeText>
                   {errorMsg && <ErrorMsg>{initialValues.error}</ErrorMsg>}
                   {successMsg && (
                     <SuccessMsg>{initialValues.success}</SuccessMsg>
                   )}
                   <InputContainer>
-                    <Input
-                      type="text"
-                      placeholder="Email or Username"
-                      name="usernameOrEmail"
-                      values="usernameOrEmail"
-                    />
-                    {errors.usernameOrEmail && touched.usernameOrEmail && (
-                      <Error>{errors.usernameOrEmail}</Error>
-                    )}
+                    <div className="form-group">
+                      <Input
+                        type="text"
+                        placeholder="Email or Username"
+                        name="usernameOrEmail"
+                        values="usernameOrEmail"
+                      />
+                      {errors.usernameOrEmail && touched.usernameOrEmail && (
+                        <Error>{errors.usernameOrEmail}</Error>
+                      )}
+                    </div>
                   </InputContainer>
                   <ButtonContainer>
                     <Button
@@ -100,7 +101,7 @@ const ChangePassword = () => {
               </FormWrap>
             )}
           </Formik>
-        </FPContainer>
+        </PageContainer>
         <ToastContainer />
       </>
     );

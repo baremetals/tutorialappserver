@@ -1,8 +1,10 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToOne } from "typeorm";
 import { SharedEntity } from "./SharedEntity";
-import { CourseStudent } from "./CourseStudent";
+import { Student } from "./Student";
 import { Category } from "./Category";
 import { User } from "./User";
+import {Comment } from "./Comment";
+import { Note } from "./Note";
 
 @Entity({ name: "Courses" })
 export class Course extends SharedEntity {
@@ -57,15 +59,21 @@ export class Course extends SharedEntity {
   })
   endDate: string;
 
-  @Column("int", { name: "Students", default: 0, nullable: false })
-  students: number;
+  @Column("int", { name: "TotalStudents", default: 0, nullable: false })
+  totalStudents: number;
 
   @ManyToOne(() => User, (user: User) => user.courses)
   adminUser: User;
 
-  @OneToMany(() => CourseStudent, (courseStudent) => courseStudent.course)
-  courseStudents: CourseStudent[];
+  @OneToMany(() => Student, (student) => student.course)
+  students: Student[];
 
   @ManyToOne(() => Category, (category) => category.courses)
   category: Category;
+
+  @OneToMany(() => Comment, (comments) => comments.course)
+  comments: Comment[];
+
+  @OneToMany(() => Note, (notes) => notes.course)
+  notes: Note[];
 }

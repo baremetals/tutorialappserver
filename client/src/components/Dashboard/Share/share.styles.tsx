@@ -31,7 +31,6 @@ export const Title = styled.input`
   border: 1px;
   width: 80%;
   margin-bottom: 10px;
-
   &:focus {
     outline: none;
   }
@@ -40,7 +39,6 @@ export const Title = styled.input`
 export const Body = styled.select`
   border: none;
   width: 80%;
-
   &:focus {
     outline: none;
   }
@@ -49,12 +47,10 @@ export const Body = styled.select`
 export const SelectOptions = styled.option`
   border: none;
   width: 80%;
-
   &:focus {
     outline: none;
   }
 `;
-
 
 export const ShareHr = styled.hr`
   margin: 20px;

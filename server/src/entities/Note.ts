@@ -1,17 +1,16 @@
 import { Length } from "class-validator";
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany } from "typeorm";
+import { Course } from "./Course";
 import { SharedEntity } from "./SharedEntity";
 import { User } from "./User";
+import { Comment } from "./Comment";
 
 
 
-@Entity({ name: "CourseNotes" })
-export class CourseNote extends SharedEntity {
+@Entity({ name: "Notes" })
+export class Note extends SharedEntity {
   @PrimaryGeneratedColumn({ name: "Id", type: "bigint" })
   id: string;
-
-  @Column("int", { name: "Views", default: 0, nullable: false })
-  views: number;
 
   @Column("boolean", { name: "IsDisabled", default: false, nullable: false })
   isDisabled: boolean;
@@ -28,6 +27,12 @@ export class CourseNote extends SharedEntity {
   @Length(10, 2500)
   body: string;
 
-  @ManyToOne(() => User, (user: User) => user.courseNotes)
-  user: User;
+  @ManyToOne(() => User, (user: User) => user.notes)
+  adminUser: User;
+
+  @ManyToOne(() => Course, (course) => course.notes)
+  course: Course;
+
+  @OneToMany(() => Comment, (comments) => comments.note)
+  comments: Comment[];
 }
