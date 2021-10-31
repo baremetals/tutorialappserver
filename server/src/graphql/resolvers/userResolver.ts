@@ -248,6 +248,11 @@ const userResolver = {
         throw ex;
       }
     },
+
+    // Todo
+
+    // editMe: async (): Promise<string>{}
+    // deleteMe: async (): Promise<string>{}
   },
 };
 

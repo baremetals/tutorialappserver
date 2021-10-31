@@ -69,6 +69,7 @@ export const createCourse = async (
   };
 };
 
+
 export const getLatestCourses = async (): Promise<QueryArrayResult<Course>> => {
   const courses = await Course.createQueryBuilder("course")
     .leftJoinAndSelect("course.category", "category")
@@ -109,14 +110,14 @@ export const getCoursesByCategoryId = async (
   };
 };
 
-export const getCourseStudentsByCourseId = async (
+export const getStudentsByCourseId = async (
   courseId: string
 ): Promise<QueryArrayResult<Student>> => {
   const students = await Student.createQueryBuilder("cs")
     .where(`cs."courseId" = :courseId`, { courseId })
     .leftJoinAndSelect("cs.course", "course")
     .leftJoinAndSelect("cs.user", "courses")
-    .orderBy("c.createdOn", "DESC")
+    .orderBy("cs.createdOn", "DESC")
     .getMany();
 
   if (!students) {
@@ -144,4 +145,10 @@ export const getCourseById = async (
     entity: course,
   };
 };
+
+// Todo
+
+// export const editCourse = async (): Promise{}
+// export const deleteCourse = async (): Promise{}
+// export const removeStudent = async (): Promise{}
 

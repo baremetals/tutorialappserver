@@ -19,9 +19,9 @@ export class Note extends SharedEntity {
   @Length(5, 150)
   title: string;
 
-  @Column("varchar", { name: "PostType", length: 100, nullable: false })
+  @Column("varchar", { name: "NoteType", length: 100, nullable: false })
   @Length(5, 150)
-  postType: string;
+  noteType: string;
 
   @Column("varchar", { name: "Body", length: 2500, nullable: true })
   @Length(10, 2500)

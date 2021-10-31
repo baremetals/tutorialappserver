@@ -22,9 +22,9 @@ const typeDefs = gql`
     posts: [Post!]
     groups: [Group!]
     comments: [Comment!]
-    # courses: [Course!]
-    # courseNotes: [CourseNote!]
-    # books: [Book!]
+    courses: [Course!]
+    notes: [Note!]
+    books: [Book!]
     # recommendations: [Recommendation!]
     createdBy: String!
     createdOn: Date!
@@ -131,9 +131,9 @@ const typeDefs = gql`
     image: String!
     startDate: String!
     endDate: String!
-    students: Int!
+    totalStudents: Int!
     adminUser: User!
-    courseStudents: CourseStudent!
+    students: Student!
     category: Category!
     createdBy: String!
     createdOn: Date!
@@ -148,7 +148,7 @@ const typeDefs = gql`
   }
   union CourseArrayResult = CourseArray | EntityResult
 
-  type CourseStudent {
+  type Student {
     id: ID!
     student: [User!]
     course: Course!
@@ -159,10 +159,33 @@ const typeDefs = gql`
     lastModifiedOn: Date!
   }
 
-  type CourseStudentArray {
+  type StudentArray {
     students: [User!]
   }
 
+  union StudentArrayResult = StudentArray | EntityResult
+
+  type Note {
+    id: ID!
+    isDisabled: Boolean!
+    title: String!
+    noteType: String
+    body: String!
+    adminUser: User!
+    course: Course!
+    comment: [Comment!]
+    createdBy: String!
+    createdOn: Date!
+    lastModifiedBy: String!
+    lastModifiedOn: Date!
+  }
+  union NoteResult = Note | EntityResult
+  type NoteArray {
+    notes: [Note!]
+  }
+  union NoteArrayResult = NoteArray | EntityResult
+
+  # Book types
   type Book {
     id: ID!
     title: String!
@@ -177,13 +200,13 @@ const typeDefs = gql`
     lastModifiedBy: String!
     lastModifiedOn: Date!
   }
-
   union BookResult = Book | EntityResult
   type BookArray {
     books: [Book!]
   }
   union BookArrayResult = BookArray | EntityResult
 
+  # Message types
   type Message {
     id: ID!
     from: String!
@@ -198,9 +221,9 @@ const typeDefs = gql`
     lastModifiedBy: String!
     lastModifiedOn: Date!
   }
-
   union MsgResult = Message | EntityResult
 
+  # Query types
   type Query {
     # Users Query
     me: UserResult!
@@ -214,19 +237,26 @@ const typeDefs = gql`
 
     # Comment Query
     getCommentsByPostId(postId: ID!): CommentArrayResult!
+    getCommentsByCourseId(courseId: ID!): CommentArrayResult!
+    getCommentsByNoteId(noteId: ID!): CommentArrayResult!
 
     # Course Query
     getCourseById(id: ID!): CourseResult!
     getLatestCourses: CourseArrayResult!
     getCoursesByCategoryId(categoryId: ID!): CourseArrayResult!
+    getStudentsByCourseId(courseId: ID!): StudentArrayResult!
 
     # Book Query
     getBooks: BookArrayResult!
     getBooksByCategoryId(categoryId: ID!): BookArrayResult!
 
     # Notification Query
+
+    # Note Query
+    getNotesByCourseId(courseId: ID!): NoteArrayResult!
   }
 
+  # Mutatiob types
   type Mutation {
     # Users Mutation
     register(
@@ -253,6 +283,8 @@ const typeDefs = gql`
 
     # Comment Mutation
     createComment(userId: ID!, postId: ID!, body: String): EntityResult!
+    newCourseComment(userId: ID!, courseId: ID!, body: String): EntityResult!
+    newNoteComment(userId: ID!, noteId: ID!, body: String): EntityResult!
 
     # Likes Mutation
     updatePostPoint(postId: ID!, increment: Boolean!): MsgResult!
@@ -285,8 +317,18 @@ const typeDefs = gql`
     joinOrLeaveCourse(courseId: ID!, join: Boolean!): String!
 
     # Notification Mutation
+
+    # Note Mutation
+    newNote(
+      userId: ID!
+      courseId: ID!
+      title: String!
+      body: String!
+      noteType: String!
+    ): EntityResult!
   }
 
+  # Subscription types
   type Subscription {
     accountActivated: Message!
     newLike: Message!

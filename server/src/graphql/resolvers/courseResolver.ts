@@ -6,9 +6,10 @@ import { GqlContext } from "../GqlContext";
 import {
 } from "../../controllers/PostController";
 import { STANDARD_ERROR, EntityResult } from "../resolvers";
-import { createCourse, getCourseById, getCoursesByCategoryId, getLatestCourses } from "../../controllers/CourseController";
+import { createCourse, getCourseById, getCoursesByCategoryId, getLatestCourses, getStudentsByCourseId } from "../../controllers/CourseController";
 import { Course } from "../../entities/Course";
 import { joinOrLeaveCourse } from "../../controllers/StudentController";
+import { Student } from "../../entities/Student";
 
 const courseResolver = {
   CourseResult: {
@@ -96,6 +97,29 @@ const courseResolver = {
         throw ex;
       }
     },
+
+    getStudentsByCourseId: async (
+      _obj: any,
+      args: { courseId: string },
+      _ctx: GqlContext,
+      _info: any
+    ): Promise<{ students: Array<Student> } | EntityResult> => {
+      let students: QueryArrayResult<Student>;
+      try {
+        students = await getStudentsByCourseId(args.courseId);
+        if (students.entities) {
+          return {
+            students: students.entities,
+          };
+        }
+        return {
+          messages: students.messages ? students.messages : [STANDARD_ERROR],
+        };
+      } catch (ex) {
+        console.error(ex);
+        throw ex;
+      }
+    },
   },
   Mutation: {
     createCourse: async (
@@ -159,6 +183,12 @@ const courseResolver = {
         throw ex;
       }
     },
+
+    // Todo
+
+    // editCourse: async (): Promise<>{}
+    // deleteCourse: async (): Promise<>{}
+    // removeStudent: async (): Promise<>{}
   },
 };
 

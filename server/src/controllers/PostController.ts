@@ -121,3 +121,8 @@ export const getLatestPosts = async (): Promise<QueryArrayResult<Post>> => {
     entities: posts,
   };
 };
+
+// Todo
+
+// export const editPost = async (): Promise{}
+// export const deletePost = async (): Promise{}

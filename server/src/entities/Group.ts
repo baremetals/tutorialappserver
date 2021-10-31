@@ -1,7 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable } from "typeorm";
 import { Permission } from "./Permission";
 import { SharedEntity } from "./SharedEntity";
-// import { User } from "./User";
+
 
 @Entity({ name: "Groups" })
 export class Group extends SharedEntity {
@@ -27,7 +27,5 @@ export class Group extends SharedEntity {
   @JoinTable()
   permissions: Permission[];
 
-  // @OneToMany(() => User, (user) => user.group)
-  // users: User[];
 }
 

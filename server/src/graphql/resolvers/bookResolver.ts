@@ -109,6 +109,10 @@ const bookResolver = {
         throw ex;
       }
     },
+    // Todo
+
+    // editBook: async (): Promise<string>{}
+    // deleteBook: async (): Promise<string>{}
   },
 };
 

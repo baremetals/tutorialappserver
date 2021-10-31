@@ -19,6 +19,7 @@ import Redis from "ioredis";
 import cors from "cors";
 import courseResolver from "./graphql/resolvers/courseResolver";
 import bookResolver from "./graphql/resolvers/bookResolver";
+import noteResolver from "./graphql/resolvers/noteResolver";
 
 // import creatGroup from "./controllers/GroupController"
 
@@ -84,6 +85,7 @@ const main = async () => {
       commentResolver,
       courseResolver,
       bookResolver,
+      noteResolver,
     ],
   });
 

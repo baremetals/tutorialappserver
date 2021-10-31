@@ -42,9 +42,10 @@ const postResolvers = {
   Subscription: {
     newLike: {
       subscribe: withFilter(
-        () => pubsub.asyncIterator(LIKED_POST),(payload, args) => payload.postId ===args.postId,
-      )
-    }
+        () => pubsub.asyncIterator(LIKED_POST),
+        (payload, args) => payload.postId === args.postId
+      ),
+    },
   },
 
   Query: {
@@ -210,6 +211,11 @@ const postResolvers = {
         throw ex;
       }
     },
+
+    // Todo
+
+    // editPost: async (): Promise<string>{}
+    // deletePost: async (): Promise<string>{}
   },
 };
 

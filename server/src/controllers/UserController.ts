@@ -307,3 +307,11 @@ function userNotFound(usernameOrEmail: string) {
 
 // To do 
 // add notifications for reset password, activation and change password.
+
+// export const deleteMe = async (): Promise{}
+// export const editMe = async (): Promise{}
+
+// Admin only feature
+// export const deleteUser = async (): Promise{}
+// export const editUser = async (): Promise{}
+

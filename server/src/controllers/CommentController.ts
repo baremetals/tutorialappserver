@@ -218,3 +218,8 @@ export const getCommentsByNoteId = async (
     entities: comments,
   };
 };
+
+// Todo
+
+// export const editComment = async (): Promise{}
+// export const deleteComment = async (): Promise{}
