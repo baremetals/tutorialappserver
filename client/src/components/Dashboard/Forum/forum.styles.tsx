@@ -20,6 +20,7 @@ export const PostTop = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
+  margin-bottom: -9px;
 `;
 export const PostLeftWrap = styled.div`
   display: flex;
@@ -40,13 +41,19 @@ export const PostDate = styled.span`
   font-size: 12px;
 `;
 export const PostTopRightWrap = styled.div`
+display: grid;
+
+;
 `;
 export const ExpandIcon = styled(MdExpandMore)`
-
+  cursor: pointer;
 `;
+
 
 export const PostCenterWrap = styled.div`
   margin: 20px 0;
+  position: relative;
+  z-index: -1;
 `;
 export const PostText = styled.span`
 
