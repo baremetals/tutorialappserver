@@ -5,26 +5,28 @@ import VideoPostCard from '../../Dashboard/Forum/VideoPostCard';
 import LeftSideBar from '../../Dashboard/LeftSideBar';
 import SmallFooter from '../../Dashboard/SmallFooter';
 import Topbar from '../../Dashboard/TopBar'
-import PageContainer, {
-  MiddleContainer,
-  RightSideContainer,
-} from '../../Containers/PageContainer'
 
 import {
-  CoursesH1,
+  CardTitle,
   DetailsCardWrapper,
   CardTop,
   CardLeftWrap,
-  CardTitle,
   StartDate,
   CardCenterWrap,
   CardText,
   StartDateTitle,
-  ApplyButton,
-  CardBottom,
   MediaContainer,
   CoursesH2,
 } from "./details.styles";
+
+import {
+  PageContainer,
+  InnerContainer,
+  PageRightSide,
+  PageHeading,
+  CardBottom,
+  ApplyButton,
+} from "../../../styles/common.styles";
 
 function CourseDetails() {
     return (
@@ -32,8 +34,8 @@ function CourseDetails() {
         <Topbar />
         <PageContainer>
           <LeftSideBar />
-          <MiddleContainer>
-            <CoursesH1>Course Title</CoursesH1>
+          <InnerContainer>
+            <PageHeading>Course Title</PageHeading>
             <DetailsCardWrapper>
               <CardTop>
                 <CardLeftWrap>
@@ -69,7 +71,8 @@ function CourseDetails() {
                   date="5 hours ago"
                   likeCount={12}
                   commentCount={2}
-                  content="leap into electronic typesetting, remaining
+                  title={""}
+                  body="leap into electronic typesetting, remaining
                   essentially unchanged. It was popularised in the 1960s with
                   the release of Letraset sheets containing Lorem Ipsum
                   passages, and more recently with desktop publishing"
@@ -79,11 +82,11 @@ function CourseDetails() {
                 <VideoPostCard
                   username="hotness"
                   image="/prettygirl.jpg"
-                  videoMedia="/exvid.mp4"
+                  body="/exvid.mp4"
                   date="5 hours ago"
                   likeCount={12}
                   commentCount={2}
-                  content="leap into electronic typesetting, remaining
+                  title="leap into electronic typesetting, remaining
                   essentially unchanged."
                 />
               </MediaContainer>
@@ -91,17 +94,17 @@ function CourseDetails() {
                 <ImagePostCard
                   username="aleah"
                   image="/Aleah.jpg"
-                  postMedia="/assets/images/forum.svg"
+                  body="/assets/images/forum.svg"
                   date="5 hours ago"
                   likeCount={12}
                   commentCount={2}
-                  content="leap into electronic typesetting, remaining
+                  title="leap into electronic typesetting, remaining
                   essentially unchanged."
                 />
               </MediaContainer>
             </DetailsCardWrapper>
-          </MiddleContainer>
-          <RightSideContainer>blow my wig</RightSideContainer>
+          </InnerContainer>
+          <PageRightSide>blow my wig</PageRightSide>
         </PageContainer>
         <SmallFooter />
       </>

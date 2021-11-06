@@ -7,7 +7,6 @@ import Share from "../Dashboard/Share";
 import { useAppSelector } from "app/hooks";
 import { isUser } from "features/auth/selectors";
 
-
 const FeedContainer = styled.div`
   flex: 5.5;
 `;

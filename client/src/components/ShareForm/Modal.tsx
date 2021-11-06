@@ -9,7 +9,7 @@ import {
   FormWrap,
   MainContainer,
   TitleInput,
-  CategorySecetion,
+  Category,
   CategoryOptions,
   BodyText,
   ButtonContainer,
@@ -22,7 +22,6 @@ import {
   Background,
 } from "./modal.styles";
 import { AiFillCloseCircle } from "react-icons/ai";
-// import Uploader from "components/Uploader";
 import { uploadBytes, ref, getDownloadURL } from "firebase/storage";
 import { storage } from "lib/admin"
 import { useCategoryQuery } from "generated/graphql";
@@ -36,12 +35,6 @@ type FormInput = {
   upload?: string;
 };
 
-// const categories = [
-//   { value: "grocery", name: "Grocery", id: "1" },
-//   { value: "women-cloths", name: "Women Cloths", id: "2" },
-//   { value: "bags", name: "Bags", id: "3" },
-//   { value: "makeup", name: "Makeup", id: "4" },
-// ];
 
 export const Modal = ({ closeM, showModal, setShowModal, ...props }: any) => {
   const dispatch = useAppDispatch();
@@ -130,7 +123,7 @@ export const Modal = ({ closeM, showModal, setShowModal, ...props }: any) => {
                       {...props}
                     />
                     {errors.title && <span>Title is required</span>}
-                    <CategorySecetion
+                    <Category
                       {...register("category", { required: true })}
                     >
                       <CategoryOptions>
@@ -159,7 +152,7 @@ export const Modal = ({ closeM, showModal, setShowModal, ...props }: any) => {
                           </CategoryOptions>
                         )
                       )}
-                    </CategorySecetion>
+                    </Category>
                     {errors.category && <span>Category is required</span>}
                     <UploadWrapper>
                       <UploadLabel
@@ -173,7 +166,6 @@ export const Modal = ({ closeM, showModal, setShowModal, ...props }: any) => {
                         type="file"
                         name="upload"
                       />
-                      {/* <Uploader onChange={handleUploader} /> */}
                     </UploadWrapper>
                     <BodyTextWrapper>
                       <BodyText

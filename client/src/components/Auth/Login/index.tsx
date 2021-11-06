@@ -29,6 +29,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { FooterLinkContainer } from "components/Footer/styles";
 
 
+
 const initialValues = {
   usernameOrEmail: "",
   password: "",
@@ -52,16 +53,17 @@ const Login = () => {
           ...values,
         },
       });
-      if (!response.data?.login.includes("Login successful for")) {
+      if (!response.data?.login.includes("bm-user")) {
         err = response.data?.login;
         initialValues.error = err;
         setErrorMsg(true);
         dispatch(setError(response.data?.login));
       } else {
         dispatch(setSuccess(response.data?.login));
-        toast.success(response.data?.login);
+        const me = response.data?.login;
+        toast.success("login successful");
         setTimeout(() => {
-          router.push("/courses");
+          router.push(`/user-profile/${me}`);
         }, 2000);
       }
     } catch (ex) {

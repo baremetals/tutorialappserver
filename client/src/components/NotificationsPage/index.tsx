@@ -1,13 +1,8 @@
 import React from "react";
-import PageContainer, {
-  MiddleContainer,
-  RightSideContainer,
-} from "../Containers/PageContainer";
 import LeftSideBar from "../Dashboard/LeftSideBar";
 import SmallFooter from "../Dashboard/SmallFooter";
 import TopBar from "../Dashboard/TopBar";
 import {
-  NoticesH1,
   NoticesWrapper,
   NoticeLeftWrap,
   SenderProfileImge,
@@ -16,57 +11,41 @@ import {
   NoticeTopRightWrap,
   DeleteIcon,
 } from "./notice.styles";
+import {
+  PageContainer,
+  InnerContainer,
+  PageRightSide,
+  PageHeading,
+} from "../../styles/common.styles";
 
-function NotificationsPage() {
+
+type NotificationsPageType = {
+  image: string;
+  body: string;
+  createdOn: string;
+};
+function NotificationsPage({ ...props }: NotificationsPageType) {
   return (
     <>
       <TopBar />
       <PageContainer>
         <LeftSideBar />
-        <MiddleContainer>
-          <NoticesH1>Notifications</NoticesH1>
+        <InnerContainer>
+          <PageHeading>Notifications</PageHeading>
           <NoticesWrapper>
             <NoticeLeftWrap>
-              <SenderProfileImge alt="sender profile image" src="/Aleah.jpg" />
+              <SenderProfileImge alt="sender profile image" src={props.image} />
               <NoticeMessage>
-                Lorem Ipsum is simply dummy text of the printing and typesetting
-                industry.
+                {props.body}
               </NoticeMessage>
-              <NoticeDate>10 hours ago</NoticeDate>
+              <NoticeDate>{props.createdOn}</NoticeDate>
             </NoticeLeftWrap>
             <NoticeTopRightWrap>
               <DeleteIcon />
             </NoticeTopRightWrap>
-          </NoticesWrapper>
-          <NoticesWrapper>
-            <NoticeLeftWrap>
-              <SenderProfileImge alt="sender profile image" src="/D.jpg" />
-              <NoticeMessage>
-                Lorem Ipsum is simply dummy text of the printing and typesetting
-                industry.
-              </NoticeMessage>
-              <NoticeDate>10 hours ago</NoticeDate>
-            </NoticeLeftWrap>
-            <NoticeTopRightWrap>
-              <DeleteIcon />
-            </NoticeTopRightWrap>
-          </NoticesWrapper>
-          <NoticesWrapper>
-            <NoticeLeftWrap>
-              <SenderProfileImge alt="sender profile image" src="/prettygirl.jpg" />
-              <NoticeMessage>
-                Lorem Ipsum is simply dummy text of the printing and typesetting
-                industry.
-              </NoticeMessage>
-              <NoticeDate>10 hours ago</NoticeDate>
-            </NoticeLeftWrap>
-            <NoticeTopRightWrap>
-              <DeleteIcon />
-            </NoticeTopRightWrap>
-          </NoticesWrapper>
-          
-        </MiddleContainer>
-        <RightSideContainer>Live forever young!</RightSideContainer>
+          </NoticesWrapper>         
+        </InnerContainer>
+        <PageRightSide>Live forever young!</PageRightSide>
       </PageContainer>
       <SmallFooter />
     </>

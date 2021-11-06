@@ -1,0 +1,21 @@
+query GetLatestCourses {
+  getLatestCourses {
+    ... on EntityResult {
+      messages
+    }
+    ... on CourseArray {
+      courses {
+        id
+        title
+        duration
+        description
+        image
+        startDate
+        endDate
+        category {
+          name
+        }
+      }
+    }
+  }
+}

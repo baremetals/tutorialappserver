@@ -15,6 +15,31 @@ export type Scalars = {
   Date: any;
 };
 
+export type Book = {
+  __typename?: 'Book';
+  adminUser: User;
+  author: Scalars['String'];
+  category: Category;
+  createdBy: Scalars['String'];
+  createdOn: Scalars['Date'];
+  description: Scalars['String'];
+  id: Scalars['ID'];
+  image: Scalars['String'];
+  lastModifiedBy: Scalars['String'];
+  lastModifiedOn: Scalars['Date'];
+  link: Scalars['String'];
+  title: Scalars['String'];
+};
+
+export type BookArray = {
+  __typename?: 'BookArray';
+  books?: Maybe<Array<Book>>;
+};
+
+export type BookArrayResult = BookArray | EntityResult;
+
+export type BookResult = Book | EntityResult;
+
 export type Category = {
   __typename?: 'Category';
   createdBy: Scalars['String'];
@@ -58,6 +83,34 @@ export type CommentArrayResult = CommentArray | EntityResult;
 
 export type CommentResult = Comment | EntityResult;
 
+export type Course = {
+  __typename?: 'Course';
+  adminUser: User;
+  category: Category;
+  createdBy: Scalars['String'];
+  createdOn: Scalars['Date'];
+  description: Scalars['String'];
+  duration: Scalars['String'];
+  endDate: Scalars['String'];
+  id: Scalars['ID'];
+  image: Scalars['String'];
+  lastModifiedBy: Scalars['String'];
+  lastModifiedOn: Scalars['Date'];
+  startDate: Scalars['String'];
+  students: Student;
+  title: Scalars['String'];
+  totalStudents: Scalars['Int'];
+};
+
+export type CourseArray = {
+  __typename?: 'CourseArray';
+  courses?: Maybe<Array<Course>>;
+};
+
+export type CourseArrayResult = CourseArray | EntityResult;
+
+export type CourseResult = Course | EntityResult;
+
 export type EntityResult = {
   __typename?: 'EntityResult';
   messages?: Maybe<Array<Scalars['String']>>;
@@ -75,23 +128,59 @@ export type Group = {
   permissions?: Maybe<Array<Permission>>;
 };
 
+export type Message = {
+  __typename?: 'Message';
+  body: Scalars['String'];
+  createdBy: Scalars['String'];
+  createdOn: Scalars['Date'];
+  from: Scalars['String'];
+  id: Scalars['ID'];
+  image: Scalars['String'];
+  isRead: Scalars['Boolean'];
+  lastModifiedBy: Scalars['String'];
+  lastModifiedOn: Scalars['Date'];
+  title: Scalars['String'];
+  type: Scalars['String'];
+  user: User;
+};
+
+export type MsgResult = EntityResult | Message;
+
 export type Mutation = {
   __typename?: 'Mutation';
-  activateAccount: Scalars['String'];
+  activateAccount: MsgResult;
+  addABook: EntityResult;
   changePassword: Scalars['String'];
-  createComment?: Maybe<EntityResult>;
-  createPost?: Maybe<EntityResult>;
+  createComment: EntityResult;
+  createCourse: EntityResult;
+  createPost: EntityResult;
   forgotPassword: Scalars['String'];
+  joinOrLeaveCourse: Scalars['String'];
   login: Scalars['String'];
   logout: Scalars['String'];
+  newCourseComment: EntityResult;
+  newNote: EntityResult;
+  newNoteComment: EntityResult;
   register: Scalars['String'];
   resetPassword: Scalars['String'];
-  updatePostPoint: Scalars['String'];
+  updatePostPoint: MsgResult;
 };
 
 
 export type MutationActivateAccountArgs = {
   token: Scalars['String'];
+};
+
+
+export type MutationAddABookArgs = {
+  author: Scalars['String'];
+  categoryId: Scalars['ID'];
+  description: Scalars['String'];
+  group: Scalars['String'];
+  image: Scalars['String'];
+  link: Scalars['String'];
+  title: Scalars['String'];
+  userId: Scalars['ID'];
 };
 
 
@@ -103,6 +192,19 @@ export type MutationChangePasswordArgs = {
 export type MutationCreateCommentArgs = {
   body?: Maybe<Scalars['String']>;
   postId: Scalars['ID'];
+  userId: Scalars['ID'];
+};
+
+
+export type MutationCreateCourseArgs = {
+  categoryId: Scalars['ID'];
+  description: Scalars['String'];
+  duration: Scalars['String'];
+  endDate: Scalars['String'];
+  group: Scalars['String'];
+  image: Scalars['String'];
+  startDate: Scalars['String'];
+  title: Scalars['String'];
   userId: Scalars['ID'];
 };
 
@@ -121,6 +223,12 @@ export type MutationForgotPasswordArgs = {
 };
 
 
+export type MutationJoinOrLeaveCourseArgs = {
+  courseId: Scalars['ID'];
+  join: Scalars['Boolean'];
+};
+
+
 export type MutationLoginArgs = {
   password: Scalars['String'];
   usernameOrEmail: Scalars['String'];
@@ -129,6 +237,29 @@ export type MutationLoginArgs = {
 
 export type MutationLogoutArgs = {
   username: Scalars['String'];
+};
+
+
+export type MutationNewCourseCommentArgs = {
+  body?: Maybe<Scalars['String']>;
+  courseId: Scalars['ID'];
+  userId: Scalars['ID'];
+};
+
+
+export type MutationNewNoteArgs = {
+  body: Scalars['String'];
+  courseId: Scalars['ID'];
+  noteType: Scalars['String'];
+  title: Scalars['String'];
+  userId: Scalars['ID'];
+};
+
+
+export type MutationNewNoteCommentArgs = {
+  body?: Maybe<Scalars['String']>;
+  noteId: Scalars['ID'];
+  userId: Scalars['ID'];
 };
 
 
@@ -150,6 +281,31 @@ export type MutationUpdatePostPointArgs = {
   increment: Scalars['Boolean'];
   postId: Scalars['ID'];
 };
+
+export type Note = {
+  __typename?: 'Note';
+  adminUser: User;
+  body: Scalars['String'];
+  comment?: Maybe<Array<Comment>>;
+  course: Course;
+  createdBy: Scalars['String'];
+  createdOn: Scalars['Date'];
+  id: Scalars['ID'];
+  isDisabled: Scalars['Boolean'];
+  lastModifiedBy: Scalars['String'];
+  lastModifiedOn: Scalars['Date'];
+  noteType?: Maybe<Scalars['String']>;
+  title: Scalars['String'];
+};
+
+export type NoteArray = {
+  __typename?: 'NoteArray';
+  notes?: Maybe<Array<Note>>;
+};
+
+export type NoteArrayResult = EntityResult | NoteArray;
+
+export type NoteResult = EntityResult | Note;
 
 export type Permission = {
   __typename?: 'Permission';
@@ -204,17 +360,56 @@ export type PostResult = EntityResult | Post;
 export type Query = {
   __typename?: 'Query';
   getAllCategories?: Maybe<Array<Category>>;
+  getBooks: BookArrayResult;
+  getBooksByCategoryId: BookArrayResult;
+  getCommentsByCourseId: CommentArrayResult;
+  getCommentsByNoteId: CommentArrayResult;
   getCommentsByPostId: CommentArrayResult;
+  getCourseById: CourseResult;
+  getCoursesByCategoryId: CourseArrayResult;
+  getLatestCourses: CourseArrayResult;
   getLatestPosts: PostArrayResult;
+  getNotesByCourseId: NoteArrayResult;
   getPostById?: Maybe<PostResult>;
   getPostsByCategoryId: PostArrayResult;
+  getStudentsByCourseId: StudentArrayResult;
   getTopCategoryPost?: Maybe<Array<CategoryPost>>;
   me: UserResult;
 };
 
 
+export type QueryGetBooksByCategoryIdArgs = {
+  categoryId: Scalars['ID'];
+};
+
+
+export type QueryGetCommentsByCourseIdArgs = {
+  courseId: Scalars['ID'];
+};
+
+
+export type QueryGetCommentsByNoteIdArgs = {
+  noteId: Scalars['ID'];
+};
+
+
 export type QueryGetCommentsByPostIdArgs = {
   postId: Scalars['ID'];
+};
+
+
+export type QueryGetCourseByIdArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type QueryGetCoursesByCategoryIdArgs = {
+  categoryId: Scalars['ID'];
+};
+
+
+export type QueryGetNotesByCourseIdArgs = {
+  courseId: Scalars['ID'];
 };
 
 
@@ -227,11 +422,43 @@ export type QueryGetPostsByCategoryIdArgs = {
   categoryId: Scalars['ID'];
 };
 
+
+export type QueryGetStudentsByCourseIdArgs = {
+  courseId: Scalars['ID'];
+};
+
+export type Student = {
+  __typename?: 'Student';
+  course: Course;
+  createdBy: Scalars['String'];
+  createdOn: Scalars['Date'];
+  hasJoined: Scalars['Boolean'];
+  id: Scalars['ID'];
+  lastModifiedBy: Scalars['String'];
+  lastModifiedOn: Scalars['Date'];
+  student?: Maybe<Array<User>>;
+};
+
+export type StudentArray = {
+  __typename?: 'StudentArray';
+  students?: Maybe<Array<User>>;
+};
+
+export type StudentArrayResult = EntityResult | StudentArray;
+
+export type Subscription = {
+  __typename?: 'Subscription';
+  accountActivated: Message;
+  newLike: Message;
+};
+
 export type User = {
   __typename?: 'User';
   backgroundImg: Scalars['String'];
+  books?: Maybe<Array<Book>>;
   comments?: Maybe<Array<Comment>>;
   confirmed: Scalars['Boolean'];
+  courses?: Maybe<Array<Course>>;
   createdBy: Scalars['String'];
   createdOn: Scalars['Date'];
   email: Scalars['String'];
@@ -241,6 +468,7 @@ export type User = {
   isDisabled: Scalars['Boolean'];
   lastModifiedBy: Scalars['String'];
   lastModifiedOn: Scalars['Date'];
+  notes?: Maybe<Array<Note>>;
   password: Scalars['String'];
   posts?: Maybe<Array<Post>>;
   profileImage: Scalars['String'];
@@ -254,7 +482,7 @@ export type ActivateAccountMutationVariables = Exact<{
 }>;
 
 
-export type ActivateAccountMutation = { __typename?: 'Mutation', activateAccount: string };
+export type ActivateAccountMutation = { __typename?: 'Mutation', activateAccount: { __typename?: 'EntityResult', messages?: Array<string> | null | undefined } | { __typename?: 'Message', id: string, from: string, image: string, isRead: boolean, title: string, body: string, type: string, createdOn: any } };
 
 export type ForgotPasswordMutationVariables = Exact<{
   usernameOrEmail: Scalars['String'];
@@ -303,7 +531,7 @@ export type CreateCommentMutationVariables = Exact<{
 }>;
 
 
-export type CreateCommentMutation = { __typename?: 'Mutation', createComment?: { __typename?: 'EntityResult', messages?: Array<string> | null | undefined } | null | undefined };
+export type CreateCommentMutation = { __typename?: 'Mutation', createComment: { __typename?: 'EntityResult', messages?: Array<string> | null | undefined } };
 
 export type CreatePostMutationVariables = Exact<{
   userId: Scalars['ID'];
@@ -314,15 +542,20 @@ export type CreatePostMutationVariables = Exact<{
 }>;
 
 
-export type CreatePostMutation = { __typename?: 'Mutation', createPost?: { __typename?: 'EntityResult', messages?: Array<string> | null | undefined } | null | undefined };
+export type CreatePostMutation = { __typename?: 'Mutation', createPost: { __typename?: 'EntityResult', messages?: Array<string> | null | undefined } };
 
-export type UpdatePostPointMutationMutationVariables = Exact<{
+export type UpdatePostPointMutationVariables = Exact<{
   postId: Scalars['ID'];
   increment: Scalars['Boolean'];
 }>;
 
 
-export type UpdatePostPointMutationMutation = { __typename?: 'Mutation', updatePostPoint: string };
+export type UpdatePostPointMutation = { __typename?: 'Mutation', updatePostPoint: { __typename?: 'EntityResult', messages?: Array<string> | null | undefined } | { __typename?: 'Message', id: string, from: string, image: string, isRead: boolean, title: string, body: string, type: string, createdOn: any } };
+
+export type GetBooksQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetBooksQuery = { __typename?: 'Query', getBooks: { __typename?: 'BookArray', books?: Array<{ __typename?: 'Book', id: string, title: string, description: string, image: string, author: string, link: string, category: { __typename?: 'Category', name: string } }> | null | undefined } | { __typename?: 'EntityResult', messages?: Array<string> | null | undefined } };
 
 export type GetCommentsByPostIdQueryVariables = Exact<{
   postId: Scalars['ID'];
@@ -330,6 +563,11 @@ export type GetCommentsByPostIdQueryVariables = Exact<{
 
 
 export type GetCommentsByPostIdQuery = { __typename?: 'Query', getCommentsByPostId: { __typename?: 'CommentArray', comments?: Array<{ __typename?: 'Comment', id: string, body: string, isDisabled: boolean, createdOn: any, user: { __typename?: 'User', username: string, id: string } }> | null | undefined } | { __typename?: 'EntityResult', messages?: Array<string> | null | undefined } };
+
+export type GetLatestCoursesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetLatestCoursesQuery = { __typename?: 'Query', getLatestCourses: { __typename?: 'CourseArray', courses?: Array<{ __typename?: 'Course', id: string, title: string, duration: string, description: string, image: string, startDate: string, endDate: string, category: { __typename?: 'Category', name: string } }> | null | undefined } | { __typename?: 'EntityResult', messages?: Array<string> | null | undefined } };
 
 export type CategoryQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -349,7 +587,21 @@ export type GetLatestPostsQuery = { __typename?: 'Query', getLatestPosts: { __ty
 
 export const ActivateAccountDocument = gql`
     mutation ActivateAccount($token: String!) {
-  activateAccount(token: $token)
+  activateAccount(token: $token) {
+    ... on EntityResult {
+      messages
+    }
+    ... on Message {
+      id
+      from
+      image
+      isRead
+      title
+      body
+      type
+      createdOn
+    }
+  }
 }
     `;
 export type ActivateAccountMutationFn = Apollo.MutationFunction<ActivateAccountMutation, ActivateAccountMutationVariables>;
@@ -621,38 +873,101 @@ export function useCreatePostMutation(baseOptions?: Apollo.MutationHookOptions<C
 export type CreatePostMutationHookResult = ReturnType<typeof useCreatePostMutation>;
 export type CreatePostMutationResult = Apollo.MutationResult<CreatePostMutation>;
 export type CreatePostMutationOptions = Apollo.BaseMutationOptions<CreatePostMutation, CreatePostMutationVariables>;
-export const UpdatePostPointMutationDocument = gql`
-    mutation UpdatePostPointMutation($postId: ID!, $increment: Boolean!) {
-  updatePostPoint(postId: $postId, increment: $increment)
+export const UpdatePostPointDocument = gql`
+    mutation UpdatePostPoint($postId: ID!, $increment: Boolean!) {
+  updatePostPoint(postId: $postId, increment: $increment) {
+    ... on EntityResult {
+      messages
+    }
+    ... on Message {
+      id
+      from
+      image
+      isRead
+      title
+      body
+      type
+      createdOn
+    }
+  }
 }
     `;
-export type UpdatePostPointMutationMutationFn = Apollo.MutationFunction<UpdatePostPointMutationMutation, UpdatePostPointMutationMutationVariables>;
+export type UpdatePostPointMutationFn = Apollo.MutationFunction<UpdatePostPointMutation, UpdatePostPointMutationVariables>;
 
 /**
- * __useUpdatePostPointMutationMutation__
+ * __useUpdatePostPointMutation__
  *
- * To run a mutation, you first call `useUpdatePostPointMutationMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useUpdatePostPointMutationMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useUpdatePostPointMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdatePostPointMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [updatePostPointMutationMutation, { data, loading, error }] = useUpdatePostPointMutationMutation({
+ * const [updatePostPointMutation, { data, loading, error }] = useUpdatePostPointMutation({
  *   variables: {
  *      postId: // value for 'postId'
  *      increment: // value for 'increment'
  *   },
  * });
  */
-export function useUpdatePostPointMutationMutation(baseOptions?: Apollo.MutationHookOptions<UpdatePostPointMutationMutation, UpdatePostPointMutationMutationVariables>) {
+export function useUpdatePostPointMutation(baseOptions?: Apollo.MutationHookOptions<UpdatePostPointMutation, UpdatePostPointMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpdatePostPointMutationMutation, UpdatePostPointMutationMutationVariables>(UpdatePostPointMutationDocument, options);
+        return Apollo.useMutation<UpdatePostPointMutation, UpdatePostPointMutationVariables>(UpdatePostPointDocument, options);
       }
-export type UpdatePostPointMutationMutationHookResult = ReturnType<typeof useUpdatePostPointMutationMutation>;
-export type UpdatePostPointMutationMutationResult = Apollo.MutationResult<UpdatePostPointMutationMutation>;
-export type UpdatePostPointMutationMutationOptions = Apollo.BaseMutationOptions<UpdatePostPointMutationMutation, UpdatePostPointMutationMutationVariables>;
+export type UpdatePostPointMutationHookResult = ReturnType<typeof useUpdatePostPointMutation>;
+export type UpdatePostPointMutationResult = Apollo.MutationResult<UpdatePostPointMutation>;
+export type UpdatePostPointMutationOptions = Apollo.BaseMutationOptions<UpdatePostPointMutation, UpdatePostPointMutationVariables>;
+export const GetBooksDocument = gql`
+    query GetBooks {
+  getBooks {
+    ... on EntityResult {
+      messages
+    }
+    ... on BookArray {
+      books {
+        id
+        title
+        description
+        image
+        author
+        link
+        category {
+          name
+        }
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetBooksQuery__
+ *
+ * To run a query within a React component, call `useGetBooksQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetBooksQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetBooksQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetBooksQuery(baseOptions?: Apollo.QueryHookOptions<GetBooksQuery, GetBooksQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetBooksQuery, GetBooksQueryVariables>(GetBooksDocument, options);
+      }
+export function useGetBooksLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetBooksQuery, GetBooksQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetBooksQuery, GetBooksQueryVariables>(GetBooksDocument, options);
+        }
+export type GetBooksQueryHookResult = ReturnType<typeof useGetBooksQuery>;
+export type GetBooksLazyQueryHookResult = ReturnType<typeof useGetBooksLazyQuery>;
+export type GetBooksQueryResult = Apollo.QueryResult<GetBooksQuery, GetBooksQueryVariables>;
 export const GetCommentsByPostIdDocument = gql`
     query GetCommentsByPostId($postId: ID!) {
   getCommentsByPostId(postId: $postId) {
@@ -702,6 +1017,56 @@ export function useGetCommentsByPostIdLazyQuery(baseOptions?: Apollo.LazyQueryHo
 export type GetCommentsByPostIdQueryHookResult = ReturnType<typeof useGetCommentsByPostIdQuery>;
 export type GetCommentsByPostIdLazyQueryHookResult = ReturnType<typeof useGetCommentsByPostIdLazyQuery>;
 export type GetCommentsByPostIdQueryResult = Apollo.QueryResult<GetCommentsByPostIdQuery, GetCommentsByPostIdQueryVariables>;
+export const GetLatestCoursesDocument = gql`
+    query GetLatestCourses {
+  getLatestCourses {
+    ... on EntityResult {
+      messages
+    }
+    ... on CourseArray {
+      courses {
+        id
+        title
+        duration
+        description
+        image
+        startDate
+        endDate
+        category {
+          name
+        }
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetLatestCoursesQuery__
+ *
+ * To run a query within a React component, call `useGetLatestCoursesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetLatestCoursesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetLatestCoursesQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetLatestCoursesQuery(baseOptions?: Apollo.QueryHookOptions<GetLatestCoursesQuery, GetLatestCoursesQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetLatestCoursesQuery, GetLatestCoursesQueryVariables>(GetLatestCoursesDocument, options);
+      }
+export function useGetLatestCoursesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetLatestCoursesQuery, GetLatestCoursesQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetLatestCoursesQuery, GetLatestCoursesQueryVariables>(GetLatestCoursesDocument, options);
+        }
+export type GetLatestCoursesQueryHookResult = ReturnType<typeof useGetLatestCoursesQuery>;
+export type GetLatestCoursesLazyQueryHookResult = ReturnType<typeof useGetLatestCoursesLazyQuery>;
+export type GetLatestCoursesQueryResult = Apollo.QueryResult<GetLatestCoursesQuery, GetLatestCoursesQueryVariables>;
 export const CategoryDocument = gql`
     query Category {
   getAllCategories {

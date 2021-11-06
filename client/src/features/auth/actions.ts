@@ -11,6 +11,8 @@ interface UseRefreshReduxMeResult {
   updateMe: () => void;
 }
 
+
+
 const useRefreshReduxMe = (): UseRefreshReduxMeResult => {
   const [execMe, { data }] = useLazyQuery(MeDocument);
   const reduxDispatcher = useDispatch();

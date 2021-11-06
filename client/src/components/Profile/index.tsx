@@ -3,11 +3,15 @@ import LeftSideBar from "components/Dashboard/LeftSideBar";
 import SmallFooter from "components/Dashboard/SmallFooter";
 import TopBar from "components/Dashboard/TopBar";
 import {
-  ProfileContainer,
   ProfileRightWrap,
   ProfileRightTopWrap,
   ProfileRightBottomWrap,
 } from "components/Profile/profile.styles";
+import {
+  PageContainer,
+  InnerContainer,
+  PageRightSide,
+} from "../../styles/common.styles";
 import ProfileRightBar from "components/Profile/ProfileRightBar";
 import UserFeed from "components/Profile/UserFeed";
 import ProfileHeader from './ProfileHeader';
@@ -17,18 +21,23 @@ const Profile = () => {
     return (
       <>
         <TopBar />
-        <ProfileContainer>
+        <PageContainer>
           <LeftSideBar />
-          <ProfileRightWrap>
-            <ProfileRightTopWrap>
+          <InnerContainer>
+            <ProfileRightWrap>
+              <ProfileRightTopWrap>
                 <ProfileHeader />
-            </ProfileRightTopWrap>
-            <ProfileRightBottomWrap>
-              <UserFeed />
-              <ProfileRightBar />
-            </ProfileRightBottomWrap>
-          </ProfileRightWrap>
-        </ProfileContainer>
+              </ProfileRightTopWrap>
+              <ProfileRightBottomWrap>
+                <UserFeed />
+              </ProfileRightBottomWrap>
+            </ProfileRightWrap>
+          </InnerContainer>
+          <PageRightSide>
+            live fast
+            <ProfileRightBar />
+          </PageRightSide>
+        </PageContainer>
 
         <SmallFooter />
       </>

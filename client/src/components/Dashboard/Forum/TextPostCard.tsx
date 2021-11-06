@@ -20,6 +20,7 @@ import {
   CommentIcon,
   CommentText,
   ForumWrapper,
+  ForumContainer,
 } from "./forum.styles";
 import { Comment } from "../../Comments";
 import Dropdown from "../../Dropdown";
@@ -36,36 +37,40 @@ const TextPostCard = ({
   const [showComments, setShowComments] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   return (
-    <ForumWrapper>
-      <PostTop>
-        <PostLeftWrap>
-          <PostProfileImge src={image} alt="user profile image" />
-          <UserName>{username}</UserName>
-          <PostDate>{dayjs(date).fromNow()}</PostDate>
-        </PostLeftWrap>
-        <PostTopRightWrap>
-          <ExpandIcon onClick={() => setShowDropdown(!showDropdown)} />
-        </PostTopRightWrap>
-      </PostTop>
-      <Dropdown showDropdown={showDropdown} />
-      <PostCenterWrap>
-        <PostText>{title}</PostText>
-      </PostCenterWrap>
-      <PostCenterWrap>
-        <PostText>{body}</PostText>
-      </PostCenterWrap>
-      <PostBottomWrapper>
-        <BottomLeftWrap>
-          <LikeIcon />
-          <LikeCounter>{likeCount} liked your post</LikeCounter>
-        </BottomLeftWrap>
-        <BottomRightWrap>
-          <CommentIcon onClick={() => setShowComments(!showComments)} />
-          <CommentText>{commentCount}</CommentText>
-        </BottomRightWrap>
-      </PostBottomWrapper>
-      <Comment showComments={showComments} />
-    </ForumWrapper>
+    <>
+      <ForumContainer>
+        <ForumWrapper>
+          <PostTop>
+            <PostLeftWrap>
+              <PostProfileImge src={image} alt="user profile image" />
+              <UserName>{username}</UserName>
+              <PostDate>{dayjs(date).fromNow()}</PostDate>
+            </PostLeftWrap>
+            <PostTopRightWrap>
+              <ExpandIcon onClick={() => setShowDropdown(!showDropdown)} />
+            </PostTopRightWrap>
+          </PostTop>
+          <Dropdown showDropdown={showDropdown} />
+          <PostCenterWrap>
+            <PostText>{title}</PostText>
+          </PostCenterWrap>
+          <PostCenterWrap>
+            <PostText>{body}</PostText>
+          </PostCenterWrap>
+          <PostBottomWrapper>
+            <BottomLeftWrap>
+              <LikeIcon />
+              <LikeCounter>{likeCount} liked your post</LikeCounter>
+            </BottomLeftWrap>
+            <BottomRightWrap>
+              <CommentIcon onClick={() => setShowComments(!showComments)} />
+              <CommentText>{commentCount}</CommentText>
+            </BottomRightWrap>
+          </PostBottomWrapper>
+          <Comment showComments={showComments} />
+        </ForumWrapper>
+      </ForumContainer>
+    </>
   );
 }
 

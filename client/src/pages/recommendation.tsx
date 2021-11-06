@@ -1,63 +1,53 @@
-import React from 'react'
-import Dashboard from "../components/Dashboard";
-import { ForumContainer } from "../components/Dashboard/Forum/forum.styles";
-import ImagePostCard from "../components/Dashboard/Forum/ImagePostCard";
-import TextPostCard from "../components/Dashboard/Forum/TextPostCard";
-import VideoPostCard from "../components/Dashboard/Forum/VideoPostCard";
-import MiddleSection from "../components/Dashboard/MiddleSection";
+import React from "react";
+import { requireAuthentication } from "lib/requireAuthentication";
+import { GetServerSideProps } from "next";
+import ForumPage from "components/ForumPage";
+import TextPostCard from "components/Dashboard/Forum/TextPostCard";
+import VideoPostCard from "components/Dashboard/Forum/VideoPostCard";
+import ImagePostCard from "components/Dashboard/Forum/ImagePostCard";
 
 function Recommendation() {
-    return (
-      <Dashboard>
-        <MiddleSection>
-          <ForumContainer>
-            <ImagePostCard
-              username="maguyva"
-              image="/D.jpg"
-              date="5 min ago"
-              content="tweet tweet tweet"
-              postMedia="/isak.jpg"
-              likeCount={10}
-              commentCount={8}
-            />
-          </ForumContainer>
-          <ForumContainer>
-            <TextPostCard
-              username="maguyva"
-              image="/D.jpg"
-              date="5 min ago"
-              content="tweet tweet tweet"
-              likeCount="10"
-              commentCount={16}
-            />
-          </ForumContainer>
-          <ForumContainer>
-            <VideoPostCard
-              username="maguyva"
-              image="/D.jpg"
-              date="5 min ago"
-              content="tweet tweet tweet"
-              videoMedia="https://www.youtube.com/embed/VC4ORS5n9Hg"
-              likeCount={10}
-              commentCount={49}
-              viewCount={19}
-            />
-          </ForumContainer>
-          <ForumContainer>
-            <VideoPostCard
-              username="maguyva"
-              image="/D.jpg"
-              date="5 min ago"
-              content="tweet tweet tweet"
-              videoMedia="/exvid.mp4"
-              likeCount={13}
-              commentCount={29}
-              viewCount={31}
-            />
-          </ForumContainer>
-        </MiddleSection>
-      </Dashboard>
-    );
+  return (
+    <>
+      <ForumPage>
+          <TextPostCard
+            username="maguyva"
+            image="/D.jpg"
+            date="5 min ago"
+            title="tweet tweet tweet"
+            body="tweet tweet tweet"
+            likeCount="10"
+            commentCount={16}
+          />
+          <VideoPostCard
+            username="maguyva"
+            image="/D.jpg"
+            date="5 min ago"
+            title="tweet tweet tweet"
+            body="/exvid.mp4"
+            likeCount={13}
+            commentCount={29}
+            viewCount={31}
+          />
+          <ImagePostCard
+            username="maguyva"
+            image="/D.jpg"
+            date="5 min ago"
+            title="tweet tweet tweet"
+            body="/isak.jpg"
+            likeCount={10}
+            commentCount={8}
+          />   
+      </ForumPage>
+    </>
+  );
 }
+export const getServerSideProps: GetServerSideProps = requireAuthentication(
+  async (_ctx) => {
+    return {
+      props: {},
+    };
+  }
+);
 
-export default Recommendation
+export default Recommendation;

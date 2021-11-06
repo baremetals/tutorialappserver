@@ -1,5 +1,7 @@
 import cookie from "cookie";
+// import { MeDocument, MeQueryResult } from "generated/graphql";
 import { GetServerSideProps, GetServerSidePropsContext } from "next";
+// import { client } from "pages/_app";
 
 export function requireAuthentication(gssp: GetServerSideProps) {
   return async (ctx: GetServerSidePropsContext) => {
@@ -16,8 +18,14 @@ export function requireAuthentication(gssp: GetServerSideProps) {
       const accessToken = cookie.parse(req.headers.cookie);
       // console.log(accessToken);
       const tokens = Object.keys(accessToken).includes("maguyvathegreat");
-      console.log(tokens);
+      // console.log(tokens);
       const token = tokens
+
+      // const response = await client.query<MeQueryResult>({
+      //   query: MeDocument,
+      // });
+      // console.log(response)
+
       if (!token) {
         return {
           redirect: {
@@ -25,8 +33,10 @@ export function requireAuthentication(gssp: GetServerSideProps) {
             destination: "/signin",
           },
         };
-      }
+      } 
     }
     return await gssp(ctx);
+    
   };
+  
 }

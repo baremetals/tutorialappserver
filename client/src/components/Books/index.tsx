@@ -1,85 +1,85 @@
 import React from 'react'
-import PageContainer, {
-  MiddleContainer,
-  RightSideContainer,
-} from "../Containers/PageContainer";
+import { useGetBooksQuery, Book } from "generated/graphql";
+import styled from "styled-components";
 import LeftSideBar from '../Dashboard/LeftSideBar'
 import SmallFooter from '../Dashboard/SmallFooter'
 import TopBar from '../Dashboard/TopBar'
 import {
-  BooksH1,
-  BooksWrapper,
-  BooksCard,
-  BookTitle,
-  BookImage,
-  BookDescription,
-  BookBottom,
-  BookAuthor,
-  BuyButton,
-} from "./book.styles";
+  PageContainer,
+  InnerContainer,
+  PageRightSide,
+  PageHeading,
+  PageWrapper,
+  PostCard,
+  CardTitle,
+  CardImage,
+  CardDescription,
+  CardBottom,
+  ApplyButton,
+} from "../../styles/common.styles";
+import { ErrorMsg } from 'components/Input';
 
 
+// type BookPageType = {
+//   title: string;
+//   image: string;
+//   description: string;
+//   author: string;
+//   link: string;
+// };
 
 function BooksPage() {
-    return (
-      <>
-        <TopBar />
-        <PageContainer>
-          <LeftSideBar />
-          <MiddleContainer>
-            <BooksH1>Recommended Books</BooksH1>
-            <BooksWrapper>
-              <BooksCard>
-                <BookTitle>Essential TypeScript</BookTitle>
-                <BookImage alt="course image" src="/assets/images/react.svg" />
-                <BookDescription>
-                  Develop Future Proof responsive websites
-                </BookDescription>
-                <BookBottom>
-                  <BookAuthor>Peter Jones</BookAuthor>
-                  <BuyButton>Buy</BuyButton>
-                </BookBottom>
-              </BooksCard>
-              <BooksCard>
-                <BookTitle>Essential TypeScript</BookTitle>
-                <BookImage alt="course image" src="/assets/images/react.svg" />
-                <BookDescription>
-                  Develop Future Proof responsive websites
-                </BookDescription>
-                <BookBottom>
-                  <BookAuthor>Peter Jones</BookAuthor>
-                  <BuyButton>Buy</BuyButton>
-                </BookBottom>
-              </BooksCard>
-              <BooksCard>
-                <BookTitle>Essential TypeScript</BookTitle>
-                <BookImage alt="course image" src="/assets/images/react.svg" />
-                <BookDescription>
-                  Develop Future Proof responsive websites
-                </BookDescription>
-                <BookBottom>
-                  <BookAuthor>Peter Jones</BookAuthor>
-                  <BuyButton>Buy</BuyButton>
-                </BookBottom>
-              </BooksCard>
-              <BooksCard>
-                <BookTitle>Essential TypeScript</BookTitle>
-                <BookImage alt="course image" src="/assets/images/react.svg" />
-                <BookDescription>
-                  Develop Future Proof responsive websites
-                </BookDescription>
-                <BookBottom>
-                  <BookAuthor>Peter Jones</BookAuthor>
-                  <BuyButton>Buy</BuyButton>
-                </BookBottom>
-              </BooksCard>
-            </BooksWrapper>
-          </MiddleContainer>
-          <RightSideContainer>Live Forever Young</RightSideContainer>
-        </PageContainer>
-        <SmallFooter />
-      </>
-    );
+  const { data, loading, error } = useGetBooksQuery();
+  if (!data || loading) {
+    return <div>loading...</div>;
+  }
+  if (error) return <ErrorMsg>{error}</ErrorMsg>;
+  const bk: any = data?.getBooks 
+  const books   = bk.books
+  // console.log(bk); 
+
+  return (
+    <>
+      <TopBar />
+      <PageContainer>
+        <LeftSideBar />
+        <InnerContainer>
+          <PageHeading>Recommended Books</PageHeading>
+          <PageWrapper>
+            {!books ? (
+              <div>loading...</div>
+            ) : (
+              books.map((book: Book, id: string) =>
+                !book ? null : (
+                  <PostCard key={id}>
+                    <a href={book.link}>
+                      <CardImage alt="course image" src={book.image} />
+                    </a>
+                    <CardTitle>{book.title}</CardTitle>
+                    <CardDescription>{book.description}</CardDescription>
+                    <CardBottom>
+                      <BookAuthor>{book.author}</BookAuthor>
+                      <ApplyButton>Buy</ApplyButton>
+                    </CardBottom>
+                  </PostCard>
+                )
+              )
+            )}
+          </PageWrapper>
+        </InnerContainer>
+        <PageRightSide>Live Forever Young</PageRightSide>
+      </PageContainer>
+      <SmallFooter />
+    </>
+  );
 }
 
 export default BooksPage
+
+export const BookAuthor = styled.span`
+  font-size: 0.875rem;
+  font-weight: bold;
+  color: #125c55;
+  display: block;
+  margin-bottom: 1rem;
+`;

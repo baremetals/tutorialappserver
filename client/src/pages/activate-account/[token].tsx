@@ -17,9 +17,11 @@ import {
   ActivateAccountMutationOptions,
 } from "generated/graphql";
 import { withApollo } from "utils/withApollo";
+import { useNoAuth } from "lib/noAuth";
 
 
 const ActivateAccount = (props: any) => {
+  useNoAuth();
   const router = useRouter();
   const response = props;
   const res = response.data.activateAccount;

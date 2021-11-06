@@ -74,7 +74,7 @@ export const getLatestCourses = async (): Promise<QueryArrayResult<Course>> => {
   const courses = await Course.createQueryBuilder("course")
     .leftJoinAndSelect("course.category", "category")
     .leftJoinAndSelect("course.adminUser", "adminUser")
-    .leftJoinAndSelect("course.courseStudents", "courseStudents")
+    .leftJoinAndSelect("course.students", "students")
     .orderBy("course.createdOn", "DESC")
     .take(8)
     .getMany();

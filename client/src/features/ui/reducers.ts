@@ -16,7 +16,7 @@ const initialState: uiState = {
 };
 
 const uiSlice = createSlice({
-  name: "auth",
+  name: "ui",
   initialState,
   reducers: {
     setCategory: (state, action: PayloadAction<any>) => {

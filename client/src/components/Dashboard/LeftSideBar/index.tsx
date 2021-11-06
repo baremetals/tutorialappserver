@@ -29,7 +29,10 @@ const LeftSideBar = () => {
   }
   return (
     <>
-      <ToggleButton onClick={() => setMenuState(true)} className="toggleMenu">
+      <ToggleButton
+        onClick={() => setMenuState(!menuState)}
+        className="toggleMenu"
+      >
         <span></span>
         <span></span>
         <span></span>
@@ -39,68 +42,100 @@ const LeftSideBar = () => {
           <LeftSideBarListItem>
             <LeftSideBarIcon>
               <Link href="/courses">
-                <MdSchool />
+                <div>
+                  <MdSchool />
+                </div>
               </Link>
             </LeftSideBarIcon>
-            <LeftSideBarListItemText>Courses</LeftSideBarListItemText>
+            <Link href="/courses">
+              <LeftSideBarListItemText>Courses</LeftSideBarListItemText>
+            </Link>
           </LeftSideBarListItem>
           <LeftSideBarListItem>
             <LeftSideBarIcon>
               <Link href="/books">
-                <MdLibraryBooks />
+                <div>
+                  <MdLibraryBooks />
+                </div>
               </Link>
             </LeftSideBarIcon>
-            <LeftSideBarListItemText>Books</LeftSideBarListItemText>
+            <Link href="/books">
+              <LeftSideBarListItemText>Books</LeftSideBarListItemText>
+            </Link>
           </LeftSideBarListItem>
           <LeftSideBarListItem>
             <LeftSideBarIcon>
               <Link href="/recommendation">
-                <MdPermMedia />
+                <div>
+                  <MdPermMedia />
+                </div>
               </Link>
             </LeftSideBarIcon>
-            <LeftSideBarListItemText>Recommendations</LeftSideBarListItemText>
+            <Link href="/recommendation">
+              <LeftSideBarListItemText>Recommendations</LeftSideBarListItemText>
+            </Link>
           </LeftSideBarListItem>
           <LeftSideBarListItem>
             <LeftSideBarIcon>
               <IconBadge></IconBadge>
               <Link href="/messages/maguyva">
-                <BsFillChatSquareFill />
+                <div>
+                  <BsFillChatSquareFill />
+                </div>
               </Link>
             </LeftSideBarIcon>
-            <LeftSideBarListItemText>Chat</LeftSideBarListItemText>
+            <Link href="/messages/maguyva">
+              <LeftSideBarListItemText>Chat</LeftSideBarListItemText>
+            </Link>
           </LeftSideBarListItem>
           <LeftSideBarListItem>
             <LeftSideBarIcon>
               <Link href="/forum">
-                <MdForum />
+                <div>
+                  <MdForum />
+                </div>
               </Link>
             </LeftSideBarIcon>
-            <LeftSideBarListItemText>Forum</LeftSideBarListItemText>
+            <Link href="/forum">
+              <LeftSideBarListItemText>Forum</LeftSideBarListItemText>
+            </Link>
           </LeftSideBarListItem>
           <LeftSideBarListItem>
             <LeftSideBarIcon>
               <IconBadge>2</IconBadge>
               <Link href="/notifications">
-                <RiNotification2Fill />
+                <div>
+                  <RiNotification2Fill />
+                </div>
               </Link>
             </LeftSideBarIcon>
-            <LeftSideBarListItemText>Notifications</LeftSideBarListItemText>
+            <Link href="/notifications">
+              <LeftSideBarListItemText>Notifications</LeftSideBarListItemText>
+            </Link>
           </LeftSideBarListItem>
           <LeftSideBarListItem>
             <LeftSideBarIcon>
               <Link href="/support">
-                <FaRegQuestionCircle />
+                <div>
+                  <FaRegQuestionCircle />
+                </div>
               </Link>
             </LeftSideBarIcon>
-            <LeftSideBarListItemText>Support</LeftSideBarListItemText>
+            <Link href="/support">
+              <LeftSideBarListItemText>Support</LeftSideBarListItemText>
+            </Link>
           </LeftSideBarListItem>
           <LeftSideBarListItem>
             <LeftSideBarIcon>
               <Link href="/admin">
-                <RiAdminFill />
+                <div>
+                  <RiAdminFill />
+                </div>
               </Link>
             </LeftSideBarIcon>
-            <LeftSideBarListItemText>Admin</LeftSideBarListItemText>
+            <Link href="/admin">
+              <LeftSideBarListItemText>Admin</LeftSideBarListItemText>
+            </Link>
           </LeftSideBarListItem>
         </LeftSideBarWrapper>
       </LeftSideContainer>

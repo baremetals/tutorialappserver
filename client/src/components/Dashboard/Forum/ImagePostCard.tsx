@@ -18,6 +18,7 @@ import {
   CommentIcon,
   CommentText,
   ForumWrapper,
+  ForumContainer,
   // DropAndCenterWrap,
 } from "./forum.styles";
 import dayjs from "dayjs";
@@ -36,6 +37,7 @@ interface ForumPost {
   commentCount: number;
 }
 
+
 const ImagePostCard = ({
   username,
   image,
@@ -50,37 +52,41 @@ const [showDropdown, setShowDropdown] = useState(false);
 
   return (
     <>
-      <ForumWrapper>
-        <PostTop>
-          <PostLeftWrap>
-            <PostProfileImge src={image} alt="user profile image" />
-            <UserName>{username}</UserName>
-            <PostDate>{dayjs(date).fromNow()}</PostDate>
-          </PostLeftWrap>
-          <PostTopRightWrap>
-            <ExpandIcon onClick={() => setShowDropdown(!showDropdown)} />
-          </PostTopRightWrap>
-        </PostTop>
-        <Dropdown showDropdown={showDropdown} />
-        <PostCenterWrap>
-          <PostText>{title}</PostText>
-          <PostMediaImage alt="Post image" src={body} />
-        </PostCenterWrap>
+      <ForumContainer>
+        <ForumWrapper>
+          <PostTop>
+            <PostLeftWrap>
+              <PostProfileImge src={image} alt="user profile image" />
+              <UserName>{username}</UserName>
+              <PostDate>{dayjs(date).fromNow()}</PostDate>
+            </PostLeftWrap>
+            <PostTopRightWrap>
+              <ExpandIcon onClick={() => setShowDropdown(!showDropdown)} />
+            </PostTopRightWrap>
+          </PostTop>
+          <Dropdown showDropdown={showDropdown} />
+          <PostCenterWrap>
+            <PostText>{title}</PostText>
+            <PostMediaImage alt="Post image" src={body} />
+          </PostCenterWrap>
 
-        <PostBottomWrapper>
-          <BottomLeftWrap>
-            <LikeIcon />
-            <LikeCounter>{likeCount} people liked your post</LikeCounter>
-          </BottomLeftWrap>
-          <BottomRightWrap>
-            <CommentIcon onClick={() => setShowComments(!showComments)} />
-            <CommentText>{commentCount}</CommentText>
-          </BottomRightWrap>
-        </PostBottomWrapper>
-        <Comment showComments={showComments} />
-      </ForumWrapper>
+          <PostBottomWrapper>
+            <BottomLeftWrap>
+              <LikeIcon />
+              <LikeCounter>{likeCount} people liked your post</LikeCounter>
+            </BottomLeftWrap>
+            <BottomRightWrap>
+              <CommentIcon onClick={() => setShowComments(!showComments)} />
+              <CommentText>{commentCount}</CommentText>
+            </BottomRightWrap>
+          </PostBottomWrapper>
+          <Comment showComments={showComments} />
+        </ForumWrapper>
+      </ForumContainer>
     </>
   );
 };
 
 export default ImagePostCard;
+
+

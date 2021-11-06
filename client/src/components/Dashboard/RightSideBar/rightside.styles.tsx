@@ -6,6 +6,7 @@ export const RightSideContainer = styled.aside`
 
 export const RightSideWrapper = styled.div`
   padding: 20px 20px 0 0;
+  
 `;
 
 export const ImageWrapper = styled.div`
@@ -25,9 +26,12 @@ export const ImageText = styled.span`
 `;
 
 export const RightSideAdvert = styled.img`
-  width: 100%;
-  border-radius: 10px;
-  margin: 30px 0;
+  width: 50%;
+  border: solid 0.5px;
+  border-color: rgb(244, 239, 239);
+  border-radius: 6px;
+  margin: 10px 0;
+  box-shadow: 5px 15px 15px 5px rgba(0, 0, 0, 0.23);
 `;
 
 export const RightSideTitle = styled.h4`

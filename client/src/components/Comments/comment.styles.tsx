@@ -49,3 +49,21 @@ export const CommentHorizontalRule = styled.hr`
   background-color: rgb(156 151 151);
   margin: 1.5rem auto;
 `;
+
+export const CommentInputWrap = styled.div`
+display: flex;
+`;
+export const CommentInput = styled.textarea`
+  border-radius: 6px;
+`
+export const CommentInputButton = styled.button`
+  margin-left: 10px;
+  border-radius: 6px;
+  color: white;
+  background-color: rgb(156 151 151);
+  text-align: center;
+  font-size: 16px;
+  text-decoration: none;
+  border: none;
+  padding: 15px 15px;
+`;

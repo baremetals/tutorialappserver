@@ -13,7 +13,7 @@ export default class Post {
     public points: number,
     public createdOn: Date,
     public lastModifiedOn: Date,
-    public threadItems: Array<Comment>,
+    public comments: Array<Comment>,
     // public category: Category
   ) {}
 }

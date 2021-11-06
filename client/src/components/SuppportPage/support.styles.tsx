@@ -1,14 +1,5 @@
 import styled from "styled-components";
 
-export const SupportH1 = styled.h1`
-  font-size: 2.5rem;
-  color: #655e5e;
-  margin-bottom: 34px;
-
-  @media screen and (max-width: 480px) {
-    font-size: 2rem;
-  }
-`;
 
 export const SupportCardWrapper = styled.div`
   padding: 5px;

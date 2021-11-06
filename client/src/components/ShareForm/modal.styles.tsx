@@ -4,230 +4,155 @@ import { BsUpload } from "react-icons/bs";
 
 
 export const Background = styled.div`
-  width: 100%;
-  height: 100%;
-  min-height: 692px;
-  background: linear-gradient(108deg, #fefefe 0%, #cac3ce 100%);
-  /* background: rgba(0, 0, 0, 0.8); */
-  /* position: fixed; */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
-
-
-export const PageContainer = styled.div`
-  align-items: center;
-  justify-content: center;
-  display: flex;
-  margin: 80px 670px;
-  padding: 0px;
-  /* min-height: 692px; */
-  /* position: absolute; */
-  /* bottom: 0;
+  position: fixed;
+  top: 0;
+  bottom: 0;
   left: 0;
   right: 0;
-  top: 0; */
-  z-index: 0;
-  overflow: hidden;
-  background: linear-gradient(108deg, #04213f 0%, #f2f2f2 100%);
+  background-color: rgb(0 0 0 / 50%);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  > div {
+    width: 100%;
+  }
+`;
+
+export const PageContainer = styled.div`
+  margin: 2rem auto;
+  background-color: rgb(0 0 0 / 50%);
+  border-radius: 1rem;
+  max-width: 45rem;
+  padding: 3rem;
+  backdrop-filter: blur(0.25rem);
 `;
 
 export const FormWrap = styled.form`
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-
-  @media screen and (max-width: 400px) {
-    height: 80%;
-  }
+  display: block;
 `;
 
 export const MainContainer = styled.div`
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-  height: 100%;
-  width: 30vw;
-  background: rgba(255, 255, 255, 0.15);
-  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-  backdrop-filter: blur(8.5px);
-  -webkit-backdrop-filter: blur(8.5px);
-  border-radius: 10px;
-  color: #ffffff;
-  text-transform: uppercase;
-  letter-spacing: 0.4rem;
-  @media only screen and (max-width: 320px) {
-    width: 80vw;
-    height: 40vh;
-    hr {
-      margin-bottom: 0.3rem;
-    }
-    h4 {
-      font-size: small;
-    }
-  }
-  @media only screen and (min-width: 360px) {
-    width: 80vw;
-    height: 60vh;
-    h4 {
-      font-size: small;
-    }
-  }
-  @media only screen and (min-width: 411px) {
-    width: 80vw;
-    height: 57vh;
-  }
-  @media only screen and (min-width: 768px) {
-    width: 80vw;
-    height: 50vh;
-  }
-  @media only screen and (min-width: 1024px) {
-    width: 70vw;
-    height: 50vh;
-  }
-  @media only screen and (min-width: 1280px) {
-    width: 30vw;
-    height: 55vh;
-  }
-  @media only screen and (max-width: 600px) {
-    width: 70vw;
-    height: 57vh;
-    margin-top: 35px;
-  }
+  display: block;
+  width: 100%;
 `;
 
 export const CardText = styled.h2`
-  margin: .5rem 0 2rem 0;
+  margin-bottom: 1.5rem;
+  color: #fff;
 `;
 export const CloseButtonWrap = styled.span`
-  display: flex;
-  margin: 8px;
   cursor: pointer;
+  float: right;
+  svg {
+    width: 1.75rem;
+    height: 1.75rem;
+    fill: #fff;
+  }
 `;
 
 export const InputContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  grid-gap: 1.2em;
-  justify-content: space-around;
-  align-items: center;
-  height: 40%;
-  width: 100%;
-  padding-top: 40px;
+  border-top: 1px solid rgb(255 255 255 / 40%);
+  padding-top: 1.5rem;
 `;
 
 export const TitleInput = styled.input`
-  background: rgb(255, 255, 255);
-  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-  border-radius: .2rem;
-  width: 50%;
-  height: 1rem;
-  padding: 1rem;
-  border: none;
-  outline: none;
-  color: #3c354e;
+  background-color: rgb(0 0 0 / 20%);
+  border: 1px solid rgb(255 255 255 / 20%);
+  border-radius: 2rem;
+  width: calc(50% - 1rem);
+  padding: 0.875rem 1.5rem;
+  color: #fff;
   font-size: 1rem;
-  font-weight: bold;
+  margin-right: 1rem;
+  margin-bottom: 1rem;
   &:focus {
-    display: inline-block;
-    box-shadow: 0 0 0 0.2rem #b9abe0;
-    backdrop-filter: blur(12rem);
-    border-radius: .2rem;
+    border-color: rgb(255 255 255 / 20%);
+    outline: none;
   }
   &::placeholder {
-    color: #3c1a9899;
-    font-weight: 100;
-    font-size: 1rem;
+    color: inherit;
+    font-weight: inherit;
+    font-size: inherit;
   }
 `;
 export const UploadWrapper = styled.div`
-  width: 50%;
+  width: 100%;
+  margin-bottom: 1rem;
 `;
-export const UploadLabel = styled.label`
-  
-`;
+export const UploadLabel = styled.label``;
 
 export const UploadIcon = styled(BsUpload)``;
 
 export const UploadInput = styled.input`
-  background: rgb(255, 255, 255);
-  border-radius: .2rem;
+  background-color: rgb(0 0 0 / 20%);
+  border: 1px solid rgb(255 255 255 / 20%);
+  border-radius: 2rem;
   width: 100%;
-  padding: .5rem;
+  padding: 0.875rem 1.5rem;
+  color: #fff;
   font-size: 1rem;
-  font-weight: bold;
-  
-    /* display: none; */
-  &::placeholder {
-    color: #3c1a9899;
-    font-weight: 100;
-    font-size: 1rem;
-  }
-`;
-
-export const CategorySecetion = styled.select`
-  background: rgb(255, 255, 255);
-  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-  border-radius: .2rem;
-  width: 50%;
-  /* height: 2rem; */
-  padding: .5rem;
-  border: none;
-  outline: none;
-  color: #3c354e;
-  font-size: 1rem;
-  font-weight: bold;
+  display: block;
   &:focus {
-    display: inline-block;
-    box-shadow: 0 0 0 0.2rem #b9abe0;
-    backdrop-filter: blur(12rem);
-    border-radius: .2rem;
+    border-color: rgb(255 255 255 / 20%);
+    outline: none;
   }
   &::placeholder {
-    color: #3c1a9899;
-    font-weight: 100;
-    font-size: 1rem;
+    color: inherit;
+    font-weight: inherit;
+    font-size: inherit;
   }
 `;
 
-export const CategoryOptions = styled.option`
+export const Category = styled.select`
+  background-color: rgb(0 0 0 / 20%);
+  border: 1px solid rgb(255 255 255 / 20%);
+  border-radius: 2rem;
+  width: 50%;
+  padding: 0.875rem 1.5rem;
+  color: #fff;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  &:focus {
+    border-color: rgb(255 255 255 / 20%);
+    outline: none;
+  }
+  &::placeholder {
+    color: inherit;
+    font-weight: inherit;
+    font-size: inherit;
+  }
 `;
+
+export const CategoryOptions = styled.option``;
 
 export const BodyTextWrapper = styled.div``;
 
 export const BodyText = styled.textarea`
-  background: rgb(255, 255, 255);
-  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-  border-radius: 0.2rem;
-  width: 340px;
-  height: 100px;
-  padding: 10px;
-  border: none;
-  outline: none;
-  color: #3c354e;
+  background-color: rgb(0 0 0 / 20%);
+  border: 1px solid rgb(255 255 255 / 20%);
+  border-radius: 2rem;
+  width: 100%;
+  padding: 0.875rem 1.5rem;
+  color: #fff;
   font-size: 1rem;
-  font-weight: bold;
+  margin-bottom: 1rem;
+  display: block;
+  height: 8rem;
   &:focus {
-    display: inline-block;
-    box-shadow: 0 0 0 0.2rem #b9abe0;
-    backdrop-filter: blur(12rem);
-    border-radius: 0.2rem;
+    border-color: rgb(255 255 255 / 20%);
+    outline: none;
   }
   &::placeholder {
-    color: #3c1a9899;
-    font-weight: 100;
-    font-size: 1rem;
+    color: inherit;
+    font-weight: inherit;
+    font-size: inherit;
   }
 `;
 
 export const ButtonContainer = styled.div`
-  margin: 7rem 0 2rem 0;
-  width: 100%;
+  margin-top: 1.5rem;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  justify-content: space-between;
 `;
 
 export const LoginWith = styled.h5`
@@ -246,24 +171,23 @@ export const HorizontalRule = styled.hr`
 `;
 export const SubmitButton = styled.button`
   background: linear-gradient(to right, #14163c 0%, #03217b 79%);
-  text-transform: uppercase;
-  letter-spacing: 0.1rem;
-  width: 15%;
-  height: 1.5rem;
-  border: none;
-  color: white;
-  border-radius: .2rem;
   cursor: pointer;
+  padding: 0.75rem 3.5rem;
+  font-size: 1rem;
+  color: #fff;
+  text-transform: capitalize;
+  border: none;
+  border-radius: 2rem;
+  box-shadow: 0 0 1rem rgb(0 0 0 / 50%);
 `;
 export const CloseButton = styled.button`
   background: linear-gradient(to right, #dc4b4b 0%, #7b2d03 79%);
-  text-transform: uppercase;
-  letter-spacing: 0.1rem;
-  width: 15%;
-  height: 1.5rem;
-  border: none;
-  color: white;
-  border-radius: .2rem;
   cursor: pointer;
-  margin-right: 8rem;
+  padding: 0.75rem 3.5rem;
+  font-size: 1rem;
+  color: #fff;
+  text-transform: capitalize;
+  border: none;
+  border-radius: 2rem;
+  box-shadow: 0 0 1rem rgb(0 0 0 / 50%);
 `;

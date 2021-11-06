@@ -162,7 +162,7 @@ const userResolver = {
           ctx.req.session!.userId = user.user.id;
           // console.log(ctx.req.session);
 
-          return `Login successful for username ${user.user.username}.`;
+          return `bm-user=${user.user.username}-${user.user.id}`;
         }
 
         return user && user.messages ? user.messages[0] : STANDARD_ERROR;
