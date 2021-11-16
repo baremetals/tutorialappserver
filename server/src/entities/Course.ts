@@ -3,7 +3,7 @@ import { SharedEntity } from "./SharedEntity";
 import { Student } from "./Student";
 import { Category } from "./Category";
 import { User } from "./User";
-import {Comment } from "./Comment";
+// import {Comment } from "./Comment";
 import { Note } from "./Note";
 
 @Entity({ name: "Courses" })
@@ -71,8 +71,8 @@ export class Course extends SharedEntity {
   @ManyToOne(() => Category, (category) => category.courses)
   category: Category;
 
-  @OneToMany(() => Comment, (comments) => comments.course)
-  comments: Comment[];
+  // @OneToMany(() => Comment, (comments) => comments.course)
+  // comments: Comment[];
 
   @OneToMany(() => Note, (notes) => notes.course)
   notes: Note[];

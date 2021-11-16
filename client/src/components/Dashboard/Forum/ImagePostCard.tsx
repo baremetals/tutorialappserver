@@ -24,7 +24,7 @@ import {
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 dayjs.extend(relativeTime);
-import { Comment } from "../../Comments"
+import  Comment  from "../../Comments"
 import Dropdown from "../../Dropdown"
 
 interface ForumPost {
@@ -35,6 +35,7 @@ interface ForumPost {
   body?: string;
   likeCount: number;
   commentCount: number;
+  postId: string;
 }
 
 
@@ -46,9 +47,10 @@ const ImagePostCard = ({
   body,
   likeCount = 0,
   commentCount = 0,
+  postId,
 }: ForumPost) => {
-const [showComments, setShowComments] = useState(false);
-const [showDropdown, setShowDropdown] = useState(false);
+  const [showComments, setShowComments] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(false);
 
   return (
     <>
@@ -80,8 +82,8 @@ const [showDropdown, setShowDropdown] = useState(false);
               <CommentText>{commentCount}</CommentText>
             </BottomRightWrap>
           </PostBottomWrapper>
-          <Comment showComments={showComments} />
         </ForumWrapper>
+        <Comment showComments={showComments} postId={postId} />
       </ForumContainer>
     </>
   );

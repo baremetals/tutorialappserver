@@ -5,6 +5,7 @@ import Profile from "components/Profile";
 import { useIsAuth } from "../../lib/isAuth";
 
 
+
 const UserProfile = () => {
   useIsAuth();
   
@@ -14,6 +15,7 @@ const UserProfile = () => {
     </>
   );
 };
+
 export const getServerSideProps: GetServerSideProps = requireAuthentication(
   async (_ctx) => {
     return {
@@ -23,3 +25,4 @@ export const getServerSideProps: GetServerSideProps = requireAuthentication(
 );
 
 export default UserProfile;
+

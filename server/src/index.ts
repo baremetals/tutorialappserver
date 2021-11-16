@@ -108,6 +108,7 @@ const main = async () => {
         execute,
         subscribe,
         schema,
+        onConnect:()=>console.log("client is connected")
       },
       {
         server: server,

@@ -17,11 +17,16 @@ export const CommentLeftWrap = styled.div`
   align-items: center;
 `;
 
+export const ImageAndUserNameWrap = styled.div`
+  display: flex;
+`;
+
 export const UserProfileImge = styled.img`
   width: 32px;
   height: 32px;
   border-radius: 50%;
   object-fit: cover;
+  margin-right: .25rem;
 `;
 
 export const CommentText = styled.span`
@@ -50,7 +55,7 @@ export const CommentHorizontalRule = styled.hr`
   margin: 1.5rem auto;
 `;
 
-export const CommentInputWrap = styled.div`
+export const CommentInputWrap = styled.form`
 display: flex;
 `;
 export const CommentInput = styled.textarea`
@@ -67,3 +72,4 @@ export const CommentInputButton = styled.button`
   border: none;
   padding: 15px 15px;
 `;
+

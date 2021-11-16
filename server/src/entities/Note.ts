@@ -1,9 +1,9 @@
 import { Length } from "class-validator";
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from "typeorm";
 import { Course } from "./Course";
 import { SharedEntity } from "./SharedEntity";
 import { User } from "./User";
-import { Comment } from "./Comment";
+// import { Comment } from "./Comment";
 
 
 
@@ -33,6 +33,6 @@ export class Note extends SharedEntity {
   @ManyToOne(() => Course, (course) => course.notes)
   course: Course;
 
-  @OneToMany(() => Comment, (comments) => comments.note)
-  comments: Comment[];
+  // @OneToMany(() => Comment, (comments) => comments.note)
+  // comments: Comment[];
 }

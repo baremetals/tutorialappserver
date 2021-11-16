@@ -25,7 +25,7 @@ import {
   PostMediaVideoIF,
   ForumContainer,
 } from "./forum.styles";
-import { Comment } from "../../Comments";
+import  Comment  from "../../Comments";
 import Dropdown from "../../Dropdown";
 
 const VideoPostCard = ({
@@ -37,6 +37,7 @@ const VideoPostCard = ({
   likeCount = 0,
   viewCount = 0,
   commentCount = 0,
+  postId,
   ...props
 }: any) => {
   const [showComments, setShowComments] = useState(false);
@@ -79,7 +80,7 @@ const VideoPostCard = ({
               <CommentText>{commentCount}</CommentText>
             </BottomRightWrap>
           </PostBottomWrapper>
-          <Comment showComments={showComments} />
+          <Comment showComments={showComments} postId={postId} />
         </ForumWrapper>
       </ForumContainer>
     </>

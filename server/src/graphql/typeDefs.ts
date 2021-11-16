@@ -81,13 +81,14 @@ const typeDefs = gql`
     isDisabled: Boolean!
     body: String!
     user: User!
-    post: Post!
+    # post: Post!
     createdBy: String!
     createdOn: Date!
-    lastModifiedBy: String!
-    lastModifiedOn: Date!
+    # lastModifiedBy: String!
+    # lastModifiedOn: Date!
   }
   union CommentResult = Comment | EntityResult
+
   type CommentArray {
     comments: [Comment!]
   }
@@ -201,6 +202,7 @@ const typeDefs = gql`
     lastModifiedOn: Date!
   }
   union BookResult = Book | EntityResult
+
   type BookArray {
     books: [Book!]
   }
@@ -282,7 +284,7 @@ const typeDefs = gql`
     ): EntityResult!
 
     # Comment Mutation
-    createComment(userId: ID!, postId: ID!, body: String): EntityResult!
+    createComment(userId: ID!, postId: ID!, body: String): CommentResult!
     newCourseComment(userId: ID!, courseId: ID!, body: String): EntityResult!
     newNoteComment(userId: ID!, noteId: ID!, body: String): EntityResult!
 
@@ -332,6 +334,7 @@ const typeDefs = gql`
   type Subscription {
     accountActivated: Message!
     newLike: Message!
+    newComment: Comment!
   }
 `;
 

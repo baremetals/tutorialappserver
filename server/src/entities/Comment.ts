@@ -3,8 +3,8 @@ import { Length } from "class-validator";
 import { User } from "./User";
 import { Post } from "./Post";
 import { SharedEntity } from "./SharedEntity";
-import { Course } from "./Course";
-import { Note } from "./Note";
+// import { Course } from "./Course";
+// import { Note } from "./Note";
 
 @Entity({ name: "Comments" })
 export class Comment extends SharedEntity {
@@ -24,9 +24,9 @@ export class Comment extends SharedEntity {
   @ManyToOne(() => Post, (post) => post.comments)
   post: Post;
 
-  @ManyToOne(() => Course, (course) => course.comments)
-  course: Course;
+  // @ManyToOne(() => Course, (course) => course.comments)
+  // course: Course;
 
-  @ManyToOne(() => Note, (note) => note.comments)
-  note: Note;
+  // @ManyToOne(() => Note, (note) => note.comments)
+  // note: Note;
 }

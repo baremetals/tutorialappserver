@@ -1,7 +1,12 @@
-import React from 'react'
+import React, { useState } from "react";
 import Conversation from '../Conversation';
 import Message from '../Message';
-import OnlineChat from '../OnlineChat';
+import OnlineChat from '../OnlineChat'
+import {
+  BackOverlay,
+  SearchButton,
+} from "components/Dashboard/LeftSideBar/leftside.styles";
+import { SearchIcon } from "components/Dashboard/TopBar/topbar.styles";
 import {
   MsgContainer,
   MsgChatMenu,
@@ -19,35 +24,52 @@ import {
 } from "./msg.styles";
 
 function UserMessages() {
+  const [menuState, setMenuState] = useState(false);
+  {
+    menuState && (
+      <BackOverlay onClick={() => setMenuState(false)} className="" />
+    );
+  }
+
+  // const [leftSearch, setLeftSearch] = useState(false);
+
     return (
-      <MsgContainer>
-        <MsgChatMenu>
-          <MsgChatMenuWrapper>
-            <MsgChatMenuInput placeholder="Search for a user" />
-            <div>
-              <Conversation />
-            </div>
-          </MsgChatMenuWrapper>
-        </MsgChatMenu>
-        <ChatBoxContainer>
-          <ChatBoxWrapper>
-            <ChatBoxTop>
+      <>
+        <SearchButton onClick={() => setMenuState(true)} className="toggleMenu">
+          <SearchIcon></SearchIcon>
+        </SearchButton>
+        {menuState && (
+          <BackOverlay onClick={() => setMenuState(false)} className="" />
+        )}
+        <MsgContainer>
+          <MsgChatMenu className={menuState ? "opened" : ""}>
+            <MsgChatMenuWrapper>
+              <MsgChatMenuInput placeholder="Search for a user" />
+              <div>
+                <Conversation />
+              </div>
+            </MsgChatMenuWrapper>
+          </MsgChatMenu>
+          <ChatBoxContainer>
+            <ChatBoxWrapper>
+              <ChatBoxTop>
                 <div>
-                    <Message />
+                  <Message />
                 </div>
-            </ChatBoxTop>
-            <ChatBoxBottom>
-              <ChatMessageInput placeholder="write something..." ></ChatMessageInput>
-              <ChatSubmitButton>send</ChatSubmitButton>
-            </ChatBoxBottom>
-          </ChatBoxWrapper>
-        </ChatBoxContainer>
-        <OnlineChatContainer>
+              </ChatBoxTop>
+              <ChatBoxBottom>
+                <ChatMessageInput placeholder="write something..."></ChatMessageInput>
+                <ChatSubmitButton>send</ChatSubmitButton>
+              </ChatBoxBottom>
+            </ChatBoxWrapper>
+          </ChatBoxContainer>
+          <OnlineChatContainer>
             <OnlineChatWrapper>
-                <OnlineChat />
+              <OnlineChat />
             </OnlineChatWrapper>
-        </OnlineChatContainer>
-      </MsgContainer>
+          </OnlineChatContainer>
+        </MsgContainer>
+      </>
     );
 }
 

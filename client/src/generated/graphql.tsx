@@ -68,9 +68,6 @@ export type Comment = {
   createdOn: Scalars['Date'];
   id: Scalars['ID'];
   isDisabled: Scalars['Boolean'];
-  lastModifiedBy: Scalars['String'];
-  lastModifiedOn: Scalars['Date'];
-  post: Post;
   user: User;
 };
 
@@ -151,7 +148,7 @@ export type Mutation = {
   activateAccount: MsgResult;
   addABook: EntityResult;
   changePassword: Scalars['String'];
-  createComment: EntityResult;
+  createComment: CommentResult;
   createCourse: EntityResult;
   createPost: EntityResult;
   forgotPassword: Scalars['String'];
@@ -449,6 +446,7 @@ export type StudentArrayResult = EntityResult | StudentArray;
 export type Subscription = {
   __typename?: 'Subscription';
   accountActivated: Message;
+  newComment: Comment;
   newLike: Message;
 };
 
@@ -531,7 +529,7 @@ export type CreateCommentMutationVariables = Exact<{
 }>;
 
 
-export type CreateCommentMutation = { __typename?: 'Mutation', createComment: { __typename?: 'EntityResult', messages?: Array<string> | null | undefined } };
+export type CreateCommentMutation = { __typename?: 'Mutation', createComment: { __typename?: 'Comment', id: string, body: string, createdBy: string, createdOn: any, user: { __typename?: 'User', id: string, username: string } } | { __typename?: 'EntityResult', messages?: Array<string> | null | undefined } };
 
 export type CreatePostMutationVariables = Exact<{
   userId: Scalars['ID'];
@@ -562,7 +560,7 @@ export type GetCommentsByPostIdQueryVariables = Exact<{
 }>;
 
 
-export type GetCommentsByPostIdQuery = { __typename?: 'Query', getCommentsByPostId: { __typename?: 'CommentArray', comments?: Array<{ __typename?: 'Comment', id: string, body: string, isDisabled: boolean, createdOn: any, user: { __typename?: 'User', username: string, id: string } }> | null | undefined } | { __typename?: 'EntityResult', messages?: Array<string> | null | undefined } };
+export type GetCommentsByPostIdQuery = { __typename?: 'Query', getCommentsByPostId: { __typename?: 'CommentArray', comments?: Array<{ __typename?: 'Comment', id: string, body: string, isDisabled: boolean, createdOn: any, createdBy: string, user: { __typename?: 'User', id: string, username: string, profileImage: string } }> | null | undefined } | { __typename?: 'EntityResult', messages?: Array<string> | null | undefined } };
 
 export type GetLatestCoursesQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -582,7 +580,12 @@ export type MeQuery = { __typename?: 'Query', me: { __typename?: 'EntityResult',
 export type GetLatestPostsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetLatestPostsQuery = { __typename?: 'Query', getLatestPosts: { __typename?: 'EntityResult', messages?: Array<string> | null | undefined } | { __typename?: 'PostArray', posts?: Array<{ __typename?: 'Post', id: string, views: number, points: number, title: string, body: string, postType: string, isDisabled: boolean, createdOn: any, creator: { __typename?: 'User', username: string }, category: { __typename?: 'Category', id: string, name: string }, comments?: Array<{ __typename?: 'Comment', id: string, body: string, createdBy: string }> | null | undefined }> | null | undefined } };
+export type GetLatestPostsQuery = { __typename?: 'Query', getLatestPosts: { __typename?: 'EntityResult', messages?: Array<string> | null | undefined } | { __typename?: 'PostArray', posts?: Array<{ __typename?: 'Post', id: string, views: number, points: number, isDisabled: boolean, title: string, body: string, postType: string, createdOn: any, createdBy: string, creator: { __typename?: 'User', id: string, username: string }, category: { __typename?: 'Category', id: string, name: string }, comments?: Array<{ __typename?: 'Comment', id: string, body: string, createdBy: string, createdOn: any }> | null | undefined }> | null | undefined } };
+
+export type NewCommentSubscriptionVariables = Exact<{ [key: string]: never; }>;
+
+
+export type NewCommentSubscription = { __typename?: 'Subscription', newComment: { __typename?: 'Comment', id: string, body: string, createdBy: string, isDisabled: boolean, createdOn: any, user: { __typename?: 'User', id: string, username: string, profileImage: string } } };
 
 
 export const ActivateAccountDocument = gql`
@@ -798,7 +801,19 @@ export type ResetPasswordMutationOptions = Apollo.BaseMutationOptions<ResetPassw
 export const CreateCommentDocument = gql`
     mutation CreateComment($userId: ID!, $postId: ID!, $body: String) {
   createComment(userId: $userId, postId: $postId, body: $body) {
-    messages
+    ... on EntityResult {
+      messages
+    }
+    ... on Comment {
+      id
+      body
+      createdBy
+      createdOn
+      user {
+        id
+        username
+      }
+    }
   }
 }
     `;
@@ -976,11 +991,13 @@ export const GetCommentsByPostIdDocument = gql`
         id
         body
         isDisabled
-        user {
-          username
-          id
-        }
         createdOn
+        createdBy
+        user {
+          id
+          username
+          profileImage
+        }
       }
     }
     ... on EntityResult {
@@ -1181,22 +1198,25 @@ export const GetLatestPostsDocument = gql`
         id
         views
         points
+        isDisabled
         title
         body
         postType
+        createdOn
+        createdBy
         creator {
+          id
           username
         }
-        isDisabled
         category {
           id
           name
         }
-        createdOn
         comments {
           id
           body
           createdBy
+          createdOn
         }
       }
     }
@@ -1230,3 +1250,41 @@ export function useGetLatestPostsLazyQuery(baseOptions?: Apollo.LazyQueryHookOpt
 export type GetLatestPostsQueryHookResult = ReturnType<typeof useGetLatestPostsQuery>;
 export type GetLatestPostsLazyQueryHookResult = ReturnType<typeof useGetLatestPostsLazyQuery>;
 export type GetLatestPostsQueryResult = Apollo.QueryResult<GetLatestPostsQuery, GetLatestPostsQueryVariables>;
+export const NewCommentDocument = gql`
+    subscription NewComment {
+  newComment {
+    id
+    body
+    createdBy
+    isDisabled
+    user {
+      id
+      username
+      profileImage
+    }
+    createdOn
+  }
+}
+    `;
+
+/**
+ * __useNewCommentSubscription__
+ *
+ * To run a query within a React component, call `useNewCommentSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useNewCommentSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useNewCommentSubscription({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useNewCommentSubscription(baseOptions?: Apollo.SubscriptionHookOptions<NewCommentSubscription, NewCommentSubscriptionVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useSubscription<NewCommentSubscription, NewCommentSubscriptionVariables>(NewCommentDocument, options);
+      }
+export type NewCommentSubscriptionHookResult = ReturnType<typeof useNewCommentSubscription>;
+export type NewCommentSubscriptionResult = Apollo.SubscriptionResult<NewCommentSubscription>;

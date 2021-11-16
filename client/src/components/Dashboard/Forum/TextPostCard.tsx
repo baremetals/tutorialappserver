@@ -22,7 +22,7 @@ import {
   ForumWrapper,
   ForumContainer,
 } from "./forum.styles";
-import { Comment } from "../../Comments";
+import  Comment  from "../../Comments";
 import Dropdown from "../../Dropdown";
 
 const TextPostCard = ({
@@ -33,6 +33,7 @@ const TextPostCard = ({
   body,
   likeCount = 0,
   commentCount = 0,
+  postId,
 }: any) => {
   const [showComments, setShowComments] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
@@ -67,11 +68,11 @@ const TextPostCard = ({
               <CommentText>{commentCount}</CommentText>
             </BottomRightWrap>
           </PostBottomWrapper>
-          <Comment showComments={showComments} />
+          <Comment showComments={showComments} postId={postId}/>
         </ForumWrapper>
       </ForumContainer>
     </>
   );
-}
+};
 
 export default TextPostCard

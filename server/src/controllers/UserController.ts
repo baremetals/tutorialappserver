@@ -15,8 +15,8 @@ import {
   profileImage,
   backgroundImg,
 } from "../lib/constants";
-import { MsgResult } from "./MsgController";
 
+import { MsgResult } from "./MsgController";
 export class UserResult {
   constructor(public messages?: Array<string>, public user?: User) {}
 }

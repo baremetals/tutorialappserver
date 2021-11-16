@@ -1,5 +1,5 @@
 import { Provider } from "react-redux";
-import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
+import { ApolloProvider } from "@apollo/client";
 import type { AppProps } from "next/app";
 import React, { useEffect, useState } from "react";
 import CssBaseline from "@material-ui/core/CssBaseline";
@@ -7,23 +7,16 @@ import { ThemeProvider } from "styled-components";
 import store from "../app/store";
 import Head from "next/head";
 import { darkTheme } from "../styles/theme";
-import Footer from "../components/Footer/Footer";
-import NavBar from "../components/NavBar/NavBar";
+// import Footer from "../components/Footer/Footer";
+// import NavBar from "../components/NavBar/NavBar";
 import NavDropDown from "../components/NavDropDown";
-
-
 import "../styles/globals.css";
+import { useApollo } from "../lib/apolloClient";
 
-export const client = new ApolloClient({
-  uri: "http://localhost:8000/graphql",
-  credentials: "include",
-  cache: new InMemoryCache({
-    resultCaching: false,
-  }),
-});
 
 function MyApp({ Component, pageProps }: AppProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const apolloClient = useApollo(pageProps.initialApolloState);
   useEffect(() => {
     // Remove the server-side injected CSS.
     const jssStyles = document.querySelector("#jss-server-side");
@@ -46,7 +39,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         />
       </Head>
       <Provider store={store}>
-        <ApolloProvider client={client}>
+        <ApolloProvider client={apolloClient}>
           <ThemeProvider theme={darkTheme}>
             <CssBaseline />
             <NavDropDown toggle={toggle} isOpen={isOpen} />

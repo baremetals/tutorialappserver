@@ -8,16 +8,20 @@ import { Comment } from "../entities/Comment";
 import { Post } from "../entities/Post";
 
 import { getRepository } from "typeorm";
-import { Course } from "../entities/Course";
-import { Note } from "../entities/Note";
+// import { Course } from "../entities/Course";
+// import { Note } from "../entities/Note";
 
 // Post comments
+
+export class CommentResult {
+  constructor(public messages?: Array<string>, public comment?: Comment) {}
+}
 
 export const createComment = async (
   userId: string | undefined | null,
   postId: string,
   body: string
-): Promise<QueryArrayResult<Comment>> => {
+): Promise<CommentResult> => {
   const userRepository = getRepository(User);
   const bodyMsg = isPostBodyValid(body);
   if (bodyMsg) {
@@ -47,7 +51,7 @@ export const createComment = async (
     body,
     user,
     post,
-    createdBy: user?.username
+    createdBy: user?.username,
   }).save();
   if (!comment) {
     return {
@@ -56,6 +60,7 @@ export const createComment = async (
   }
 
   return {
+    comment: comment,
     messages: ["Comment created successfully."],
   };
 };
@@ -83,52 +88,54 @@ export const getCommentsByPostId = async (
 
 // Course comments
 
-export const newCourseComment = async (
-  userId: string | undefined | null,
-  courseId: string,
-  body: string
-): Promise<QueryArrayResult<Comment>> => {
-  const userRepository = getRepository(User);
-  const bodyMsg = isPostBodyValid(body);
-  if (bodyMsg) {
-    return {
-      messages: [bodyMsg],
-    };
-  }
-  if (!userId) {
-    return {
-      messages: ["User not logged in."],
-    };
-  }
-  const user = await userRepository.findOne({
-    id: userId,
-  });
-  // console.log(user?.username);
+// export const newCourseComment = async (
+//   userId: string | undefined | null,
+//   courseId: string,
+//   body: string
+// ): Promise<QueryArrayResult<Comment>> => {
+//   const userRepository = getRepository(User);
+//   const bodyMsg = isPostBodyValid(body);
+//   if (bodyMsg) {
+//     return {
+//       messages: [bodyMsg],
+//     };
+//   }
+//   if (!userId) {
+//     return {
+//       messages: ["User not logged in."],
+//     };
+//   }
+//   const user = await userRepository.findOne({
+//     id: userId,
+//   });
+//   // console.log(user?.username);
 
-  const course = await Course.findOne({
-    id: courseId,
-  });
-  if (!course) {
-    return {
-      messages: ["Course not found."],
-    };
-  }
-  const comment = await Comment.create({
-    body,
-    user,
-    course,
-    createdBy: user?.username,
-  }).save();
-  if (!comment) {
-    return {
-      messages: ["Failed to create Comment."],
-    };
-  }
+//   const course = await Course.findOne({
+//     id: courseId,
+//   });
+//   if (!course) {
+//     return {
+//       messages: ["Course not found."],
+//     };
+//   }
+//   const comment = await Comment.create({
+//     body,
+//     user,
+//     course,
+//     createdBy: user?.username,
+//   }).save();
+//   if (!comment) {
+//     return {
+//       messages: ["Failed to create Comment."],
+//     };
+//   }
 
-  return {
-    messages: ["Comment created successfully."],
-  };
-};
+//   return {
+//     messages: ["Comment created successfully."],
+//   };
+// };
+
+
 export const getCommentsByCourseId = async (
   courseId: string
 ): Promise<QueryArrayResult<Comment>> => {
@@ -152,52 +159,54 @@ export const getCommentsByCourseId = async (
 
 // Note comments
 
-export const newNoteComment = async (
-  userId: string | undefined | null,
-  noteId: string,
-  body: string
-): Promise<QueryArrayResult<Comment>> => {
-  const userRepository = getRepository(User);
-  const bodyMsg = isPostBodyValid(body);
-  if (bodyMsg) {
-    return {
-      messages: [bodyMsg],
-    };
-  }
-  if (!userId) {
-    return {
-      messages: ["User not logged in."],
-    };
-  }
-  const user = await userRepository.findOne({
-    id: userId,
-  });
-  // console.log(user?.username);
+// export const newNoteComment = async (
+//   userId: string | undefined | null,
+//   noteId: string,
+//   body: string
+// ): Promise<QueryArrayResult<Comment>> => {
+//   const userRepository = getRepository(User);
+//   const bodyMsg = isPostBodyValid(body);
+//   if (bodyMsg) {
+//     return {
+//       messages: [bodyMsg],
+//     };
+//   }
+//   if (!userId) {
+//     return {
+//       messages: ["User not logged in."],
+//     };
+//   }
+//   const user = await userRepository.findOne({
+//     id: userId,
+//   });
+//   // console.log(user?.username);
 
-  const note = await Note.findOne({
-    id: noteId,
-  });
-  if (!note) {
-    return {
-      messages: ["Note not found."],
-    };
-  }
-  const comment = await Comment.create({
-    body,
-    user,
-    note,
-    createdBy: user?.username,
-  }).save();
-  if (!comment) {
-    return {
-      messages: ["Failed to create Comment."],
-    };
-  }
+//   const note = await Note.findOne({
+//     id: noteId,
+//   });
+//   if (!note) {
+//     return {
+//       messages: ["Note not found."],
+//     };
+//   }
+//   const comment = await Comment.create({
+//     body,
+//     user,
+//     note,
+//     createdBy: user?.username,
+//   }).save();
+//   if (!comment) {
+//     return {
+//       messages: ["Failed to create Comment."],
+//     };
+//   }
 
-  return {
-    messages: ["Comment created successfully."],
-  };
-};
+//   return {
+//     messages: ["Comment created successfully."],
+//   };
+// };
+
+
 export const getCommentsByNoteId = async (
   noteId: string
 ): Promise<QueryArrayResult<Comment>> => {

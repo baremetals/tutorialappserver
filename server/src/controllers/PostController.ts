@@ -54,6 +54,7 @@ export const createPost = async (
     creator,
     category,
     postType,
+    createdBy: creator?.username
   }).save();
 
   if (!post) {

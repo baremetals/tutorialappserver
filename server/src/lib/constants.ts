@@ -1,5 +1,6 @@
 export const ACCOUNT_ACTIVATED = "ACCOUNT_ACTIVATED";
 export const LIKED_POST = "LIKED_POST";
+export const NEW_COMMENT = "NEW_COMMENT";
 
 
 export const profileImage =

@@ -1,6 +1,10 @@
 import styled from "styled-components"
 
-export const ChatContainer = styled.div``;
+export const ChatContainer = styled.div`
+  &:nth-child(1) ~ div {
+    margin-left: -0.5rem;
+  }
+`;
 
 export const OnlineUsersWrap = styled.div`
   display: flex;
@@ -8,11 +12,17 @@ export const OnlineUsersWrap = styled.div`
   font-weight: 500;
   cursor: pointer;
   margin-top: 10px;
+  @media (max-width: 991px) {
+    margin-top: 0;
+  }
 `;
 
 export const OnlineUsersImageWrap = styled.div`
   position: relative;
   margin-right: 10px;
+  @media (max-width: 991px) {
+    margin-right: 0;
+  }
 `;
 
 export const OnlineUsersImage = styled.img`
@@ -21,6 +31,7 @@ export const OnlineUsersImage = styled.img`
   border-radius: 50%;
   object-fit: cover;
   border: 1px solid white;
+  display: block;
 `;
 
 export const OnlineUsersImageBadge = styled.div`
@@ -34,7 +45,7 @@ export const OnlineUsersImageBadge = styled.div`
 `; 
 
 export const OnlineUsersName = styled.span`
-  @media screen and (max-width: 768px) {
+  @media screen and (max-width: 991px) {
     display: none;
   }
 `;

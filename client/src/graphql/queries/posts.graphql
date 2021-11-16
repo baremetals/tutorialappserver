@@ -8,22 +8,25 @@ query GetLatestPosts {
         id
         views
         points
+        isDisabled
         title
         body
         postType
+        createdOn
+        createdBy
         creator {
+          id
           username
         }
-        isDisabled
         category {
           id
           name
         }
-        createdOn
         comments {
           id
           body
           createdBy
+          createdOn
         }
       }
     }

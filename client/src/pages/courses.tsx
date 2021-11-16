@@ -6,7 +6,7 @@ import CoursesPage from '../components/Courses'
 
 import { useAppDispatch } from "app/hooks";
 import { setCourse} from "features/courses/reducers";
-import { client } from './_app';
+import { client } from "../lib/initApollo";;
 import { useIsAuth } from "../lib/isAuth";
 
 function courses(props: any) {

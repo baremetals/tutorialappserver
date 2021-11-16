@@ -5,11 +5,13 @@ query GetCommentsByPostId($postId: ID!) {
         id
         body
         isDisabled
-        user {
-          username
-          id
-        }
         createdOn
+        createdBy
+        user {
+          id
+          username
+          profileImage
+        }
       }
     }
     ... on EntityResult {

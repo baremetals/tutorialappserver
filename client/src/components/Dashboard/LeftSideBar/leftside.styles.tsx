@@ -56,6 +56,24 @@ export const BackOverlay = styled.div`
   bottom: 0;
 
 `;
+
+export const SearchButton = styled.button`
+  width: 4rem;
+  background-color: #fff;
+  border: none;
+  z-index: 100;
+  height: 3.5rem;
+  position: absolute;
+  cursor: pointer;
+  @media (min-width: 992px) {
+    display: none;
+  }
+  svg {
+    margin: 0;
+    float: left;
+    margin-left: 1.5rem;
+  }
+`;
 export const ToggleButton = styled.button`
   width: 1.5rem;
     background-color: transparent;
