@@ -1,16 +1,14 @@
 mutation CreatePost(
   $userId: ID!
-  $categoryId: ID!
+  $categoryName: String!
   $title: String!
   $body: String!
-  $postType: String!
 ) {
   createPost(
     userId: $userId
-    categoryId: $categoryId
+    categoryName: $categoryName
     title: $title
     body: $body
-    postType: $postType
   ) {
     messages
   }

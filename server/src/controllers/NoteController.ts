@@ -33,7 +33,7 @@ export const newNote = async (
     };
   }
 
-  const adminUser = await userRepository.findOne({
+  const teacher = await userRepository.findOne({
     id: userId,
   });
 
@@ -49,7 +49,7 @@ export const newNote = async (
   const note = await Note.create({
     title,
     body,
-    adminUser,
+    teacher,
     noteType,
     course,
   }).save();

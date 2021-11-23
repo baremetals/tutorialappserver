@@ -10,59 +10,61 @@ import { Message } from "./Message";
 import { Note } from "./Note";
 import { Group } from "./Group";
 import { SharedEntity } from "./SharedEntity";
+import { Chat } from './Chat';
+import { ChatMsg } from './ChatMsg';
 // import { Group } from "./Group";
 
-@Entity({ name: "Users" })
+@Entity({ name: 'Users' })
 export class User extends SharedEntity {
-  @PrimaryGeneratedColumn({ name: "Id", type: "bigint" })
+  @PrimaryGeneratedColumn({ name: 'Id', type: 'bigint' })
   id: string;
 
-  @Column("varchar", {
-    name: "Email",
+  @Column('varchar', {
+    name: 'Email',
     length: 120,
     unique: true,
     nullable: false,
   })
   email: string;
 
-  @Column("varchar", {
-    name: "UserName",
+  @Column('varchar', {
+    name: 'UserName',
     length: 60,
     unique: true,
     nullable: false,
   })
   username: string;
 
-  @Column("varchar", {
-    name: "FullName",
+  @Column('varchar', {
+    name: 'FullName',
     length: 60,
     unique: false,
     nullable: false,
   })
   fullName: string;
 
-  @Column("varchar", { name: "Password", length: 100, nullable: false })
+  @Column('varchar', { name: 'Password', length: 100, nullable: false })
   @Length(8, 100)
   password: string;
 
-  @Column("varchar", {
-    name: "ProfileImage",
+  @Column('varchar', {
+    name: 'ProfileImage',
     length: 250,
     nullable: false,
   })
   profileImage: string;
 
-  @Column("varchar", {
-    name: "BackgroundImage",
+  @Column('varchar', {
+    name: 'BackgroundImage',
     length: 250,
     nullable: true,
   })
   backgroundImg: string;
 
-  @Column("boolean", { name: "Confirmed", default: false, nullable: false })
+  @Column('boolean', { name: 'Confirmed', default: false, nullable: false })
   confirmed: boolean;
 
-  @Column("boolean", { name: "IsDisabled", default: false, nullable: false })
+  @Column('boolean', { name: 'IsDisabled', default: false, nullable: false })
   isDisabled: boolean;
 
   // @ManyToOne(() => Group, (group: Group) => group.users)
@@ -81,18 +83,31 @@ export class User extends SharedEntity {
   @OneToMany(() => PostPoint, (postPoint) => postPoint.user)
   postPoints: PostPoint[];
 
-  @OneToMany(() => Student, (student) => student.student)
-  students: Student[];
+  // This represents the total courses the user is taking. So each course will have the users student identity.
+  @OneToMany(() => Student, (student) => student.user)
+  myCourses: Student[];
 
   @OneToMany(() => Book, (book) => book.adminUser)
   books: Book[];
 
-  @OneToMany(() => Course, (course) => course.adminUser)
+  @OneToMany(() => Course, (course) => course.teacher)
   courses: Course[];
 
   @OneToMany(() => Message, (message) => message.user)
   messages: Message[];
 
-  @OneToMany(() => Note, (note) => note.adminUser)
+  @OneToMany(() => Note, (note) => note.teacher)
   notes: Note[];
+
+  @OneToMany(() => Chat, (chat) => chat.owner)
+  ownerChats: Chat[];
+  
+  @OneToMany(() => Chat, (chat) => chat.recipient)
+  recipientChats: Chat[];
+
+  @OneToMany(() => ChatMsg, (chatMsg) => chatMsg.sender)
+  senderChats: ChatMsg[];
+
+  @OneToMany(() => ChatMsg, (chatMsg) => chatMsg.receiver)
+  receiverChats: ChatMsg[];
 }

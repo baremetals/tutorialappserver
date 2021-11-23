@@ -1,16 +1,16 @@
 import { Post } from "../entities/Post";
 import { Category } from "../entities/Category";
 import { User } from "../entities/User";
+import { Comment } from '../entities/Comment';
 import { isPostBodyValid, isPostTitleValid } from "../utils/validators/PostValidators";
 import { QueryArrayResult, QueryOneResult } from "./QuerryArrayResult";
 import { getRepository } from "typeorm";
 
 export const createPost = async (
   userId: string | undefined | null,
-  categoryId: string,
+  categoryName: string,
   title: string,
   body: string,
-  postType: string
 ): Promise<QueryArrayResult<Post>> => {
   const userRepository = getRepository(User);
   const titleMsg = isPostTitleValid(title);
@@ -39,7 +39,7 @@ export const createPost = async (
   
 
   const category = await Category.findOne({
-    id: categoryId,
+    name: categoryName,
   });
 
   if (!category) {
@@ -53,7 +53,6 @@ export const createPost = async (
     body,
     creator,
     category,
-    postType,
     createdBy: creator?.username
   }).save();
 
@@ -68,14 +67,32 @@ export const createPost = async (
   };
 };
 
-export const getPostById = async (
-  id: string
-): Promise<QueryOneResult<Post>> => {
-  const post = await Post.findOne({ id });
+export const getPostById = async (id: string): Promise<QueryOneResult<Post>> => {
+  const post = await Post.findOne({
+    where: {
+      id,
+    },
+    relations: [
+      'creator',
+      'comments',
+      'comments.user',
+      'comments.post',
+      'category',
+    ],
+  });
   if (!post) {
     return {
-      messages: ["Post not found."],
+      messages: ['Post not found.'],
     };
+  }
+
+  // extra sort
+  if (post.comments) {
+    post.comments.sort((a: Comment, b: Comment) => {
+      if (a.createdOn > b.createdOn) return -1;
+      if (a.createdOn < b.createdOn) return 1;
+      return 0;
+    });
   }
 
   return {

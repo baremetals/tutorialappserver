@@ -36,7 +36,6 @@ export class Post extends SharedEntity {
     length: 15,
     nullable: false,
   })
-  postType: string;
 
   @Column("varchar", { name: "Body", length: 2500, nullable: true })
   @Length(10, 2500)

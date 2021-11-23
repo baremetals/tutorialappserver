@@ -23,7 +23,6 @@ query Me {
         isDisabled
         title
         body
-        postType
         createdOn
         comments {
           id

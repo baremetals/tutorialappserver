@@ -87,10 +87,10 @@ export const updatePostPoint = async (
   const response: Message = await Message.create({
     from: user!.username,
     image: user!.profileImage,
-    // user,
-    title: message,
+    title: 'post like',
     body: `${user!.username} liked your post.`,
     type: LIKED_POST,
+    user,
   }).save();
   
 

@@ -160,7 +160,7 @@ const userResolver = {
         user = await login(args.usernameOrEmail, args.password);
         if (user && user.user) {
           ctx.req.session!.userId = user.user.id;
-          // console.log(ctx.req.session);
+          //console.log(ctx.req.session);
 
           return `bm-user=${user.user.username}-${user.user.id}`;
         }
@@ -186,6 +186,7 @@ const userResolver = {
           }
           console.log("session destroyed", ctx.req.session?.id);
         });
+        ctx.res.clearCookie('maguyvathegreat');
         return result;
       } catch (ex) {
         console.log(ex.message);

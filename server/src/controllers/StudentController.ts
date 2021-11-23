@@ -1,4 +1,4 @@
-import { getManager, getRepository } from "typeorm";
+import { getManager } from "typeorm";
 import { User } from "../entities/User";
 import { Student } from "../entities/Student";
 import { Course } from "../entities/Course";
@@ -8,7 +8,6 @@ export const joinOrLeaveCourse = async (
   courseId: string,
   join: boolean
 ): Promise<string> => {
-  const userRepository = getRepository(User);
   if (!userId || userId === "0") {
     return "User is not authenticated";
   }
@@ -16,58 +15,63 @@ export const joinOrLeaveCourse = async (
   let message = "Failed to join course";
   const course = await Course.findOne({
     where: { id: courseId },
-    relations: ["adminUser"],
+    relations: ["teacher"],
   });
 
-  if (course!.adminUser!.id === userId) {
+  if (course!.teacher!.id === userId) {
     message = "Error: Teachers cannot join their own course";
     console.log("incCourseStudent", message);
     return message;
   }
-  const student = await userRepository.findOne({ where: { id: userId } });
+  const user = await User.findOne({ where: { id: userId } });
 
-  const existingUser = await Student.findOne({
+  const existingStudent = await Student.findOne({
     where: {
       course: { id: courseId },
-      student: { id: userId },
+      user: { id: userId },
     },
     relations: ["course"],
   });
   await getManager().transaction(async (_transactionEntityManager) => {
-    if (existingUser) {
+    if (existingStudent) {
       if (join) {
-        if (existingUser.hasJoined) {
-          console.log("remove dec");
-          await Student.remove(existingUser);
-          course!.totalStudents = Number(course!.students) + 1;
+        if (existingStudent.hasJoined) {
+          console.log('remove dec');
+          await Student.remove(existingStudent);
+          course!.totalStudents = Number(course!.totalStudents) + 1;
           course!.lastModifiedOn = new Date();
           await course!.save();
+          console.log('I was here')
         }
       } else {
-        if (!existingUser.hasJoined) {
-          console.log("remove inc");
-          await Student.remove(existingUser);
-          course!.totalStudents = Number(course!.students) - 1;
+        if (!existingStudent.hasJoined) {
+          console.log('remove inc');
+          await Student.remove(existingStudent);
+          course!.totalStudents = Number(course!.totalStudents) - 1;
           course!.lastModifiedOn = new Date();
           await course!.save();
+          console.log('actually I was here');
         }
       }
     } else {
-      console.log("new student has joined the course");
+      console.log('new student');
       await Student.create({
         course,
-        hasJoined: !join,
-        student,
+        hasJoined: join,
+        user,
       }).save();
+      console.log('new student has joined the course');
+
       if (join) {
-        course!.totalStudents = Number(course!.students) + 1;
+        course!.totalStudents = Number(course!.totalStudents) + 1;
+        console.log(course!.totalStudents);
       } else {
-        course!.totalStudents = Number(course!.students) - 1;
+        course!.totalStudents = Number(course!.totalStudents) - 1;
       }
       course!.lastModifiedOn = new Date();
       await course!.save();
     }
-    console.log(course!.title);
+    console.log(course!.totalStudents);
     message = `You have successfully ${
       join ? "joined" : "left"
     } the course ${course!.title}.`;

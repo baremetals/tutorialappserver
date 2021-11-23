@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import { BsUpload } from "react-icons/bs";
+import ModalEditor from "./ModalEditor"
 
 
 
@@ -103,7 +104,7 @@ export const UploadInput = styled.input`
   }
 `;
 
-export const Category = styled.select`
+export const Select = styled.select`
   background-color: rgb(0 0 0 / 20%);
   border: 1px solid rgb(255 255 255 / 20%);
   border-radius: 2rem;
@@ -138,6 +139,28 @@ export const BodyText = styled.textarea`
   margin-bottom: 1rem;
   display: block;
   height: 8rem;
+  &:focus {
+    border-color: rgb(255 255 255 / 20%);
+    outline: none;
+  }
+  &::placeholder {
+    color: inherit;
+    font-weight: inherit;
+    font-size: inherit;
+  }
+`;
+
+export const EditorBodyText = styled(ModalEditor)`
+  background-color: rgb(0 0 0 / 20%);
+  border: 1px solid rgb(255 255 255 / 20%);
+  border-radius: 5rem;
+  width: 100%;
+  padding: 0.875rem 1.5rem;
+  color: #fff;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  display: block;
+  height: 50rem;
   &:focus {
     border-color: rgb(255 255 255 / 20%);
     outline: none;

@@ -85,3 +85,26 @@ export const CoursesH2 = styled.h2`
     font-size: 2rem;
   }
 `;
+
+export const CoursesTeacherWrap = styled.div`
+  /* align-items: flex-start; */
+  display: grid;
+`;
+export const CoursesTeacherNameAndImageWrap = styled.div`
+  display: flex;
+  align-items: center;
+  padding-top: 10px
+`;
+
+export const CoursesTeacherName = styled.p`
+  font-size: 12px;
+  font-weight: 300;
+  margin: 0 10px;
+`;
+
+export const CoursesTeacherImage = styled.img`
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+`;

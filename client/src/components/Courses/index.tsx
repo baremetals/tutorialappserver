@@ -1,4 +1,5 @@
 import React from "react";
+import Link from "next/link";
 import LeftSideBar from "../Dashboard/LeftSideBar";
 import SmallFooter from "../Dashboard/SmallFooter";
 import Topbar from "../Dashboard/TopBar";
@@ -45,9 +46,13 @@ function CoursesPage() {
               courses.map((course: any, id: string) =>
                 !course ? null : (
                   <PostCard key={id}>
-                    <CardImage alt="course image" src={course.image} />
+                    <Link href={`/courses/${course.id}`}>
+                      <CardImage alt="course image" src={course.image} />
+                    </Link>
                     <CardTitle>
-                      {course.title}
+                      <Link href={`/courses/${course.id}`}>
+                        {course.title}
+                      </Link>
                       <CardDuration> - {course.duration}</CardDuration>
                     </CardTitle>
                     <CardDescription>{course.description}</CardDescription>

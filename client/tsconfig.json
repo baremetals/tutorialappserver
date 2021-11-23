@@ -15,6 +15,6 @@
     "jsx": "preserve",
     "baseUrl": "src"
   },
-  "include": ["next-env.d.ts", "src/**/*.ts", "src/**/*.tsx", "database.ts"],
+  "include": ["next-env.d.ts", "src/**/*.ts", "src/**/*.tsx", "database.ts", "src/components/Editor/indexjtsx", "src/components/Editor/index.jsx"],
   "exclude": ["node_modules"]
 }

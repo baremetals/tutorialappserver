@@ -11,10 +11,7 @@ export const useNoAuth = () => {
   const router = useRouter();
   useEffect(() => {
 
-    // if (authenticated) {
-    //   const me = data?.me as User;
-    //   router.push(`/user-profile/${me.username}`);
-    // } 
+
     if (!loading && !data?.me.messages) {
         const me = data?.me as User;
       router.push(`/user-profile/${me.username}`);

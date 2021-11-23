@@ -132,6 +132,18 @@ const commentResolver = {
               post: result.comment.post,
             },
           });
+
+          // pubsub.publish(NEW_MESSAGE, {
+          //   newComment: {
+          //     id: result.comment.id,
+          //     body: args.body,
+          //     createdBy: result.comment.createdBy,
+          //     createdOn: result.comment.createdOn,
+          //     isDisabled: result.comment.isDisabled,
+          //     user: result.comment.user,
+          //     post: result.comment.post,
+          //   },
+          // });
           // console.log(result.comment);
           return result.comment;
         }

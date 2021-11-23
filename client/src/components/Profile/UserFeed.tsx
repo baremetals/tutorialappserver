@@ -74,6 +74,7 @@ export default function UserFeed() {
                     body={post.body}
                     likeCount={post.points}
                     commentCount={8}
+                    postId={post.id}
                   />
                 ))
           )

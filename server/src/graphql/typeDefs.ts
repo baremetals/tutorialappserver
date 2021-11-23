@@ -61,7 +61,6 @@ const typeDefs = gql`
     isDisabled: Boolean!
     title: String!
     body: String!
-    postType: String!
     creator: User!
     comments: [Comment!]
     category: Category!
@@ -133,8 +132,8 @@ const typeDefs = gql`
     startDate: String!
     endDate: String!
     totalStudents: Int!
-    adminUser: User!
-    students: Student!
+    teacher: User!
+    students: [Student!]
     category: Category!
     createdBy: String!
     createdOn: Date!
@@ -151,7 +150,7 @@ const typeDefs = gql`
 
   type Student {
     id: ID!
-    student: [User!]
+    user: User!
     course: Course!
     hasJoined: Boolean!
     createdBy: String!
@@ -224,6 +223,46 @@ const typeDefs = gql`
     lastModifiedOn: Date!
   }
   union MsgResult = Message | EntityResult
+  type MessageArray {
+    msgs: [Message!]
+  }
+  union MessageArrayResult = MessageArray | EntityResult
+
+  # Chat types
+  type ChatMsg {
+    id: ID!
+    isRead: Boolean!
+    body: String!
+    sender: User!
+    receiver: User!
+    chat: Chat!
+    createdBy: String!
+    createdOn: Date!
+    lastModifiedBy: String!
+    lastModifiedOn: Date!
+  }
+  union ChatMsgResult = ChatMsg | EntityResult
+  type ChatMsgArray {
+    chatMsgs: [ChatMsg!]
+  }
+  union ChatMsgArrayResult = ChatMsgArray | EntityResult
+
+  # Chat types
+  type Chat {
+    id: ID!
+    owner: User!
+    recipient: User!
+    chatMsgs: [ChatMsg!]
+    createdBy: String!
+    createdOn: Date!
+    lastModifiedBy: String!
+    lastModifiedOn: Date!
+  }
+  union ChatResult = Chat | EntityResult
+  type ChatArray {
+    chats: [Chat!]
+  }
+  union ChatArrayResult = ChatArray | EntityResult
 
   # Query types
   type Query {
@@ -253,9 +292,16 @@ const typeDefs = gql`
     getBooksByCategoryId(categoryId: ID!): BookArrayResult!
 
     # Notification Query
+    getMessagesByUserId: MessageArrayResult!
 
     # Note Query
     getNotesByCourseId(courseId: ID!): NoteArrayResult!
+
+    # Chat Query
+    getChatMessagesByUserId: ChatArrayResult!
+    getAllChats: ChatArrayResult!
+    getChatMessagesByChatId(chatId: ID!): ChatMsgArrayResult!
+    getAllChatMsgs: ChatMsgArrayResult!
   }
 
   # Mutatiob types
@@ -277,10 +323,9 @@ const typeDefs = gql`
     # Post Mutation
     createPost(
       userId: ID!
-      categoryId: ID!
+      categoryName: String!
       title: String!
       body: String!
-      postType: String!
     ): EntityResult!
 
     # Comment Mutation
@@ -303,6 +348,7 @@ const typeDefs = gql`
       endDate: String!
       group: String!
     ): EntityResult!
+    joinOrLeaveCourse(courseId: ID!, join: Boolean!): String!
 
     # Book Mutation
     addABook(
@@ -316,9 +362,19 @@ const typeDefs = gql`
       group: String!
     ): EntityResult!
 
-    joinOrLeaveCourse(courseId: ID!, join: Boolean!): String!
+    # Chat Mutation
+    createChatMessage(
+      ownerUserId: String!
+      recipientUserId: String!
+      body: String!
+    ): EntityResult
 
-    # Notification Mutation
+    # ChatMessage  Mutation
+    respondToChatMessage(
+      senderUserId: String!
+      chatId: String!
+      body: String!
+    ): ChatMsgResult
 
     # Note Mutation
     newNote(
@@ -333,8 +389,10 @@ const typeDefs = gql`
   # Subscription types
   type Subscription {
     accountActivated: Message!
-    newLike: Message!
+    newMessage: Message!
     newComment: Comment!
+    newChat: Chat!
+    newChatMessage: ChatMsg!
   }
 `;
 

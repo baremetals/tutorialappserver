@@ -15,17 +15,17 @@ const courseResolver = {
   CourseResult: {
     __resolveType(obj: any, _context: GqlContext, _info: any) {
       if (obj.messages) {
-        return "EntityResult";
+        return 'EntityResult';
       }
-      return "Course";
+      return 'Course';
     },
   },
   CourseArrayResult: {
     __resolveType(obj: any, _context: GqlContext, _info: any) {
       if (obj.messages) {
-        return "EntityResult";
+        return 'EntityResult';
       }
-      return "CourseArray";
+      return 'CourseArray';
     },
   },
 
@@ -162,18 +162,18 @@ const courseResolver = {
     joinOrLeaveCourse: async (
       _obj: any,
       args: { courseId: string; join: boolean },
-      _ctx: GqlContext,
+      ctx: GqlContext,
       _info: any
     ): Promise<string> => {
-      let result = "";
-      const userId = "44";
+      let result = '';
+      //const userId = '44';
       try {
-        // if (!ctx.req.session || !ctx.req.session?.userId) {
-        //   return "You must be logged in to join this course.";
-        // }
+        if (!ctx.req.session || !ctx.req.session?.userId) {
+          return "You must be logged in to join this course.";
+        }
         result = await joinOrLeaveCourse(
-          // ctx.req.session!.userId,
-          userId,
+          ctx.req.session!.userId,
+          // userId,
           args.courseId,
           args.join
         );

@@ -5,6 +5,7 @@ import { Formik } from "formik";
 import { getLoginValidationSchema } from "utils/formValidation";
 import { useLoginMutation } from "generated/graphql";
 
+
 // Redux imports
 import { useAppDispatch } from "app/hooks";
 import { setSuccess, setError } from "features/ui/reducers";
@@ -64,7 +65,7 @@ const Login = () => {
         toast.success("login successful");
         setTimeout(() => {
           router.push(`/user-profile/${me}`);
-        }, 2000);
+        }, 800);
       }
     } catch (ex) {
       console.log(ex);

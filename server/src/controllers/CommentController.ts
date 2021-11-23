@@ -8,8 +8,12 @@ import { Comment } from "../entities/Comment";
 import { Post } from "../entities/Post";
 
 import { getRepository } from "typeorm";
+import { Message } from '../entities/Message';
 // import { Course } from "../entities/Course";
 // import { Note } from "../entities/Note";
+
+import { pubsub } from '../graphql/GqlContext';
+import { NEW_MESSAGE } from '../lib/constants';
 
 // Post comments
 
@@ -52,12 +56,34 @@ export const createComment = async (
     user,
     post,
     createdBy: user?.username,
-  }).save();
+  }).save()
   if (!comment) {
     return {
       messages: ["Failed to create Comment."],
     };
   }
+
+  const notice = await Message.create({
+    from: user?.username,
+    image: user?.profileImage,
+    title: 'new comment',
+    body: `${user?.username} commented on your post`,
+    type: 'NEW_COMMENT',
+    user,
+  }).save();
+
+  pubsub.publish(NEW_MESSAGE, {
+    newMessage: {
+      id: notice.id,
+      from: user?.username,
+      image: user?.profileImage,
+      title: 'new comment',
+      body: notice.body,
+      createdBy: notice.createdBy,
+      createdOn: notice.createdOn,
+      user
+    },
+  });
 
   return {
     comment: comment,

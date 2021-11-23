@@ -1,0 +1,30 @@
+query GetCourseById($id: ID!) {
+  getCourseById(id: $id) {
+    ... on EntityResult {
+      messages
+    }
+    ... on Course {
+      id
+      title
+      duration
+      description
+      image
+      startDate
+      endDate
+      totalStudents
+      teacher {
+        id
+        fullName
+        profileImage
+      }
+      createdOn
+      students {
+        id
+        user {
+          id
+          username
+        }
+      }
+    }
+  }
+}

@@ -8,6 +8,10 @@ import {
   User,
 } from "generated/graphql";
 
+// import { EditorState, convertToRaw } from "draft-js";
+// import draftToHtml from "draftjs-to-html";
+// import {PostEditor} from "../Editor"
+
 import {
   CommentHorizontalRule,
   CommentCard,

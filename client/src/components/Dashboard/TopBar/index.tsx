@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import Link from "next/link";
-
+import { useRouter } from "next/router";
 // for data fetching
 // import { useMeQuery } from "generated/graphql";
 // import { useAppDispatch} from "app/hooks";
@@ -31,9 +31,11 @@ import { Logo } from "../../../../public/assets/images/Logo";
 // import { ErrorMsg } from 'components/Input';
 import { useAppSelector } from "app/hooks";
 import { isUser } from "features/auth/selectors";
-
+import { useLogoutMutation } from 'generated/graphql';
 
 const Topbar = () => {
+  const router = useRouter();
+  const [logout] = useLogoutMutation();
   const [dropdown, setDropdown] = useState(false);
   const { user: user } = useAppSelector(isUser);
   // const dispatch = useAppDispatch();
@@ -42,74 +44,86 @@ const Topbar = () => {
   //   return <div>loading...</div>;
   // }
   // if (error) return <ErrorMsg>{error}</ErrorMsg>;
-
   const me = user;
   // dispatch(setUser(me));
+  const handleLogOut = async () => {
+    try {
+      const { data } = await logout({
+        variables: {
+          username: me?.username as string,
+        },
+      });
+      if (data?.logout.includes("User logged off.")) {
+        router.push("/signin");
+      }
+    } catch (error) {
+      console.log(error);
+      throw error
+    }
+  };
 
-
-    return (
-      <TopbarContainer>
-        <TopLeftWrap>
-          <TopBarLogo>
-            <Link href={`/courses`}>
-              <TopBarLogo>
-                <Logo color="white" width="50" height="50" />
-              </TopBarLogo>
+  return (
+    <TopbarContainer>
+      <TopLeftWrap>
+        <TopBarLogo>
+          <Link href={`/courses`}>
+            <TopBarLogo>
+              <Logo color="white" width="50" height="50" />
+            </TopBarLogo>
+          </Link>
+        </TopBarLogo>
+      </TopLeftWrap>
+      <TopCenterWrap>
+        <SearchBar>
+          <SearchIcon></SearchIcon>
+          <SearchInput placeholder="Search for friend, post or video" />
+        </SearchBar>
+      </TopCenterWrap>
+      <TopRightWrap>
+        <Icons>
+          <IconItem>
+            <Link href={`/user-profile/${me?.username}`}>
+              <div>
+                <RiHome4Fill />
+              </div>
             </Link>
-          </TopBarLogo>
-        </TopLeftWrap>
-        <TopCenterWrap>
-          <SearchBar>
-            <SearchIcon></SearchIcon>
-            <SearchInput placeholder="Search for friend, post or video" />
-          </SearchBar>
-        </TopCenterWrap>
-        <TopRightWrap>
-          <Icons>
-            <IconItem>
-              <Link
-                href={`/user-profile/${me?.username}`}>
-                <div>
-                  <RiHome4Fill />
-                </div>
-              </Link>
-            </IconItem>
-            <IconItem>
-              <BsFillChatSquareFill />
-              <IconBadge>3</IconBadge>
-            </IconItem>
-            <IconItem>
-              <RiNotification2Fill />
-              <IconBadge>5</IconBadge>
-            </IconItem>
-          </Icons>
-          <ProfileSetting>
-            <ProfileImg
-              onClick={() => setDropdown(!dropdown)}
-              alt="user profile image"
-              src={me?.profileImage}
-            />
-            <ProfileDropdown
-              className={`${dropdown ? "opened" : ""}`}
-              onClick={() => setDropdown(!dropdown)}
-            >
-              <ProfileItem>
-                <Link href={`/user-profile/${me?.username}`}>Setting</Link>
-              </ProfileItem>
-              <ProfileItem>
-                <Link href={`/user-profile/${me?.username}`}>Profile</Link>
-              </ProfileItem>
-              <ProfileItem>
-                <Link href={`/user-profile/${me?.username}`}>Edit</Link>
-              </ProfileItem>
-              <ProfileItem>
-                <Link href={`/user-profile/${me?.username}`}>Logout</Link>
-              </ProfileItem>
-            </ProfileDropdown>
-          </ProfileSetting>
-        </TopRightWrap>
-      </TopbarContainer>
-    );
-}
+          </IconItem>
+          <IconItem>
+            <BsFillChatSquareFill />
+            <IconBadge>3</IconBadge>
+          </IconItem>
+          <IconItem>
+            <RiNotification2Fill />
+            <IconBadge>5</IconBadge>
+          </IconItem>
+        </Icons>
+        <ProfileSetting>
+          <ProfileImg
+            onClick={() => setDropdown(!dropdown)}
+            alt="user profile image"
+            src={me?.profileImage}
+          />
+          <ProfileDropdown
+            className={`${dropdown ? "opened" : ""}`}
+            onClick={() => setDropdown(!dropdown)}
+          >
+            <ProfileItem>
+              <Link href={`/user-profile/${me?.username}`}>Setting</Link>
+            </ProfileItem>
+            <ProfileItem>
+              <Link href={`/user-profile/${me?.username}`}>Profile</Link>
+            </ProfileItem>
+            <ProfileItem>
+              <Link href={`/user-profile/${me?.username}`}>Edit</Link>
+            </ProfileItem>
+            <ProfileItem>
+              <a onClick={handleLogOut}>Logout</a>
+            </ProfileItem>
+          </ProfileDropdown>
+        </ProfileSetting>
+      </TopRightWrap>
+    </TopbarContainer>
+  );
+};
 
 export default Topbar;

@@ -28,7 +28,7 @@ export class Note extends SharedEntity {
   body: string;
 
   @ManyToOne(() => User, (user: User) => user.notes)
-  adminUser: User;
+  teacher: User;
 
   @ManyToOne(() => Course, (course) => course.notes)
   course: Course;

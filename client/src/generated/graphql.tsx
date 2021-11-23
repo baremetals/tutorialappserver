@@ -82,7 +82,6 @@ export type CommentResult = Comment | EntityResult;
 
 export type Course = {
   __typename?: 'Course';
-  adminUser: User;
   category: Category;
   createdBy: Scalars['String'];
   createdOn: Scalars['Date'];
@@ -94,7 +93,8 @@ export type Course = {
   lastModifiedBy: Scalars['String'];
   lastModifiedOn: Scalars['Date'];
   startDate: Scalars['String'];
-  students: Student;
+  students?: Maybe<Array<Student>>;
+  teacher: User;
   title: Scalars['String'];
   totalStudents: Scalars['Int'];
 };
@@ -208,8 +208,7 @@ export type MutationCreateCourseArgs = {
 
 export type MutationCreatePostArgs = {
   body: Scalars['String'];
-  categoryId: Scalars['ID'];
-  postType: Scalars['String'];
+  categoryName: Scalars['String'];
   title: Scalars['String'];
   userId: Scalars['ID'];
 };
@@ -328,7 +327,6 @@ export type Post = {
   lastModifiedBy: Scalars['String'];
   lastModifiedOn: Scalars['Date'];
   points: Scalars['Int'];
-  postType: Scalars['String'];
   title: Scalars['String'];
   views: Scalars['Int'];
 };
@@ -433,7 +431,7 @@ export type Student = {
   id: Scalars['ID'];
   lastModifiedBy: Scalars['String'];
   lastModifiedOn: Scalars['Date'];
-  student?: Maybe<Array<User>>;
+  user?: Maybe<Array<User>>;
 };
 
 export type StudentArray = {
@@ -531,12 +529,19 @@ export type CreateCommentMutationVariables = Exact<{
 
 export type CreateCommentMutation = { __typename?: 'Mutation', createComment: { __typename?: 'Comment', id: string, body: string, createdBy: string, createdOn: any, user: { __typename?: 'User', id: string, username: string } } | { __typename?: 'EntityResult', messages?: Array<string> | null | undefined } };
 
+export type JoinOrLeaveCourseMutationVariables = Exact<{
+  courseId: Scalars['ID'];
+  join: Scalars['Boolean'];
+}>;
+
+
+export type JoinOrLeaveCourseMutation = { __typename?: 'Mutation', joinOrLeaveCourse: string };
+
 export type CreatePostMutationVariables = Exact<{
   userId: Scalars['ID'];
-  categoryId: Scalars['ID'];
+  categoryName: Scalars['String'];
   title: Scalars['String'];
   body: Scalars['String'];
-  postType: Scalars['String'];
 }>;
 
 
@@ -572,15 +577,22 @@ export type CategoryQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type CategoryQuery = { __typename?: 'Query', getAllCategories?: Array<{ __typename?: 'Category', id: string, name: string, description?: string | null | undefined }> | null | undefined };
 
+export type GetCourseByIdQueryVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type GetCourseByIdQuery = { __typename?: 'Query', getCourseById: { __typename?: 'Course', id: string, title: string, duration: string, description: string, image: string, startDate: string, endDate: string, totalStudents: number, createdOn: any, teacher: { __typename?: 'User', id: string, fullName: string, profileImage: string }, students?: Array<{ __typename?: 'Student', id: string, user?: Array<{ __typename?: 'User', id: string, username: string }> | null | undefined }> | null | undefined } | { __typename?: 'EntityResult', messages?: Array<string> | null | undefined } };
+
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type MeQuery = { __typename?: 'Query', me: { __typename?: 'EntityResult', messages?: Array<string> | null | undefined } | { __typename?: 'User', id: string, username: string, fullName: string, confirmed: boolean, profileImage: string, backgroundImg: string, isDisabled: boolean, createdOn: any, groups?: Array<{ __typename?: 'Group', id: string, codename: string }> | null | undefined, posts?: Array<{ __typename?: 'Post', id: string, views: number, points: number, isDisabled: boolean, title: string, body: string, postType: string, createdOn: any, comments?: Array<{ __typename?: 'Comment', id: string, body: string, isDisabled: boolean, createdOn: any, createdBy: string }> | null | undefined }> | null | undefined } };
+export type MeQuery = { __typename?: 'Query', me: { __typename?: 'EntityResult', messages?: Array<string> | null | undefined } | { __typename?: 'User', id: string, username: string, fullName: string, confirmed: boolean, profileImage: string, backgroundImg: string, isDisabled: boolean, createdOn: any, groups?: Array<{ __typename?: 'Group', id: string, codename: string }> | null | undefined, posts?: Array<{ __typename?: 'Post', id: string, views: number, points: number, isDisabled: boolean, title: string, body: string, createdOn: any, comments?: Array<{ __typename?: 'Comment', id: string, body: string, isDisabled: boolean, createdOn: any, createdBy: string }> | null | undefined }> | null | undefined } };
 
 export type GetLatestPostsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetLatestPostsQuery = { __typename?: 'Query', getLatestPosts: { __typename?: 'EntityResult', messages?: Array<string> | null | undefined } | { __typename?: 'PostArray', posts?: Array<{ __typename?: 'Post', id: string, views: number, points: number, isDisabled: boolean, title: string, body: string, postType: string, createdOn: any, createdBy: string, creator: { __typename?: 'User', id: string, username: string }, category: { __typename?: 'Category', id: string, name: string }, comments?: Array<{ __typename?: 'Comment', id: string, body: string, createdBy: string, createdOn: any }> | null | undefined }> | null | undefined } };
+export type GetLatestPostsQuery = { __typename?: 'Query', getLatestPosts: { __typename?: 'EntityResult', messages?: Array<string> | null | undefined } | { __typename?: 'PostArray', posts?: Array<{ __typename?: 'Post', id: string, views: number, points: number, isDisabled: boolean, title: string, body: string, createdOn: any, createdBy: string, creator: { __typename?: 'User', id: string, username: string }, category: { __typename?: 'Category', id: string, name: string }, comments?: Array<{ __typename?: 'Comment', id: string, body: string, createdBy: string, createdOn: any }> | null | undefined }> | null | undefined } };
 
 export type NewCommentSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
@@ -845,14 +857,45 @@ export function useCreateCommentMutation(baseOptions?: Apollo.MutationHookOption
 export type CreateCommentMutationHookResult = ReturnType<typeof useCreateCommentMutation>;
 export type CreateCommentMutationResult = Apollo.MutationResult<CreateCommentMutation>;
 export type CreateCommentMutationOptions = Apollo.BaseMutationOptions<CreateCommentMutation, CreateCommentMutationVariables>;
+export const JoinOrLeaveCourseDocument = gql`
+    mutation JoinOrLeaveCourse($courseId: ID!, $join: Boolean!) {
+  joinOrLeaveCourse(courseId: $courseId, join: $join)
+}
+    `;
+export type JoinOrLeaveCourseMutationFn = Apollo.MutationFunction<JoinOrLeaveCourseMutation, JoinOrLeaveCourseMutationVariables>;
+
+/**
+ * __useJoinOrLeaveCourseMutation__
+ *
+ * To run a mutation, you first call `useJoinOrLeaveCourseMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useJoinOrLeaveCourseMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [joinOrLeaveCourseMutation, { data, loading, error }] = useJoinOrLeaveCourseMutation({
+ *   variables: {
+ *      courseId: // value for 'courseId'
+ *      join: // value for 'join'
+ *   },
+ * });
+ */
+export function useJoinOrLeaveCourseMutation(baseOptions?: Apollo.MutationHookOptions<JoinOrLeaveCourseMutation, JoinOrLeaveCourseMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<JoinOrLeaveCourseMutation, JoinOrLeaveCourseMutationVariables>(JoinOrLeaveCourseDocument, options);
+      }
+export type JoinOrLeaveCourseMutationHookResult = ReturnType<typeof useJoinOrLeaveCourseMutation>;
+export type JoinOrLeaveCourseMutationResult = Apollo.MutationResult<JoinOrLeaveCourseMutation>;
+export type JoinOrLeaveCourseMutationOptions = Apollo.BaseMutationOptions<JoinOrLeaveCourseMutation, JoinOrLeaveCourseMutationVariables>;
 export const CreatePostDocument = gql`
-    mutation CreatePost($userId: ID!, $categoryId: ID!, $title: String!, $body: String!, $postType: String!) {
+    mutation CreatePost($userId: ID!, $categoryName: String!, $title: String!, $body: String!) {
   createPost(
     userId: $userId
-    categoryId: $categoryId
+    categoryName: $categoryName
     title: $title
     body: $body
-    postType: $postType
   ) {
     messages
   }
@@ -874,10 +917,9 @@ export type CreatePostMutationFn = Apollo.MutationFunction<CreatePostMutation, C
  * const [createPostMutation, { data, loading, error }] = useCreatePostMutation({
  *   variables: {
  *      userId: // value for 'userId'
- *      categoryId: // value for 'categoryId'
+ *      categoryName: // value for 'categoryName'
  *      title: // value for 'title'
  *      body: // value for 'body'
- *      postType: // value for 'postType'
  *   },
  * });
  */
@@ -1120,6 +1162,66 @@ export function useCategoryLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<C
 export type CategoryQueryHookResult = ReturnType<typeof useCategoryQuery>;
 export type CategoryLazyQueryHookResult = ReturnType<typeof useCategoryLazyQuery>;
 export type CategoryQueryResult = Apollo.QueryResult<CategoryQuery, CategoryQueryVariables>;
+export const GetCourseByIdDocument = gql`
+    query GetCourseById($id: ID!) {
+  getCourseById(id: $id) {
+    ... on EntityResult {
+      messages
+    }
+    ... on Course {
+      id
+      title
+      duration
+      description
+      image
+      startDate
+      endDate
+      totalStudents
+      teacher {
+        id
+        fullName
+        profileImage
+      }
+      createdOn
+      students {
+        id
+        user {
+          id
+          username
+        }
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetCourseByIdQuery__
+ *
+ * To run a query within a React component, call `useGetCourseByIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetCourseByIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetCourseByIdQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useGetCourseByIdQuery(baseOptions: Apollo.QueryHookOptions<GetCourseByIdQuery, GetCourseByIdQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetCourseByIdQuery, GetCourseByIdQueryVariables>(GetCourseByIdDocument, options);
+      }
+export function useGetCourseByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetCourseByIdQuery, GetCourseByIdQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetCourseByIdQuery, GetCourseByIdQueryVariables>(GetCourseByIdDocument, options);
+        }
+export type GetCourseByIdQueryHookResult = ReturnType<typeof useGetCourseByIdQuery>;
+export type GetCourseByIdLazyQueryHookResult = ReturnType<typeof useGetCourseByIdLazyQuery>;
+export type GetCourseByIdQueryResult = Apollo.QueryResult<GetCourseByIdQuery, GetCourseByIdQueryVariables>;
 export const MeDocument = gql`
     query Me {
   me {
@@ -1146,7 +1248,6 @@ export const MeDocument = gql`
         isDisabled
         title
         body
-        postType
         createdOn
         comments {
           id
@@ -1201,7 +1302,6 @@ export const GetLatestPostsDocument = gql`
         isDisabled
         title
         body
-        postType
         createdOn
         createdBy
         creator {

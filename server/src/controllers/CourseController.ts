@@ -1,6 +1,7 @@
 import { getRepository } from "typeorm";
 import { Category } from "../entities/Category";
 import { Course } from "../entities/Course";
+import { Note } from '../entities/Note';
 import { Student } from "../entities/Student";
 import { User } from "../entities/User";
 import { QueryArrayResult, QueryOneResult } from "./QuerryArrayResult";
@@ -25,7 +26,7 @@ export const createCourse = async (
     };
   }
 
-  const adminUser = await userRepository.findOne({
+  const teacher = await userRepository.findOne({
     id: userId,
   });
 
@@ -52,7 +53,7 @@ export const createCourse = async (
     image,
     startDate,
     endDate,
-    adminUser,
+    teacher,
     category,
   }).save();
 
@@ -71,11 +72,12 @@ export const createCourse = async (
 
 
 export const getLatestCourses = async (): Promise<QueryArrayResult<Course>> => {
-  const courses = await Course.createQueryBuilder("course")
-    .leftJoinAndSelect("course.category", "category")
-    .leftJoinAndSelect("course.adminUser", "adminUser")
-    .leftJoinAndSelect("course.students", "students")
-    .orderBy("course.createdOn", "DESC")
+  const courses = await Course.createQueryBuilder('course')
+    .leftJoinAndSelect('course.category', 'category')
+    .leftJoinAndSelect('course.teacher', 'teacher')
+    .leftJoinAndSelect('course.students', 'students')
+    .leftJoinAndSelect('course.notes', 'notes')
+    .orderBy('course.createdOn', 'DESC')
     .take(8)
     .getMany();
 
@@ -134,11 +136,32 @@ export const getStudentsByCourseId = async (
 export const getCourseById = async (
   id: string
 ): Promise<QueryOneResult<Course>> => {
-  const course = await Course.findOne({ id });
+  const course = await Course.findOne({
+    where: {
+      id,
+    },
+    relations: [
+      'teacher',
+      'notes',
+      'notes.teacher',
+      'notes.course',
+      'category',
+      'students',
+      'students.user',
+    ],
+  });
   if (!course) {
     return {
-      messages: ["Course not found."],
+      messages: ['Course not found.'],
     };
+  }
+
+  if (course.notes) {
+    course.notes.sort((a: Note, b: Note) => {
+      if (a.createdOn > b.createdOn) return -1;
+      if (a.createdOn < b.createdOn) return 1;
+      return 0;
+    });
   }
 
   return {

@@ -9,39 +9,52 @@ import {
   FormWrap,
   MainContainer,
   TitleInput,
-  Category,
+  Select,
   CategoryOptions,
-  BodyText,
+  // BodyText,
   ButtonContainer,
-  UploadWrapper,
-  UploadLabel,
+  // UploadWrapper,
+  // UploadLabel,
   BodyTextWrapper,
-  UploadInput,
+  // UploadInput,
   SubmitButton,
   CloseButton,
   Background,
+  EditorBodyText,
 } from "./modal.styles";
 import { AiFillCloseCircle } from "react-icons/ai";
 import { uploadBytes, ref, getDownloadURL } from "firebase/storage";
 import { storage } from "lib/admin"
-import { useCategoryQuery } from "generated/graphql";
-import { useAppDispatch } from "app/hooks";
+import { useCategoryQuery, useCreatePostMutation } from "generated/graphql";
+import { useAppDispatch, useAppSelector } from "app/hooks";
 import { setCategory } from "features/ui/reducers";
+import { isUser } from 'features/auth';
+import { EditorState, convertToRaw } from "draft-js";
+import draftToHtml from "draftjs-to-html";
+import ModalEditor from "./ModalEditor";
+
+
+
 
 type FormInput = {
-  title: string;
+  title: string
   category: string;
-  body?: string;
-  upload?: string;
+  body: string;
+  upload?: any;
 };
 
 
 export const Modal = ({ closeM, showModal, setShowModal, ...props }: any) => {
   const dispatch = useAppDispatch();
-
+  const [post] = useCreatePostMutation();
   const { data } = useCategoryQuery();
+  const { user: user } = useAppSelector(isUser);
+  const [editorState, setEditorState] = useState<EditorState>(
+    EditorState.createEmpty()
+  );
+  const [content, setContent] = useState<string>("");
   dispatch(setCategory(data?.getAllCategories));
-  // console.log(data?.getAllCategories);
+  console.log(user?.id);
   const categories = data?.getAllCategories as any;
   const {
     register,
@@ -83,23 +96,34 @@ export const Modal = ({ closeM, showModal, setShowModal, ...props }: any) => {
   }, [keyPress]);
 
 
-  const handleImageChange = (_name: string) => (event: { target: { files: {}[]; }; }) => {
-    upload = event.target.files[0];
-    setValue("upload", upload as any);
-  };
+  // const handleImageChange = (_name: string) => (event: { target: { files: {}[]; }; }) => {
+  //   upload = event.target.files[0];
+  //   setValue("upload", upload as any);
+  // };
 
-  const onSubmit = async (data: any) => {
-    const testingRef = ref(storage, `testing folder/${data.upload.name}`)
+
+  const onSubmit = async (info: FormInput) => {
+    setShowModal(false);
+    console.log(info);
+    const testingRef = ref(storage, `testing folder/${info.upload.name}`) || null;
     let url: string;
-    console.log(data.upload.name)
+    console.log(info.upload.name);
     try {
-      await uploadBytes(testingRef, data.upload).then(async () => {
-        url = await getDownloadURL(testingRef);
-        console.log(url);
+      await uploadBytes(testingRef, info?.upload).then(async () => {
+        url = await getDownloadURL(testingRef) || "";
+        const response = post({
+          variables: {
+            userId: user?.id as string,
+            categoryName: info.category,
+            title: info.title,
+            body: info.body || url,
+            postType: "",
+          },
+        });
+        console.log(response);
       });
     } catch (err) {
       console.log("");
-
     }
   };
   return (
@@ -123,38 +147,20 @@ export const Modal = ({ closeM, showModal, setShowModal, ...props }: any) => {
                       {...props}
                     />
                     {errors.title && <span>Title is required</span>}
-                    <Category
-                      {...register("category", { required: true })}
-                    >
+                    <Select {...register("category", { required: true })}>
                       <CategoryOptions>
                         Please select a category
                       </CategoryOptions>
                       {categories?.map(
-                        (
-                          c: {
-                            value:
-                              | string
-                              | number
-                              | readonly string[]
-                              | undefined;
-                            name:
-                              | boolean
-                              | React.ReactChild
-                              | React.ReactFragment
-                              | React.ReactPortal
-                              | null
-                              | undefined;
-                          },
-                          id: string
-                        ) => (
-                          <CategoryOptions key={id} value={c.value}>
+                        (c: { value: string; name: string; id: string }) => (
+                          <CategoryOptions key={c.id} value={c.value}>
                             {c.name}
                           </CategoryOptions>
                         )
                       )}
-                    </Category>
+                    </Select>
                     {errors.category && <span>Category is required</span>}
-                    <UploadWrapper>
+                    {/* <UploadWrapper>
                       <UploadLabel
                         {...props}
                         htmlFor="file-input"
@@ -166,13 +172,25 @@ export const Modal = ({ closeM, showModal, setShowModal, ...props }: any) => {
                         type="file"
                         name="upload"
                       />
-                    </UploadWrapper>
+                    </UploadWrapper> */}
                     <BodyTextWrapper>
-                      <BodyText
+                      {/* <BodyText
                         {...props}
                         {...register("body")}
                         placeholder="write something...."
-                      ></BodyText>
+                      ></BodyText> */}
+                      <ModalEditor
+                        editorState={editorState}
+                        onEditorStateChange={(newState: EditorState) => {
+                          setEditorState(newState);
+                          setContent(
+                            draftToHtml(
+                              convertToRaw(newState.getCurrentContent())
+                            )
+                          );
+                          setValue("body", content);
+                        }}
+                      />
                     </BodyTextWrapper>
                   </InputContainer>
                   <ButtonContainer>
