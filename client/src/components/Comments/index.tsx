@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useForm } from "react-hook-form";
+import { useRouter } from "next/router";
 // import ReactiveButton from "reactive-button";
 import {
   NewCommentDocument,
@@ -8,9 +9,14 @@ import {
   User,
 } from "generated/graphql";
 
-// import { EditorState, convertToRaw } from "draft-js";
-// import draftToHtml from "draftjs-to-html";
-// import {PostEditor} from "../Editor"
+import { EditorState, convertToRaw } from "draft-js";
+import draftToHtml from "draftjs-to-html";
+import {PostEditor} from "../Editor"
+import {
+  PostDropdown,
+  UserName,
+} from "components/Dashboard/Forum/forum.styles";
+import { SubmitButton } from "components/ShareForm/modal.styles";
 
 import {
   CommentHorizontalRule,
@@ -22,10 +28,10 @@ import {
   CommentDate,
   CommentTopRightWrap,
   ExpandIcon,
-  CommentInput,
-  CommentInputWrap,
-  ImageAndUserNameWrap,
-  CommentInputButton,
+  // CommentInput,
+  // CommentInputWrap,
+  // ImageAndUserNameWrap,
+  // CommentInputButton,
   // CommentInputButton,
 } from "./comment.styles";
 import dayjs from "dayjs";
@@ -50,40 +56,46 @@ type userComment = {
   user: User
 };
 
-const Comment = ({ showComments, postId, ...props }: any) => {
+const Comment = ({ showComments, ...props }: any) => {
+  const router = useRouter();
+  const { slug } = router.query;
   const [newComment] = useCreateCommentMutation();
   const { user: user } = useAppSelector(isUser);
-  const [showDropdown, setShowDropdown] = useState(false);
-  // const [state, setState] = useState("idle");
+  const [showDropdown, setShowDropdown] = useState(0);
+  const [editorState, setEditorState] = useState<EditorState>(
+    EditorState.createEmpty()
+  );
+  const [content, setContent] = useState<string>("");
   const {
-    register,
+    setValue,
     handleSubmit,
     formState: { errors },
   } = useForm<FormInput>();
   useEffect(() => {
     subscribeToMore({
       document: NewCommentDocument,
-      variables: { postID: postId },
+      variables: { postID: slug },
       updateQuery: (prev, { subscriptionData }) => {
         if (!subscriptionData.data) return prev;
         const newCommentItem: userComment = subscriptionData.data.newComment;
-        const trying: any = (prevArray: userComment[]) => {
+        const newArrayItem: any = (prevArray: userComment[]) => {
           return [newCommentItem, ...prevArray];
         };
-        setComArray(trying);
+        setComArray(newArrayItem);
       },
     });
   }, []);
   
-  const {subscribeToMore,  ...result } = useQuery(GetCommentsByPostIdDocument, {
+  const { subscribeToMore, ...result } = useQuery(GetCommentsByPostIdDocument, {
     variables: {
-      postId,
+      postId: slug,
     },
   });
+
   const comments = result.data?.getCommentsByPostId.comments;
   const [comArray, setComArray] = useState([]);
   // console.log(comArray);
-  // console.log(comments)
+  // console.log(result.data);
   const me: string | undefined | any = user?.id
 
 
@@ -109,14 +121,14 @@ const Comment = ({ showComments, postId, ...props }: any) => {
       const response = await newComment({
         variables: {
           userId: me,
-          postId,
+          postId: slug as string,
           body,
         },
       });
       
       if (response.data?.createComment) {
 
-        console.log(comArray);
+        console.log(response.data?.createComment);
       } 
     } catch (ex) {
       console.log(ex);
@@ -124,28 +136,19 @@ const Comment = ({ showComments, postId, ...props }: any) => {
     }
   };
 
+  const toggleDropdown = (id: number) => {
+    if (id === showDropdown) {
+      setShowDropdown(0);
+    } else {
+      setShowDropdown(id);
+    }
+  };
+
   return (
     <>
       {showComments ? (
-        <div showComments={showComments} postId={postId} {...props}>
+        <div showComments={showComments} {...props}>
           <CommentHorizontalRule />
-          <CommentInputWrap onSubmit={handleSubmit(onSubmit)}>
-            <CommentInput
-              placeholder="comment...."
-              {...register("body", { required: true })}
-              type="text"
-              name="body"
-              {...props}
-            />
-            {errors.body && <span>text is required</span>}
-            {/* <ReactiveButton
-              type="submit"
-              buttonState={state}
-              onClick={onClickHandler}
-              {...props}
-            /> */}
-            <CommentInputButton type="submit">send</CommentInputButton>
-          </CommentInputWrap>
           <CommentCard>
             {result.error ||
               !comments ||
@@ -165,28 +168,46 @@ const Comment = ({ showComments, postId, ...props }: any) => {
                     <>
                       <CommentWrapper key={id}>
                         <CommentLeftWrap>
-                          <ImageAndUserNameWrap>
-                            <UserProfileImge
-                              alt="sender profile image"
-                              src={user?.profileImage}
-                            />
-                          </ImageAndUserNameWrap>
-                          <span>{createdBy}</span>
-                          <CommentText>{body}</CommentText>
-                          <CommentDate>
-                            {dayjs(createdOn).fromNow()}
-                          </CommentDate>
+                          <UserProfileImge
+                            alt="sender profile image"
+                            src={user?.profileImage}
+                          />
+                          <CommentText>
+                            <UserName>{createdBy}</UserName>
+                            <CommentDate>
+                              {dayjs(createdOn).fromNow()}
+                            </CommentDate>
+                            {body}
+                          </CommentText>
                         </CommentLeftWrap>
                         <CommentTopRightWrap>
-                          <ExpandIcon
-                            onClick={() => setShowDropdown(!showDropdown)}
-                          />
+                          <PostDropdown>
+                            <ExpandIcon onClick={() => toggleDropdown(id)} />
+                            <Dropdown
+                              onClick={() => toggleDropdown(id)}
+                              showDropdown={showDropdown === id}
+                            />
+                          </PostDropdown>
                         </CommentTopRightWrap>
                       </CommentWrapper>
-                      <Dropdown showDropdown={showDropdown} />
                     </>
                   )
                 )}
+            <form onSubmit={handleSubmit(onSubmit)}>
+              {errors.body && <span>text is required</span>}
+              <PostEditor
+                editorState={editorState}
+                onEditorStateChange={(newState: EditorState) => {
+                  setEditorState(newState);
+                  setContent(
+                    draftToHtml(convertToRaw(newState.getCurrentContent()))
+                  );
+                  setValue("body", content);
+                }}
+              />
+              <br />
+              <SubmitButton type="submit">Submit</SubmitButton>
+            </form>
           </CommentCard>
         </div>
       ) : null}

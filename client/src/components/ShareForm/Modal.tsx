@@ -20,7 +20,7 @@ import {
   SubmitButton,
   CloseButton,
   Background,
-  EditorBodyText,
+  // EditorBodyText,
 } from "./modal.styles";
 import { AiFillCloseCircle } from "react-icons/ai";
 import { uploadBytes, ref, getDownloadURL } from "firebase/storage";
@@ -63,7 +63,7 @@ export const Modal = ({ closeM, showModal, setShowModal, ...props }: any) => {
     formState: { errors },
   } = useForm<FormInput>();
 
-  let [upload,] = useState({});
+  // let [upload,] = useState({});
 
   const modalRef = useRef();
   const animation = useSpring({
@@ -117,7 +117,7 @@ export const Modal = ({ closeM, showModal, setShowModal, ...props }: any) => {
             categoryName: info.category,
             title: info.title,
             body: info.body || url,
-            postType: "",
+            // postType: "",
           },
         });
         console.log(response);

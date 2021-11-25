@@ -29,14 +29,14 @@ const LeftSideBar = () => {
   }
   return (
     <>
-      <ToggleButton
-        onClick={() => setMenuState(!menuState)}
-        className="toggleMenu"
-      >
+      <ToggleButton onClick={() => setMenuState(true)} className="toggleMenu">
         <span></span>
         <span></span>
         <span></span>
       </ToggleButton>
+      {menuState && (
+        <BackOverlay onClick={() => setMenuState(false)} className="" />
+      )}
       <LeftSideContainer className={menuState ? "open" : ""}>
         <LeftSideBarWrapper>
           <LeftSideBarListItem>

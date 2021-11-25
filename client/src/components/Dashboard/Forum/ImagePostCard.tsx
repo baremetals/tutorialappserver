@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Link from "next/link";
 import {
   PostTop,
   PostLeftWrap,
@@ -9,22 +10,21 @@ import {
   ExpandIcon,
   PostCenterWrap,
   PostText,
-  PostMediaImage,
   PostBottomWrapper,
   BottomLeftWrap,
   LikeIcon,
   LikeCounter,
   BottomRightWrap,
-  CommentIcon,
-  CommentText,
   ForumWrapper,
-  ForumContainer,
+  PostDropdown,
+  LikeGroup,
+  ViewMore,
+  PostTitle,
   // DropAndCenterWrap,
 } from "./forum.styles";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 dayjs.extend(relativeTime);
-import  Comment  from "../../Comments"
 import Dropdown from "../../Dropdown"
 
 interface ForumPost {
@@ -49,42 +49,46 @@ const ImagePostCard = ({
   commentCount = 0,
   postId,
 }: ForumPost) => {
-  const [showComments, setShowComments] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
 
   return (
     <>
-      <ForumContainer>
-        <ForumWrapper>
-          <PostTop>
-            <PostLeftWrap>
-              <PostProfileImge src={image} alt="user profile image" />
-              <UserName>{username}</UserName>
+      <ForumWrapper>
+        <PostTop>
+          <PostLeftWrap>
+            <PostProfileImge src={image} alt="user profile image" />
+            <UserName>
+              {username}
               <PostDate>{dayjs(date).fromNow()}</PostDate>
-            </PostLeftWrap>
-            <PostTopRightWrap>
+            </UserName>
+          </PostLeftWrap>
+          <PostTopRightWrap>
+            <PostDropdown>
               <ExpandIcon onClick={() => setShowDropdown(!showDropdown)} />
-            </PostTopRightWrap>
-          </PostTop>
-          <Dropdown showDropdown={showDropdown} />
-          <PostCenterWrap>
-            <PostText>{title}</PostText>
-            <PostMediaImage alt="Post image" src={body} />
-          </PostCenterWrap>
-
-          <PostBottomWrapper>
-            <BottomLeftWrap>
+              <Dropdown showDropdown={showDropdown} />
+            </PostDropdown>
+          </PostTopRightWrap>
+        </PostTop>
+        <PostCenterWrap>
+          <PostTitle>{title}</PostTitle>
+        </PostCenterWrap>
+        <PostCenterWrap>
+          <PostText>{body}</PostText>
+        </PostCenterWrap>
+        <PostBottomWrapper>
+          <BottomLeftWrap>
+            <LikeGroup>
               <LikeIcon />
-              <LikeCounter>{likeCount} people liked your post</LikeCounter>
-            </BottomLeftWrap>
-            <BottomRightWrap>
-              <CommentIcon onClick={() => setShowComments(!showComments)} />
-              <CommentText>{commentCount}</CommentText>
-            </BottomRightWrap>
-          </PostBottomWrapper>
-        </ForumWrapper>
-        <Comment showComments={showComments} postId={postId} />
-      </ForumContainer>
+              <LikeCounter>{likeCount} </LikeCounter>
+            </LikeGroup>
+          </BottomLeftWrap>
+          <BottomRightWrap>
+            <Link href={`/forum/${postId}`}>
+              <ViewMore>View more</ViewMore>
+            </Link>
+          </BottomRightWrap>
+        </PostBottomWrapper>
+      </ForumWrapper>
     </>
   );
 };

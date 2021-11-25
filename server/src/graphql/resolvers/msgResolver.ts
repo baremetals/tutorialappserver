@@ -40,20 +40,20 @@ const messageResolver = {
     getMessagesByUserId: async (
       _obj: any,
       _args: null,
-      _ctx: GqlContext,
+      ctx: GqlContext,
       _info: any
     ): Promise<{ msgs: Array<Message> } | EntityResult> => {
       let msgs: QueryArrayResult<Message>;
       try {
-        // if (!ctx.req.session || !ctx.req.session?.userId) {
-        //   return {
-        //     messages: 'You must be logged in to join this course.',
-        //   };
-        // }
+        if (!ctx.req.session || !ctx.req.session?.userId) {
+          return {
+            messages: 'You must be logged in to join this course.',
+          };
+        }
 
-        const userId = '44';
-        msgs = await getMessagesByUserId(userId);
-        // msgs = await getMessagesByUserId(ctx.req.session!.userId);
+        // const userId = '44';
+        // msgs = await getMessagesByUserId(userId);
+        msgs = await getMessagesByUserId(ctx.req.session!.userId);
         if (msgs.entities) {
           return {
             msgs: msgs.entities,

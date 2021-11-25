@@ -1,22 +1,28 @@
-import React from 'react'
+import React from "react";
 import TopBar from "../Dashboard/TopBar";
 import LeftSideBar from "../Dashboard/LeftSideBar";
 import SmallFooter from "../Dashboard/SmallFooter";
-import Share from "../Dashboard/Share"; 
+import Share from "../Dashboard/Share";
+import styled from "styled-components";
+
 
 import {
   PageContainer,
   InnerContainer,
   PageRightSide,
   PageHeading,
+  ForumRow,
+  ForumFilter,
+  ForumFilterSortBy,
+  SelectCategory,
+  CategoryOption,
+  FilterSearch,
 } from "../../styles/common.styles";
-import ImagePostCard from 'components/Dashboard/Forum/ImagePostCard';
-import VideoPostCard from 'components/Dashboard/Forum/VideoPostCard';
-import TextPostCard from 'components/Dashboard/Forum/TextPostCard';
+import ImagePostCard from "components/Dashboard/Forum/ImagePostCard";
 
-const ForumPage = ({...props}: any) => {
 
-  const postData = props.props
+const ForumPage = ({ ...props }: any) => {
+  const postData = props.props;
   // console.log(postData)
   return (
     <>
@@ -26,54 +32,40 @@ const ForumPage = ({...props}: any) => {
         <InnerContainer>
           <PageHeading>Forum</PageHeading>
           <Share />
-          {!postData ? (
-            <div>loading...</div>
-          ) : (
-            postData.map((post: any, id: string) =>
-              !post
-                ? null
-                : (post.postType === "text" && (
-                    <TextPostCard
-                      key={id}
-                      username={post.creator.username}
-                      image="/D.jpg"
-                      date={post.createdOn}
-                      title={post.title}
-                      body={post.body}
-                      likeCount={post.points}
-                      commentCount={12}
-                      postId={post.id}
-                    />
-                  )) ||
-                  (post.postType === "video" && (
-                    <VideoPostCard
-                      key={id}
-                      username={post.creator.username}
-                      image="/D.jpg"
-                      date={post.createdOn}
-                      title={post.title}
-                      body={post.body}
-                      likeCount={post.points}
-                      commentCount={10}
-                      viewCount={post.views}
-                      postId={post.id}
-                    />
-                  )) ||
-                  (post.postType === "image" && (
+          <ForumRow>
+            <ForumFilter>
+              <ForumFilterSortBy>
+                <SelectCategory>
+                  <CategoryOption>Category 01</CategoryOption>
+                  <CategoryOption>Category 02</CategoryOption>
+                  <CategoryOption>Category 03</CategoryOption>
+                  <CategoryOption>Category 04</CategoryOption>
+                </SelectCategory>
+              </ForumFilterSortBy>
+              <FilterSearch placeholder="Search"></FilterSearch>
+            </ForumFilter>
+            {!postData ? (
+              <div>loading...</div>
+            ) : (
+              postData.map((post: any, id: string) =>
+                !post ? null : (
+                  <ForumContainer>
                     <ImagePostCard
                       key={id}
                       username={post.creator.username}
                       image="/D.jpg"
                       date={post.createdOn}
                       title={post.title}
-                      body={post.body}
+                      body={post.category.name}
                       likeCount={post.points}
-                      commentCount={78}
+                      commentCount={12}
                       postId={post.id}
                     />
-                  ))
-            )
-          )}
+                  </ForumContainer>
+                )
+              )
+            )}
+          </ForumRow>
         </InnerContainer>
         <PageRightSide>Live Forever Young</PageRightSide>
       </PageContainer>
@@ -82,5 +74,15 @@ const ForumPage = ({...props}: any) => {
   );
 };
 
-export default ForumPage
+export default ForumPage;
 
+export const ForumContainer = styled.div`
+  width: 33.33%;
+  padding: 0.5rem;
+  @media (max-width: 1366px) {
+    width: 50%;
+  }
+  @media (max-width: 575px) {
+    width: 100%;
+  }
+`;

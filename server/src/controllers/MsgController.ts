@@ -26,3 +26,71 @@ export const getMessagesByUserId = async (
     entities: msgs,
   };
 };
+
+// export const createNotification = async (
+//   userId: string | undefined | null,
+//   ownerId: string | undefined | null,
+//   entityId: string,
+//   body: string
+// ): Promise<MsgResult> => {
+//   const userRepository = getRepository(User);
+//   const bodyMsg = isPostBodyValid(body);
+//   if (bodyMsg) {
+//     return {
+//       messages: [bodyMsg],
+//     };
+//   }
+//   if (!userId) {
+//     return {
+//       messages: ['User not logged in.'],
+//     };
+//   }
+//   const user = await userRepository.findOne({
+//     id: userId,
+//   });
+//   // console.log(user?.username);
+
+//   const post = await Post.findOne({
+//     id: postId,
+//   });
+//   const postOwner = await userRepository.findOne({
+//     where: { id: ownerId },
+//   });
+//   if (!post) {
+//     return {
+//       messages: ['Postnot found.'],
+//     };
+//   }
+//   const notice = await Message.create({
+//     from: user?.username,
+//     image: user?.profileImage,
+//     title: 'new comment',
+//     body, // `${user?.username} commented on your post`,
+//     type: 'NEW_COMMENT',
+//     user: postOwner,
+//   }).save();
+
+//   if (!notice) {
+//     return {
+//       messages: ['Failed to create Notification.'],
+//     };
+//   }
+
+//   pubsub.publish(NEW_MESSAGE, {
+//     newMessage: {
+//       id: notice.id,
+//       from: user?.username,
+//       image: user?.profileImage,
+//       title: 'new comment',
+//       body: notice.body,
+//       createdBy: notice.createdBy,
+//       createdOn: notice.createdOn,
+//       user,
+//     },
+//   });
+
+//   return {
+//     comment: comment,
+//     messages: ['Comment created successfully.'],
+//   };
+// };

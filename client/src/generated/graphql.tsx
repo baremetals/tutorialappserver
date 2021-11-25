@@ -61,6 +61,50 @@ export type CategoryPost = {
   titleCreatedOn: Scalars['Date'];
 };
 
+export type Chat = {
+  __typename?: 'Chat';
+  chatMsgs?: Maybe<Array<ChatMsg>>;
+  createdBy: Scalars['String'];
+  createdOn: Scalars['Date'];
+  id: Scalars['ID'];
+  lastModifiedBy: Scalars['String'];
+  lastModifiedOn: Scalars['Date'];
+  owner: User;
+  recipient: User;
+};
+
+export type ChatArray = {
+  __typename?: 'ChatArray';
+  chats?: Maybe<Array<Chat>>;
+};
+
+export type ChatArrayResult = ChatArray | EntityResult;
+
+export type ChatMsg = {
+  __typename?: 'ChatMsg';
+  body: Scalars['String'];
+  chat: Chat;
+  createdBy: Scalars['String'];
+  createdOn: Scalars['Date'];
+  id: Scalars['ID'];
+  isRead: Scalars['Boolean'];
+  lastModifiedBy: Scalars['String'];
+  lastModifiedOn: Scalars['Date'];
+  receiver: User;
+  sender: User;
+};
+
+export type ChatMsgArray = {
+  __typename?: 'ChatMsgArray';
+  chatMsgs?: Maybe<Array<ChatMsg>>;
+};
+
+export type ChatMsgArrayResult = ChatMsgArray | EntityResult;
+
+export type ChatMsgResult = ChatMsg | EntityResult;
+
+export type ChatResult = Chat | EntityResult;
+
 export type Comment = {
   __typename?: 'Comment';
   body: Scalars['String'];
@@ -141,6 +185,13 @@ export type Message = {
   user: User;
 };
 
+export type MessageArray = {
+  __typename?: 'MessageArray';
+  msgs?: Maybe<Array<Message>>;
+};
+
+export type MessageArrayResult = EntityResult | MessageArray;
+
 export type MsgResult = EntityResult | Message;
 
 export type Mutation = {
@@ -148,6 +199,7 @@ export type Mutation = {
   activateAccount: MsgResult;
   addABook: EntityResult;
   changePassword: Scalars['String'];
+  createChatMessage?: Maybe<EntityResult>;
   createComment: CommentResult;
   createCourse: EntityResult;
   createPost: EntityResult;
@@ -160,6 +212,7 @@ export type Mutation = {
   newNoteComment: EntityResult;
   register: Scalars['String'];
   resetPassword: Scalars['String'];
+  respondToChatMessage?: Maybe<ChatMsgResult>;
   updatePostPoint: MsgResult;
 };
 
@@ -183,6 +236,13 @@ export type MutationAddABookArgs = {
 
 export type MutationChangePasswordArgs = {
   newPassword: Scalars['String'];
+};
+
+
+export type MutationCreateChatMessageArgs = {
+  body: Scalars['String'];
+  ownerUserId: Scalars['String'];
+  recipientUserId: Scalars['String'];
 };
 
 
@@ -273,6 +333,13 @@ export type MutationResetPasswordArgs = {
 };
 
 
+export type MutationRespondToChatMessageArgs = {
+  body: Scalars['String'];
+  chatId: Scalars['String'];
+  senderUserId: Scalars['String'];
+};
+
+
 export type MutationUpdatePostPointArgs = {
   increment: Scalars['Boolean'];
   postId: Scalars['ID'];
@@ -355,8 +422,12 @@ export type PostResult = EntityResult | Post;
 export type Query = {
   __typename?: 'Query';
   getAllCategories?: Maybe<Array<Category>>;
+  getAllChatMsgs: ChatMsgArrayResult;
+  getAllChats: ChatArrayResult;
   getBooks: BookArrayResult;
   getBooksByCategoryId: BookArrayResult;
+  getChatMessagesByChatId: ChatMsgArrayResult;
+  getChatMessagesByUserId: ChatArrayResult;
   getCommentsByCourseId: CommentArrayResult;
   getCommentsByNoteId: CommentArrayResult;
   getCommentsByPostId: CommentArrayResult;
@@ -364,6 +435,7 @@ export type Query = {
   getCoursesByCategoryId: CourseArrayResult;
   getLatestCourses: CourseArrayResult;
   getLatestPosts: PostArrayResult;
+  getMessagesByUserId: MessageArrayResult;
   getNotesByCourseId: NoteArrayResult;
   getPostById?: Maybe<PostResult>;
   getPostsByCategoryId: PostArrayResult;
@@ -375,6 +447,11 @@ export type Query = {
 
 export type QueryGetBooksByCategoryIdArgs = {
   categoryId: Scalars['ID'];
+};
+
+
+export type QueryGetChatMessagesByChatIdArgs = {
+  chatId: Scalars['ID'];
 };
 
 
@@ -431,7 +508,7 @@ export type Student = {
   id: Scalars['ID'];
   lastModifiedBy: Scalars['String'];
   lastModifiedOn: Scalars['Date'];
-  user?: Maybe<Array<User>>;
+  user: User;
 };
 
 export type StudentArray = {
@@ -444,8 +521,10 @@ export type StudentArrayResult = EntityResult | StudentArray;
 export type Subscription = {
   __typename?: 'Subscription';
   accountActivated: Message;
+  newChat: Chat;
+  newChatMessage: ChatMsg;
   newComment: Comment;
-  newLike: Message;
+  newMessage: Message;
 };
 
 export type User = {
@@ -560,6 +639,28 @@ export type GetBooksQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type GetBooksQuery = { __typename?: 'Query', getBooks: { __typename?: 'BookArray', books?: Array<{ __typename?: 'Book', id: string, title: string, description: string, image: string, author: string, link: string, category: { __typename?: 'Category', name: string } }> | null | undefined } | { __typename?: 'EntityResult', messages?: Array<string> | null | undefined } };
 
+export type GetLatestCoursesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetLatestCoursesQuery = { __typename?: 'Query', getLatestCourses: { __typename?: 'CourseArray', courses?: Array<{ __typename?: 'Course', id: string, title: string, duration: string, description: string, image: string, startDate: string, endDate: string, category: { __typename?: 'Category', name: string } }> | null | undefined } | { __typename?: 'EntityResult', messages?: Array<string> | null | undefined } };
+
+export type GetCourseByIdQueryVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type GetCourseByIdQuery = { __typename?: 'Query', getCourseById: { __typename?: 'Course', id: string, title: string, duration: string, description: string, image: string, startDate: string, endDate: string, totalStudents: number, createdOn: any, teacher: { __typename?: 'User', id: string, fullName: string, profileImage: string }, students?: Array<{ __typename?: 'Student', id: string, user: { __typename?: 'User', id: string, username: string } }> | null | undefined } | { __typename?: 'EntityResult', messages?: Array<string> | null | undefined } };
+
+export type CategoryQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type CategoryQuery = { __typename?: 'Query', getAllCategories?: Array<{ __typename?: 'Category', id: string, name: string, description?: string | null | undefined }> | null | undefined };
+
+export type GetMessagesByUserIdQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetMessagesByUserIdQuery = { __typename?: 'Query', getMessagesByUserId: { __typename?: 'EntityResult', messages?: Array<string> | null | undefined } | { __typename?: 'MessageArray', msgs?: Array<{ __typename?: 'Message', id: string, from: string, image: string, isRead: boolean, title: string, body: string, type: string, createdOn: any }> | null | undefined } };
+
 export type GetCommentsByPostIdQueryVariables = Exact<{
   postId: Scalars['ID'];
 }>;
@@ -567,37 +668,25 @@ export type GetCommentsByPostIdQueryVariables = Exact<{
 
 export type GetCommentsByPostIdQuery = { __typename?: 'Query', getCommentsByPostId: { __typename?: 'CommentArray', comments?: Array<{ __typename?: 'Comment', id: string, body: string, isDisabled: boolean, createdOn: any, createdBy: string, user: { __typename?: 'User', id: string, username: string, profileImage: string } }> | null | undefined } | { __typename?: 'EntityResult', messages?: Array<string> | null | undefined } };
 
-export type GetLatestCoursesQueryVariables = Exact<{ [key: string]: never; }>;
+export type GetLatestPostsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetLatestCoursesQuery = { __typename?: 'Query', getLatestCourses: { __typename?: 'CourseArray', courses?: Array<{ __typename?: 'Course', id: string, title: string, duration: string, description: string, image: string, startDate: string, endDate: string, category: { __typename?: 'Category', name: string } }> | null | undefined } | { __typename?: 'EntityResult', messages?: Array<string> | null | undefined } };
-
-export type CategoryQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type CategoryQuery = { __typename?: 'Query', getAllCategories?: Array<{ __typename?: 'Category', id: string, name: string, description?: string | null | undefined }> | null | undefined };
-
-export type GetCourseByIdQueryVariables = Exact<{
-  id: Scalars['ID'];
-}>;
-
-
-export type GetCourseByIdQuery = { __typename?: 'Query', getCourseById: { __typename?: 'Course', id: string, title: string, duration: string, description: string, image: string, startDate: string, endDate: string, totalStudents: number, createdOn: any, teacher: { __typename?: 'User', id: string, fullName: string, profileImage: string }, students?: Array<{ __typename?: 'Student', id: string, user?: Array<{ __typename?: 'User', id: string, username: string }> | null | undefined }> | null | undefined } | { __typename?: 'EntityResult', messages?: Array<string> | null | undefined } };
+export type GetLatestPostsQuery = { __typename?: 'Query', getLatestPosts: { __typename?: 'EntityResult', messages?: Array<string> | null | undefined } | { __typename?: 'PostArray', posts?: Array<{ __typename?: 'Post', id: string, views: number, points: number, isDisabled: boolean, title: string, body: string, createdOn: any, createdBy: string, creator: { __typename?: 'User', id: string, username: string }, category: { __typename?: 'Category', id: string, name: string }, comments?: Array<{ __typename?: 'Comment', id: string, body: string, createdBy: string, createdOn: any }> | null | undefined }> | null | undefined } };
 
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type MeQuery = { __typename?: 'Query', me: { __typename?: 'EntityResult', messages?: Array<string> | null | undefined } | { __typename?: 'User', id: string, username: string, fullName: string, confirmed: boolean, profileImage: string, backgroundImg: string, isDisabled: boolean, createdOn: any, groups?: Array<{ __typename?: 'Group', id: string, codename: string }> | null | undefined, posts?: Array<{ __typename?: 'Post', id: string, views: number, points: number, isDisabled: boolean, title: string, body: string, createdOn: any, comments?: Array<{ __typename?: 'Comment', id: string, body: string, isDisabled: boolean, createdOn: any, createdBy: string }> | null | undefined }> | null | undefined } };
 
-export type GetLatestPostsQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type GetLatestPostsQuery = { __typename?: 'Query', getLatestPosts: { __typename?: 'EntityResult', messages?: Array<string> | null | undefined } | { __typename?: 'PostArray', posts?: Array<{ __typename?: 'Post', id: string, views: number, points: number, isDisabled: boolean, title: string, body: string, createdOn: any, createdBy: string, creator: { __typename?: 'User', id: string, username: string }, category: { __typename?: 'Category', id: string, name: string }, comments?: Array<{ __typename?: 'Comment', id: string, body: string, createdBy: string, createdOn: any }> | null | undefined }> | null | undefined } };
-
 export type NewCommentSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
 
 export type NewCommentSubscription = { __typename?: 'Subscription', newComment: { __typename?: 'Comment', id: string, body: string, createdBy: string, isDisabled: boolean, createdOn: any, user: { __typename?: 'User', id: string, username: string, profileImage: string } } };
+
+export type NewMessageSubscriptionVariables = Exact<{ [key: string]: never; }>;
+
+
+export type NewMessageSubscription = { __typename?: 'Subscription', newMessage: { __typename?: 'Message', id: string, from: string, image: string, isRead: boolean, title: string, body: string, type: string, createdOn: any, user: { __typename?: 'User', id: string, username: string, profileImage: string } } };
 
 
 export const ActivateAccountDocument = gql`
@@ -1025,57 +1114,6 @@ export function useGetBooksLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<G
 export type GetBooksQueryHookResult = ReturnType<typeof useGetBooksQuery>;
 export type GetBooksLazyQueryHookResult = ReturnType<typeof useGetBooksLazyQuery>;
 export type GetBooksQueryResult = Apollo.QueryResult<GetBooksQuery, GetBooksQueryVariables>;
-export const GetCommentsByPostIdDocument = gql`
-    query GetCommentsByPostId($postId: ID!) {
-  getCommentsByPostId(postId: $postId) {
-    ... on CommentArray {
-      comments {
-        id
-        body
-        isDisabled
-        createdOn
-        createdBy
-        user {
-          id
-          username
-          profileImage
-        }
-      }
-    }
-    ... on EntityResult {
-      messages
-    }
-  }
-}
-    `;
-
-/**
- * __useGetCommentsByPostIdQuery__
- *
- * To run a query within a React component, call `useGetCommentsByPostIdQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetCommentsByPostIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetCommentsByPostIdQuery({
- *   variables: {
- *      postId: // value for 'postId'
- *   },
- * });
- */
-export function useGetCommentsByPostIdQuery(baseOptions: Apollo.QueryHookOptions<GetCommentsByPostIdQuery, GetCommentsByPostIdQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetCommentsByPostIdQuery, GetCommentsByPostIdQueryVariables>(GetCommentsByPostIdDocument, options);
-      }
-export function useGetCommentsByPostIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetCommentsByPostIdQuery, GetCommentsByPostIdQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetCommentsByPostIdQuery, GetCommentsByPostIdQueryVariables>(GetCommentsByPostIdDocument, options);
-        }
-export type GetCommentsByPostIdQueryHookResult = ReturnType<typeof useGetCommentsByPostIdQuery>;
-export type GetCommentsByPostIdLazyQueryHookResult = ReturnType<typeof useGetCommentsByPostIdLazyQuery>;
-export type GetCommentsByPostIdQueryResult = Apollo.QueryResult<GetCommentsByPostIdQuery, GetCommentsByPostIdQueryVariables>;
 export const GetLatestCoursesDocument = gql`
     query GetLatestCourses {
   getLatestCourses {
@@ -1126,42 +1164,6 @@ export function useGetLatestCoursesLazyQuery(baseOptions?: Apollo.LazyQueryHookO
 export type GetLatestCoursesQueryHookResult = ReturnType<typeof useGetLatestCoursesQuery>;
 export type GetLatestCoursesLazyQueryHookResult = ReturnType<typeof useGetLatestCoursesLazyQuery>;
 export type GetLatestCoursesQueryResult = Apollo.QueryResult<GetLatestCoursesQuery, GetLatestCoursesQueryVariables>;
-export const CategoryDocument = gql`
-    query Category {
-  getAllCategories {
-    id
-    name
-    description
-  }
-}
-    `;
-
-/**
- * __useCategoryQuery__
- *
- * To run a query within a React component, call `useCategoryQuery` and pass it any options that fit your needs.
- * When your component renders, `useCategoryQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useCategoryQuery({
- *   variables: {
- *   },
- * });
- */
-export function useCategoryQuery(baseOptions?: Apollo.QueryHookOptions<CategoryQuery, CategoryQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<CategoryQuery, CategoryQueryVariables>(CategoryDocument, options);
-      }
-export function useCategoryLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CategoryQuery, CategoryQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<CategoryQuery, CategoryQueryVariables>(CategoryDocument, options);
-        }
-export type CategoryQueryHookResult = ReturnType<typeof useCategoryQuery>;
-export type CategoryLazyQueryHookResult = ReturnType<typeof useCategoryLazyQuery>;
-export type CategoryQueryResult = Apollo.QueryResult<CategoryQuery, CategoryQueryVariables>;
 export const GetCourseByIdDocument = gql`
     query GetCourseById($id: ID!) {
   getCourseById(id: $id) {
@@ -1222,6 +1224,203 @@ export function useGetCourseByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOpti
 export type GetCourseByIdQueryHookResult = ReturnType<typeof useGetCourseByIdQuery>;
 export type GetCourseByIdLazyQueryHookResult = ReturnType<typeof useGetCourseByIdLazyQuery>;
 export type GetCourseByIdQueryResult = Apollo.QueryResult<GetCourseByIdQuery, GetCourseByIdQueryVariables>;
+export const CategoryDocument = gql`
+    query Category {
+  getAllCategories {
+    id
+    name
+    description
+  }
+}
+    `;
+
+/**
+ * __useCategoryQuery__
+ *
+ * To run a query within a React component, call `useCategoryQuery` and pass it any options that fit your needs.
+ * When your component renders, `useCategoryQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useCategoryQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useCategoryQuery(baseOptions?: Apollo.QueryHookOptions<CategoryQuery, CategoryQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<CategoryQuery, CategoryQueryVariables>(CategoryDocument, options);
+      }
+export function useCategoryLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CategoryQuery, CategoryQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<CategoryQuery, CategoryQueryVariables>(CategoryDocument, options);
+        }
+export type CategoryQueryHookResult = ReturnType<typeof useCategoryQuery>;
+export type CategoryLazyQueryHookResult = ReturnType<typeof useCategoryLazyQuery>;
+export type CategoryQueryResult = Apollo.QueryResult<CategoryQuery, CategoryQueryVariables>;
+export const GetMessagesByUserIdDocument = gql`
+    query GetMessagesByUserId {
+  getMessagesByUserId {
+    ... on EntityResult {
+      messages
+    }
+    ... on MessageArray {
+      msgs {
+        id
+        from
+        image
+        isRead
+        title
+        body
+        type
+        createdOn
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetMessagesByUserIdQuery__
+ *
+ * To run a query within a React component, call `useGetMessagesByUserIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetMessagesByUserIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetMessagesByUserIdQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetMessagesByUserIdQuery(baseOptions?: Apollo.QueryHookOptions<GetMessagesByUserIdQuery, GetMessagesByUserIdQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetMessagesByUserIdQuery, GetMessagesByUserIdQueryVariables>(GetMessagesByUserIdDocument, options);
+      }
+export function useGetMessagesByUserIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetMessagesByUserIdQuery, GetMessagesByUserIdQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetMessagesByUserIdQuery, GetMessagesByUserIdQueryVariables>(GetMessagesByUserIdDocument, options);
+        }
+export type GetMessagesByUserIdQueryHookResult = ReturnType<typeof useGetMessagesByUserIdQuery>;
+export type GetMessagesByUserIdLazyQueryHookResult = ReturnType<typeof useGetMessagesByUserIdLazyQuery>;
+export type GetMessagesByUserIdQueryResult = Apollo.QueryResult<GetMessagesByUserIdQuery, GetMessagesByUserIdQueryVariables>;
+export const GetCommentsByPostIdDocument = gql`
+    query GetCommentsByPostId($postId: ID!) {
+  getCommentsByPostId(postId: $postId) {
+    ... on CommentArray {
+      comments {
+        id
+        body
+        isDisabled
+        createdOn
+        createdBy
+        user {
+          id
+          username
+          profileImage
+        }
+      }
+    }
+    ... on EntityResult {
+      messages
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetCommentsByPostIdQuery__
+ *
+ * To run a query within a React component, call `useGetCommentsByPostIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetCommentsByPostIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetCommentsByPostIdQuery({
+ *   variables: {
+ *      postId: // value for 'postId'
+ *   },
+ * });
+ */
+export function useGetCommentsByPostIdQuery(baseOptions: Apollo.QueryHookOptions<GetCommentsByPostIdQuery, GetCommentsByPostIdQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetCommentsByPostIdQuery, GetCommentsByPostIdQueryVariables>(GetCommentsByPostIdDocument, options);
+      }
+export function useGetCommentsByPostIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetCommentsByPostIdQuery, GetCommentsByPostIdQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetCommentsByPostIdQuery, GetCommentsByPostIdQueryVariables>(GetCommentsByPostIdDocument, options);
+        }
+export type GetCommentsByPostIdQueryHookResult = ReturnType<typeof useGetCommentsByPostIdQuery>;
+export type GetCommentsByPostIdLazyQueryHookResult = ReturnType<typeof useGetCommentsByPostIdLazyQuery>;
+export type GetCommentsByPostIdQueryResult = Apollo.QueryResult<GetCommentsByPostIdQuery, GetCommentsByPostIdQueryVariables>;
+export const GetLatestPostsDocument = gql`
+    query GetLatestPosts {
+  getLatestPosts {
+    ... on EntityResult {
+      messages
+    }
+    ... on PostArray {
+      posts {
+        id
+        views
+        points
+        isDisabled
+        title
+        body
+        createdOn
+        createdBy
+        creator {
+          id
+          username
+        }
+        category {
+          id
+          name
+        }
+        comments {
+          id
+          body
+          createdBy
+          createdOn
+        }
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetLatestPostsQuery__
+ *
+ * To run a query within a React component, call `useGetLatestPostsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetLatestPostsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetLatestPostsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetLatestPostsQuery(baseOptions?: Apollo.QueryHookOptions<GetLatestPostsQuery, GetLatestPostsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetLatestPostsQuery, GetLatestPostsQueryVariables>(GetLatestPostsDocument, options);
+      }
+export function useGetLatestPostsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetLatestPostsQuery, GetLatestPostsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetLatestPostsQuery, GetLatestPostsQueryVariables>(GetLatestPostsDocument, options);
+        }
+export type GetLatestPostsQueryHookResult = ReturnType<typeof useGetLatestPostsQuery>;
+export type GetLatestPostsLazyQueryHookResult = ReturnType<typeof useGetLatestPostsLazyQuery>;
+export type GetLatestPostsQueryResult = Apollo.QueryResult<GetLatestPostsQuery, GetLatestPostsQueryVariables>;
 export const MeDocument = gql`
     query Me {
   me {
@@ -1288,68 +1487,6 @@ export function useMeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MeQuery
 export type MeQueryHookResult = ReturnType<typeof useMeQuery>;
 export type MeLazyQueryHookResult = ReturnType<typeof useMeLazyQuery>;
 export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>;
-export const GetLatestPostsDocument = gql`
-    query GetLatestPosts {
-  getLatestPosts {
-    ... on EntityResult {
-      messages
-    }
-    ... on PostArray {
-      posts {
-        id
-        views
-        points
-        isDisabled
-        title
-        body
-        createdOn
-        createdBy
-        creator {
-          id
-          username
-        }
-        category {
-          id
-          name
-        }
-        comments {
-          id
-          body
-          createdBy
-          createdOn
-        }
-      }
-    }
-  }
-}
-    `;
-
-/**
- * __useGetLatestPostsQuery__
- *
- * To run a query within a React component, call `useGetLatestPostsQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetLatestPostsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetLatestPostsQuery({
- *   variables: {
- *   },
- * });
- */
-export function useGetLatestPostsQuery(baseOptions?: Apollo.QueryHookOptions<GetLatestPostsQuery, GetLatestPostsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetLatestPostsQuery, GetLatestPostsQueryVariables>(GetLatestPostsDocument, options);
-      }
-export function useGetLatestPostsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetLatestPostsQuery, GetLatestPostsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetLatestPostsQuery, GetLatestPostsQueryVariables>(GetLatestPostsDocument, options);
-        }
-export type GetLatestPostsQueryHookResult = ReturnType<typeof useGetLatestPostsQuery>;
-export type GetLatestPostsLazyQueryHookResult = ReturnType<typeof useGetLatestPostsLazyQuery>;
-export type GetLatestPostsQueryResult = Apollo.QueryResult<GetLatestPostsQuery, GetLatestPostsQueryVariables>;
 export const NewCommentDocument = gql`
     subscription NewComment {
   newComment {
@@ -1388,3 +1525,44 @@ export function useNewCommentSubscription(baseOptions?: Apollo.SubscriptionHookO
       }
 export type NewCommentSubscriptionHookResult = ReturnType<typeof useNewCommentSubscription>;
 export type NewCommentSubscriptionResult = Apollo.SubscriptionResult<NewCommentSubscription>;
+export const NewMessageDocument = gql`
+    subscription NewMessage {
+  newMessage {
+    id
+    from
+    image
+    isRead
+    title
+    body
+    type
+    createdOn
+    user {
+      id
+      username
+      profileImage
+    }
+  }
+}
+    `;
+
+/**
+ * __useNewMessageSubscription__
+ *
+ * To run a query within a React component, call `useNewMessageSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useNewMessageSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useNewMessageSubscription({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useNewMessageSubscription(baseOptions?: Apollo.SubscriptionHookOptions<NewMessageSubscription, NewMessageSubscriptionVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useSubscription<NewMessageSubscription, NewMessageSubscriptionVariables>(NewMessageDocument, options);
+      }
+export type NewMessageSubscriptionHookResult = ReturnType<typeof useNewMessageSubscription>;
+export type NewMessageSubscriptionResult = Apollo.SubscriptionResult<NewMessageSubscription>;

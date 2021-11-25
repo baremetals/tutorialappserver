@@ -9,7 +9,12 @@ import { GqlContext, pubsub } from '../GqlContext';
 // import { withFilter } from 'graphql-subscriptions';
 import { STANDARD_ERROR, EntityResult } from '../resolvers';
 import { Comment } from '../../entities/Comment';
-import { NEW_COMMENT } from '../../lib/constants';
+import { NEW_COMMENT, NEW_MESSAGE } from '../../lib/constants';
+import { getRepository } from 'typeorm';
+import { Message } from '../../entities/Message';
+import { User } from '../../entities/User';
+import { Post } from '../../entities/Post';
+// import { withFilter } from 'graphql-subscriptions';
 
 const commentResolver = {
   CommentResult: {
@@ -117,10 +122,45 @@ const commentResolver = {
       _ctx: GqlContext,
       _info: any
     ): Promise<Comment | EntityResult> => {
+      const userRepository = getRepository(User);
+      const post = await Post.findOne({
+        where: { id: args.postId },
+        relations: ['creator'],
+      });
+
       try {
         const result = await createComment(args.userId, args.postId, args.body);
         if (result && result.comment) {
-          
+          const postOwner = await userRepository.findOne({
+            where: { id: post!.creator!.id },
+          });
+          console.log(postOwner);
+          const user = result.comment.user;
+
+          const notice = await Message.create({
+            from: user?.username,
+            image: user?.profileImage,
+            title: 'new comment',
+            body: `${user?.username} commented on your post`,
+            type: 'NEW_COMMENT',
+            user: postOwner,
+          }).save();
+
+          pubsub.publish(NEW_MESSAGE, {
+            newMessage: {
+              id: notice.id,
+              from: user?.username,
+              image: user?.profileImage,
+              isRead: notice.isRead,
+              title: 'new comment',
+              body: notice.body,
+              type: NEW_MESSAGE,
+              createdBy: notice.createdBy,
+              createdOn: notice.createdOn,
+              user: postOwner,
+            },
+          });
+
           pubsub.publish(NEW_COMMENT, {
             newComment: {
               id: result.comment.id,
@@ -133,18 +173,6 @@ const commentResolver = {
             },
           });
 
-          // pubsub.publish(NEW_MESSAGE, {
-          //   newComment: {
-          //     id: result.comment.id,
-          //     body: args.body,
-          //     createdBy: result.comment.createdBy,
-          //     createdOn: result.comment.createdOn,
-          //     isDisabled: result.comment.isDisabled,
-          //     user: result.comment.user,
-          //     post: result.comment.post,
-          //   },
-          // });
-          // console.log(result.comment);
           return result.comment;
         }
 

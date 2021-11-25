@@ -6,11 +6,12 @@ export const TopbarContainer = styled.div`
   width: 100%;
   height: 100px;
   background-color: #fff;
+  box-shadow: 0 0 10px rgb(0 0 0 / 5%);
   display: flex;
   align-items: center;
   position: sticky;
   top: 0;
-  z-index: 999;
+  z-index: 99999;
   padding-left: 2rem;
   padding-right: 2rem;
   @media (max-width: 991px) {
@@ -21,7 +22,9 @@ export const TopbarContainer = styled.div`
 `;
 
 export const TopLeftWrap = styled.div`
-  
+  @media (min-width: 992px) {
+    min-width: 184px;
+  }
 `;
 
 export const TopBarLogo = styled.span`
@@ -40,7 +43,7 @@ export const TopCenterWrap = styled.div`
 `;
 
 export const SearchBar = styled.div`
-  max-width: 50rem;
+  max-width: 40rem;
   background-color: #e9e9e9;
   display: flex;
   align-items: center;
@@ -60,7 +63,7 @@ export const SearchInput = styled.input`
   width: 100%;
   background-color: transparent;
   height: 2.5rem;
-  font-size: 0.875rem;
+  font-size: .875rem;
   &:focus {
     outline: none;
   }
@@ -102,17 +105,17 @@ export const IconBadge = styled.span`
   border-radius: 50%;
   color: white;
   position: absolute;
-  top: -0.5rem;
-  right: -0.5rem;
-  font-size: 0.75rem;
+  top: -.5rem;
+  right: -.5rem;
+  font-size: .75rem;
   text-align: center;
   font-weight: bold;
   line-height: 1.2;
 `;
 
 export const ProfileImg = styled.img`
-  width: 2.5rem;
-  height: 2.5rem;
+  width: 2rem;
+  height: 2rem;
   border-radius: 50%;
   object-fit: cover;
   cursor: pointer;

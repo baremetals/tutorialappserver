@@ -2,17 +2,13 @@ import React from 'react'
 import { requireAuthentication } from "lib/requireAuthentication";
 import { GetServerSideProps } from "next";
 import NotificationsPage from '../components/NotificationsPage'
+import { useIsAuth } from 'lib/isAuth';
 
 function Notifications() {
+  useIsAuth();
     return (
       <>
-        <NotificationsPage
-          image={"/prettygirl.jpg"}
-          body={
-            "Lorem Ipsum is simply dummy text of the printing and typesetting industry."
-          }
-          createdOn={"10 hours ago"}
-        />
+        <NotificationsPage />
       </>
     );
 }

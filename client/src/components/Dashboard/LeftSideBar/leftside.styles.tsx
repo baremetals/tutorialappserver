@@ -14,6 +14,7 @@ export const LeftSideContainer = styled.div`
   padding-right: 2rem;
   padding-left: 2rem;
   transition: transform 0.2s ease-in-out;
+  z-index: 9999;
   &:before {
     content: "";
     background-color: rgb(0 0 0 / 5%);
@@ -28,13 +29,13 @@ export const LeftSideContainer = styled.div`
     max-width: 18rem;
     min-width: 18rem;
   }
-  
+
   @media (max-width: 991px) {
     transform: translateX(-100%);
     background-color: #ededed;
     position: fixed;
     left: 0;
-    top: 100px;
+    top: 70px;
     bottom: 0;
     padding: 2rem 1rem;
   }
@@ -54,7 +55,7 @@ export const BackOverlay = styled.div`
   right: 0;
   top: 0;
   bottom: 0;
-
+  z-index: 100;
 `;
 
 export const SearchButton = styled.button`
@@ -74,21 +75,23 @@ export const SearchButton = styled.button`
     margin-left: 1.5rem;
   }
 `;
+
 export const ToggleButton = styled.button`
   width: 1.5rem;
-    background-color: transparent;
-    border: none;
-    vertical-align: top;
-    margin-top: 1rem;
-    margin-left: 2rem;
-    @media (min-width: 992px) {
-      display: none
-    }
+  background-color: transparent;
+  border: none;
+  vertical-align: top;
+  margin-top: 1rem;
+  margin-left: 1.5rem;
+  z-index: 100;
+  @media (min-width: 992px) {
+    display: none;
+  }
   span {
     height: 2px;
     display: block;
     background-color: #000;
-    margin: .375rem 0;
+    margin: 0.375rem 0;
   }
 `;
 
@@ -105,7 +108,7 @@ export const LeftSideBarListItem = styled.li`
   padding: 1rem 1.75rem;
   transition: all 0.2s ease-in-out;
   border-radius: 10rem;
-  margin-bottom: .5rem;
+  margin-bottom: 0.5rem;
   font-weight: bold;
   svg {
     transition: transform 0.2s ease-in-out;
@@ -130,18 +133,18 @@ export const LeftSideBarIcon = styled.div`
 export const LeftSideBarListItemText = styled.span``;
 
 export const IconBadge = styled.span`
-  width: .625rem;
-  height: .625rem;
+  width: 0.625rem;
+  height: 0.625rem;
   background-color: #4cbaed;
   border-radius: 50%;
   color: white;
   position: absolute;
-  top: -.25rem;
-  right: -.25rem;
+  top: -0.25rem;
+  right: -0.25rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: .625rem;
+  font-size: 0.625rem;
   z-index: 1;
 `;
 

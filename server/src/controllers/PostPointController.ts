@@ -23,6 +23,11 @@ export const updatePostPoint = async (
     where: { id: postId },
     relations: ["creator"],
   });
+
+  const postOwner = await userRepository.findOne({
+    where: { id: post!.creator!.id },
+  });
+
   if (post!.creator!.id === userId) {
     message = "Error: users cannot like their own post";
     console.log("incPostPoint", message);
@@ -90,7 +95,7 @@ export const updatePostPoint = async (
     title: 'post like',
     body: `${user!.username} liked your post.`,
     type: LIKED_POST,
-    user,
+    user: postOwner,
   }).save();
   
 
