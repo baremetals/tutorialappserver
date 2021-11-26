@@ -1,0 +1,18 @@
+subscription NewChatMessage {
+  newChatMessage {
+    id
+    isRead
+    body
+    sender {
+      id
+      username
+      profileImage
+    }
+    receiver {
+      id
+      username
+      profileImage
+    }
+    createdOn
+  }
+}

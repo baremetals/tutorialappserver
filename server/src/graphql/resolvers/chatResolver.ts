@@ -59,6 +59,7 @@ const chatResolver = {
         () => pubsub.asyncIterator([NEW_CHAT_MESSAGE]),
         (payload, args) => payload.userId === args.userId
       ),
+      // subscribe: () => pubsub.asyncIterator([NEW_CHAT_MESSAGE]),
     },
   },
 

@@ -11,7 +11,7 @@ export class Chat extends SharedEntity {
   @ManyToOne(() => User, (user: User) => user.ownerChats, { eager: true })
   owner: User;
 
-  @ManyToOne(() => User, (user: User) => user.recipientChats)
+  @ManyToOne(() => User, (user: User) => user.recipientChats, { eager: true })
   recipient: User;
 
   @OneToMany(() => ChatMsg, (chatMsg: ChatMsg) => chatMsg.chat)

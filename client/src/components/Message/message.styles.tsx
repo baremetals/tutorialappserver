@@ -48,6 +48,13 @@ export const MessageBottom = styled.div`
   left: 3rem;
 `;
 
+export const MessageDate = styled.div`
+  font-size: 0.75rem;
+  /* position: absolute; */
+  top: -0.25rem;
+  right: 3rem;
+`;
+
 export const MessageOwner = styled.div`
   align-items: flex-end;
 `;

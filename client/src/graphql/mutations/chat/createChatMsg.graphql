@@ -1,0 +1,13 @@
+mutation CreateChatMessage(
+  $ownerUserId: String!
+  $recipientUserId: String!
+  $body: String!
+) {
+  createChatMessage(
+    ownerUserId: $ownerUserId
+    recipientUserId: $recipientUserId
+    body: $body
+  ) {
+    messages
+  }
+}

@@ -113,7 +113,7 @@ export const respondToChatMessage = async (
   const sender = await User.findOne({
     id: senderUserId,
   });
-  console.log("testing sender",sender);
+  
 
   const chat = await Chat.findOne({
     id: chatId,
@@ -125,6 +125,7 @@ export const respondToChatMessage = async (
 
   if (chat!.owner.id !== senderUserId) {
     recipient = chat!.owner.id;
+    
     const receiver = await User.findOne({
       id: recipient,
     });
@@ -149,13 +150,13 @@ export const respondToChatMessage = async (
       messages: ['Chat message created successfully.'],
     };
   } else {
-    recipient = chat!.owner.id;
+    recipient = chat!.recipient;
   }
 
   const chatMsgs = await ChatMsg.create({
     body,
     sender,
-    receiver: chat?.recipient,
+    receiver: recipient, // chat?.recipient,
     chat,
   }).save();
 

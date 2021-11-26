@@ -78,13 +78,13 @@ const LeftSideBar = () => {
           <LeftSideBarListItem>
             <LeftSideBarIcon>
               <IconBadge></IconBadge>
-              <Link href="/messages/maguyva">
+              <Link href="/messages">
                 <div>
                   <BsFillChatSquareFill />
                 </div>
               </Link>
             </LeftSideBarIcon>
-            <Link href="/messages/maguyva">
+            <Link href="/messages">
               <LeftSideBarListItemText>Chat</LeftSideBarListItemText>
             </Link>
           </LeftSideBarListItem>

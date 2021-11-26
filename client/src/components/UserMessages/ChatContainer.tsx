@@ -1,16 +1,12 @@
-import React from "react";
+import React from 'react'
 import { useForm } from "react-hook-form";
-import ChatSideBar from "./ChatSideBar"
-import Message from '../Message';
-
+import { useRouter } from "next/router";
 import {
-  ChatBoxTop,
-  ChatBoxBottom,
-  ChatMessageInput,
-  ChatSubmitButton,
-} from "./msg.styles";
-import { useRouter } from 'next/router';
-import { useCreateChatMessageMutation } from "generated/graphql";
+  useRespondToChatMessageMutation,
+} from "generated/graphql";
+import ChatSideBar from './ChatSideBar';
+import { ChatBoxBottom, ChatBoxTop, ChatMessageInput, ChatSubmitButton } from './msg.styles';
+import Message from 'components/Message';
 import { useAppSelector } from "app/hooks";
 import { isUser } from "features/auth/selectors";
 
@@ -18,53 +14,45 @@ type FormInput = {
   body: string;
 };
 
-
-function UserMessages() {
+const ChatContainer = () => {
   const router = useRouter();
-  const [newChat] = useCreateChatMessageMutation();
-  const { user: user } = useAppSelector(isUser);
+  const {chatId } = router.query
+  const [newChatMsg] = useRespondToChatMessageMutation();
+   const { user: user } = useAppSelector(isUser);
   const {
     // setValue,
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<FormInput>();
-
-  const pathname = router.pathname;
-  const me = user;
-  // console.log(me)
-
-
-  const onSubmit = async ({body}: any) => {
-
+    
+    const onSubmit = async ({body}: any) => {
+        
     try {
-      const response = await newChat({
+      const response = await newChatMsg({
         variables: {
-          ownerUserId: me?.id as string,
-          recipientUserId: "4",
+          senderUserId: user?.id as string,
+          chatId: chatId as string,
           body,
         },
       });
 
-      if (response.data?.createChatMessage) {
+      if (response.data?.respondToChatMessage) {
 
-        console.log(response.data?.createChatMessage);
+        console.log(response.data?.respondToChatMessage);
       }
     } catch (ex) {
       console.log(ex);
       throw ex;
     }
   };
-
   return (
     <>
       <ChatSideBar>
         <ChatBoxTop>
-          {pathname === "/messages" ? null : (
-            <div>
-              <Message />
-            </div>
-          )}
+          <div>
+            <Message />
+          </div>
         </ChatBoxTop>
         <ChatBoxBottom>
           <form onSubmit={handleSubmit(onSubmit)}>
@@ -82,6 +70,4 @@ function UserMessages() {
   );
 }
 
-export default UserMessages
-
-
+export default ChatContainer

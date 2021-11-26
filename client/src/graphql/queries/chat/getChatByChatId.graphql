@@ -1,0 +1,25 @@
+query GetChatMessagesByChatId($chatId: ID!) {
+  getChatMessagesByChatId(chatId: $chatId) {
+    ... on EntityResult {
+      messages
+    }
+    ... on ChatMsgArray {
+      chatMsgs {
+        id
+        isRead
+        body
+        createdOn
+        sender {
+          id
+          username
+          profileImage
+        }
+        receiver {
+          id
+          username
+          profileImage
+        }
+      }
+    }
+  }
+}
