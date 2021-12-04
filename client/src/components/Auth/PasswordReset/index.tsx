@@ -33,7 +33,7 @@ const ResetPassword = () => {
   const [errorMsg, setErrorMsg] = useState(false);
   const [successMsg, setSuccessMsg] = useState(false);
 
-  const handleSubmit = async ({ ...values }: any) => {
+  const handleSubmit = async ({ ...values }: typeof initialValues) => {
     console.log(values);
 
     try {

@@ -16,7 +16,10 @@ import {
   backgroundImg,
 } from "../lib/constants";
 
+
 import { MsgResult } from "./MsgController";
+import { getConnection } from 'typeorm';
+import { QueryArrayResult } from './QuerryArrayResult';
 export class UserResult {
   constructor(public messages?: Array<string>, public user?: User) {}
 }
@@ -31,6 +34,21 @@ export const register = async (
   password: string
 ): Promise<UserResult> => {
   const redis = new Redis();
+
+ const user = await User.findOne({
+  where: { email } || { username },
+ });
+
+ if (user && user?.isDisabled) {
+   return {
+     messages: [
+       'Your account has been deactivated. Please reactivate your account',
+     ],
+   };
+ }
+
+
+
   const result = isPasswordValid(password);
   if (!result.isValid) {
     return {
@@ -58,6 +76,8 @@ export const register = async (
     };
   }
 
+  const generatedToken = v4();
+  const slug = generatedToken + trimmedUsername;
   const hashedPassword = await argon2.hash(password);
   const groupId: any = 2;
 
@@ -78,10 +98,12 @@ export const register = async (
     password: hashedPassword,
     profileImage,
     backgroundImg,
+    userIdSlug: slug,
     groups: [group],
   }).save();
 
   userEntity.password = ""; // blank out for security
+  
 
   const token = v4();
 
@@ -98,7 +120,6 @@ export const register = async (
     `Thanks for signing up ${username}`
   );
 
-  console.log(token)
 
   return {
     user: userEntity,
@@ -167,13 +188,24 @@ export const login = async (
     };
   }
 
+  if (user.isDisabled) {
+    return {
+      messages: [
+        'Your account has been deactivated. Please reactivate your account',
+      ],
+    };
+  }
+
   const passwordMatch = await argon2.verify(user.password, password);
   if (!passwordMatch) {
     return {
       messages: ["Password is invalid."],
     };
   }
-
+  user.isOnline = true
+  user.lastModifiedBy = user.username;
+  user.lastModifiedOn = new Date(), 
+  user.save();
   return {
     user: user,
   };
@@ -187,6 +219,11 @@ export const logout = async (username: string): Promise<string> => {
   if (!user) {
     return userNotFound(username);
   }
+
+  user.isOnline = false;
+  user.lastModifiedBy = user.username;
+  user.lastModifiedOn = new Date(), 
+  user.save();
 
   return "User logged off.";
 };
@@ -215,6 +252,7 @@ export const me = async (id: string): Promise<UserResult> => {
   }
 
   user.password = "";
+  user.isOnline = true;
   return {
     user: user,
   };
@@ -222,6 +260,7 @@ export const me = async (id: string): Promise<UserResult> => {
 
 export const changePassword = async (
   id: string,
+  currentPassword: string,
   newPassword: string
 ): Promise<string> => {
   const user = await User.findOne({
@@ -236,8 +275,15 @@ export const changePassword = async (
     return "User has not confirmed their registration email yet.";
   }
 
+  const passwordMatch = await argon2.verify(user.password, currentPassword);
+  if (!passwordMatch) {
+    return 'Current Password is invalid.';
+  }
+
   const hashedPassword = await argon2.hash(newPassword);
   user.password = hashedPassword;
+  user.lastModifiedBy = user.username;
+  user.lastModifiedOn = new Date(),
   user.save();
 
   // notification code goes here
@@ -299,6 +345,190 @@ export const forgotPassword = async (
   return "Please check your email for for reset link"
 };
 
+export const editMe = async (
+  id: string,
+  email: string,
+  username: string,
+  fullName: string
+): Promise<string> => {
+
+  const user = await User.findOne({
+    where: { id },
+  });
+
+  if (!user) {
+    return 'User not found.';
+  }
+
+  if (!user.confirmed) {
+    return 'User has not confirmed their registration email yet.';
+  }
+
+  const usernameResult = isUserNameValid(username);
+  if (!usernameResult.isValid) {
+    return 'Username must have min 2 characters and must only contain letters, numbers, hyphens or an underscore(a-z0-9/_)';
+  }
+
+  const trimmedEmail = email.trim().toLowerCase();
+  const trimmedUsername = username.trim().toLowerCase();
+  const emailErrorMsg = isEmailValid(trimmedEmail);
+  
+  if (emailErrorMsg) {
+    return emailErrorMsg;
+  }
+
+  await getConnection()
+    .createQueryBuilder()
+    .update(User)
+    .set({
+      email: trimmedEmail,
+      username: trimmedUsername,
+      fullName: fullName,
+      lastModifiedBy: trimmedUsername,
+      lastModifiedOn: new Date(),
+    })
+    .where('id = :id', { id: id })
+    .execute();
+
+  // user.email = trimmedEmail;
+  // user.username = trimmedUsername;
+  // user.fullName = fullName;
+  // user.save();
+
+  // notification code goes here
+  return 'Details changed successfully.';
+};
+
+export const editProfileImage = async (
+  id: string,
+  profileImage: string,
+
+): Promise<string> => {
+  const user = await User.findOne({
+    where: { id },
+  });
+
+  if (!user) {
+    return 'User not found.';
+  }
+
+  if (!user.confirmed) {
+    return 'User has not confirmed their registration email yet.';
+  }
+
+  await getConnection()
+    .createQueryBuilder()
+    .update(User)
+    .set({
+      profileImage: profileImage,
+      lastModifiedBy: user.username,
+      lastModifiedOn: new Date(),
+    })
+    .where('id = :id', { id: id })
+    .execute();
+
+  // notification code goes here
+  return 'Profile image changed successfully.';
+};
+
+export const editBackGroundImage = async (
+  id: string,
+  backgroundImg: string
+): Promise<string> => {
+  const user = await User.findOne({
+    where: { id },
+  });
+
+  if (!user) {
+    return 'User not found.';
+  }
+
+  if (!user.confirmed) {
+    return 'User has not confirmed their registration email yet.';
+  }
+
+  await getConnection()
+    .createQueryBuilder()
+    .update(User)
+    .set({
+      backgroundImg: backgroundImg,
+      lastModifiedBy: user.username,
+      lastModifiedOn: new Date()
+    })
+    .where('id = :id', { id: id })
+    .execute();
+
+  // notification code goes here
+  return 'Profile image changed successfully.';
+};
+
+export const deleteMe = async (
+  id: string,
+): Promise<string> => {
+  const user = await User.findOne({
+    where: { id },
+  });
+
+  if (!user) {
+    return 'User not found.';
+  }
+  user.isDisabled = true;
+  user.lastModifiedBy = user.username;
+  user.lastModifiedOn = new Date();
+  user.save();
+  // notification code goes here
+  return 'Your account has been deleted.';
+};
+
+export const getUserBySlugId = async (userIdSlug: string): Promise<UserResult> => {
+  const user = await User.findOne({
+    where: { userIdSlug },
+    relations: ['posts', 'posts.comments', 'posts.comments.user'],
+  });
+
+  if (!user) {
+    return {
+      messages: ['User not found.'],
+    };
+  }
+  return {
+    user: user,
+  };
+};
+
+export const searchUsers = async (): Promise<QueryArrayResult<User>> => {
+  // const userRepository = getRepository(User);
+  // const users = await userRepository.find({
+  //   username: Equal(searchItem)
+  //   // where: [{ username: searchItem }, { fullName: searchItem}, ,{email: searchItem} ],
+  // });
+
+  const users = await User.createQueryBuilder('user')
+    // .leftJoinAndSelect('post.category', 'category')
+    // .leftJoinAndSelect('post.creator', 'creator')
+    // .leftJoinAndSelect('post.comments', 'comments')
+    // .leftJoinAndSelect('post.postPoints', 'postPoints')
+    // .leftJoinAndSelect('post.postPoints.user', 'postPoints')
+    .orderBy('user.createdOn', 'DESC')
+    .take(10)
+    .getMany();
+
+  if (!users || users.length === 0) {
+    return {
+      messages: ['No users found.'],
+    };
+  }
+
+  // if (!users) {
+  //   return {
+  //     messages: ['No user found.'],
+  //   };
+  // }
+  return {
+    entities: users,
+  };
+};
+
 function userNotFound(usernameOrEmail: string) {
   return usernameOrEmail.includes("@")
     ? `User with email ${usernameOrEmail} not found.`
@@ -307,10 +537,7 @@ function userNotFound(usernameOrEmail: string) {
 
 
 // To do 
-// add notifications for reset password, activation and change password.
-
-// export const deleteMe = async (): Promise{}
-// export const editMe = async (): Promise{}
+// add notifications/email for reset password, activation and change password.
 
 // Admin only feature
 // export const deleteUser = async (): Promise{}

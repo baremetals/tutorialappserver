@@ -37,3 +37,33 @@ export const getResetPasswordValidationSchema = () => {
     // .oneOf([Yup.ref('newPassword'), null], "Passwords must match")
   });
 };
+
+export const getChangePasswordValidationSchema = () => {
+  return Yup.object().shape({
+    currentPassword: Yup.string().required("Password is Required!"),
+
+    newPassword: Yup.string()
+      .required("Password is Required!")
+      .test("passwords-not-matching", "Passwords must not be the same as existing password", function (value) {
+        // eslint-disable-next-line no-invalid-this
+        return this.parent.currentPassword !== value;
+      })
+      .min(6, "Password must be atleast 6 characters"),
+
+    confirmPassword: Yup.string()
+      .required("Password is Required!")
+      .test("passwords-match", "Passwords must match", function (value) {
+        // eslint-disable-next-line no-invalid-this
+        return this.parent.newPassword === value;
+      })
+      .min(6, "Password must be atleast 6 characters"),
+  });
+};
+
+export const getProfileDetailsValidationSchema = () => {
+  return Yup.object().shape({
+    // fullName: Yup.string().min(3, "Minimum of 3 characters required!"),
+    // username: Yup.string().min(3, "Minimum of 3 characters required!"),
+    email: Yup.string().email("Please provide a valid email address!"),
+  });
+};

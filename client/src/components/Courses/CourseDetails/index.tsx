@@ -79,7 +79,7 @@ function CourseDetails(props: { props: { data: any; loading: any; }; }, userId: 
         }
       });
     }
-  }, [me?.id]);
+  }, [students, me?.id]);
 
   useEffect(() => {
     if (teacher.id === me?.id) {

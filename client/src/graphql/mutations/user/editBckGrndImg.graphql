@@ -1,0 +1,3 @@
+mutation EditBackGroundImage($backgroundImg: String!) {
+  editBackGroundImage(backgroundImg: $backgroundImg)
+}

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from "react";
 import { useQuery } from "@apollo/client";
 import { useAppSelector } from "app/hooks";
 import { isUser } from "features/auth/selectors";
@@ -15,13 +15,13 @@ import {
   MessageBottom,
   OwnerMessageWrap,
   OwnerMessageText,
+  ScrollChat,
 } from "./message.styles";
 import {
   GetChatMessagesByChatIdDocument,
   User,
   useNewChatMessageSubscription,
 } from "generated/graphql";
-
 
 type MessagePageType = {
   body: string;
@@ -38,14 +38,11 @@ function Message() {
   const { chatId } = router.query;
   const { user: user } = useAppSelector(isUser);
 
-  const { ...result } = useQuery(
-    GetChatMessagesByChatIdDocument,
-    {
-      variables: {
-        chatId: chatId,
-      },
-    }
-  );
+  const { ...result } = useQuery(GetChatMessagesByChatIdDocument, {
+    variables: {
+      chatId: chatId,
+    },
+  });
 
   const { data } = useNewChatMessageSubscription();
   const newChatMessage = data?.newChatMessage;
@@ -54,7 +51,16 @@ function Message() {
   // console.log(newChatMessage);
   // console.log(result.error);
   const me: string | undefined | any = user?.id;
+  const scrollUpdate: any = useRef(null || undefined);
 
+  useEffect(() => {
+    if (messages && messages.length > 0) {
+      scrollUpdate.current.scrollIntoView({
+        behavior: "instant",
+        block: "end",
+      });
+    }
+  }, [messages, msgArray]);
   useEffect(() => {
     if (newChatMessage) {
       const newChatMessageItem = newChatMessage;
@@ -65,19 +71,20 @@ function Message() {
     }
   }, [newChatMessage]);
 
-  
-
   if (!result.data || result.loading) {
     return <div>loading...</div>;
   }
+
   return (
-    <>
+    <ScrollChat
+      ref={scrollUpdate} 
+    >
       {result.error ||
         !messages ||
         (messages.length === 0 && <div> no messages </div>)}
 
       {!result.loading &&
-        msgArray.concat(messages).map((msg: any, id: any) =>
+        [...messages, ...msgArray].map((msg: any, id: any) =>
           me === msg.sender.id ? (
             <OwnerMessageWrap key={id}>
               <MessageTop>
@@ -96,8 +103,8 @@ function Message() {
             </MessageWrap>
           )
         )}
-    </>
+    </ScrollChat>
   );
 }
 
-export default Message
+export default Message;

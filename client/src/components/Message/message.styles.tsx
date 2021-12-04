@@ -58,3 +58,8 @@ export const MessageDate = styled.div`
 export const MessageOwner = styled.div`
   align-items: flex-end;
 `;
+
+export const ScrollChat = styled.div`
+  overflow-y: auto;
+  height: 100%;
+`;

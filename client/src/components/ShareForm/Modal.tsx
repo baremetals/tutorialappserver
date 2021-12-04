@@ -54,7 +54,7 @@ export const Modal = ({ closeM, showModal, setShowModal, ...props }: any) => {
   );
   const [content, setContent] = useState<string>("");
   dispatch(setCategory(data?.getAllCategories));
-  console.log(user?.id);
+  // console.log(user?.id);
   const categories = data?.getAllCategories as any;
   const {
     register,

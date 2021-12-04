@@ -134,7 +134,7 @@ const commentResolver = {
           const postOwner = await userRepository.findOne({
             where: { id: post!.creator!.id },
           });
-          console.log(postOwner);
+          // console.log(postOwner);
           const user = result.comment.user;
 
           const notice = await Message.create({

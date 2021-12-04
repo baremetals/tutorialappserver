@@ -1,36 +1,34 @@
-query Me {
-  me {
+query GetUserBySlugId($userIdSlug: String!) {
+  getUserBySlugId(userIdSlug: $userIdSlug) {
     ... on EntityResult {
       messages
     }
     ... on User {
       id
+      userIdSlug
       username
-      email
       fullName
-      confirmed
+      isOnline
       profileImage
       backgroundImg
-      isDisabled
       createdOn
-      groups {
-        id
-        codename
-      }
       posts {
         id
         views
         points
-        isDisabled
         title
         body
-        createdOn
         comments {
           id
           body
-          isDisabled
           createdOn
           createdBy
+          user {
+            id
+            userIdSlug
+            username
+            profileImage
+          }
         }
       }
     }

@@ -1,7 +1,7 @@
 import styled from "styled-components"
 
 export const ChatContainer = styled.div`
-  &:nth-child(1) ~ div {
+  &:nth-child(0) ~ div {
     margin-left: -0.5rem;
   }
 `;

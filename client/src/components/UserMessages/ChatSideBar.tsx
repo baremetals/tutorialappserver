@@ -38,7 +38,9 @@ const ChatSideBar = ({children}: any) => {
     }
 
     const messages = data?.getChatMessagesByUserId.chats;
+    const errorMsg = data?.getChatMessagesByUserId.messages;
     const me = user;
+    // console.log(data?.getChatMessagesByUserId.messages[0]);
 
     if (!data?.getChatMessagesByUserId || loading) {
       return <div>loading...</div>;
@@ -55,7 +57,14 @@ const ChatSideBar = ({children}: any) => {
         <MsgChatMenu className={menuState ? "opened" : ""}>
           <MsgChatMenuWrapper>
             <MsgChatMenuInput placeholder="Search for a user" />
-            {messages.map(
+            {errorMsg && (
+              <>
+                <br />
+                <br />
+                <div> You Currently have no messages</div>
+              </>
+            )}
+            { messages !== undefined && messages.map(
               (
                 msg: {
                   id: string | undefined;
@@ -93,7 +102,7 @@ const ChatSideBar = ({children}: any) => {
         </ChatBoxContainer>
         <OnlineChatContainer>
           <OnlineChatWrapper>
-            <OnlineChat />
+            <OnlineChat profileImage='/Aleah.jpg' username="pretty girl" online={true}/>
           </OnlineChatWrapper>
         </OnlineChatContainer>
       </MsgContainer>

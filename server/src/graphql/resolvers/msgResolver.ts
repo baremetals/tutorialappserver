@@ -7,7 +7,7 @@ import { withFilter } from 'graphql-subscriptions';
 import { STANDARD_ERROR, EntityResult } from '../resolvers';
 import { Message } from '../../entities/Message';
 import {  NEW_MESSAGE } from '../../lib/constants';
-import { getMessagesByUserId } from '../../controllers/MsgController';
+import { getMessagesByUserId, getUnReadMessagesByUserId } from '../../controllers/MsgController';
 
 const messageResolver = {
   MsgResult: {
@@ -54,6 +54,37 @@ const messageResolver = {
         // const userId = '44';
         // msgs = await getMessagesByUserId(userId);
         msgs = await getMessagesByUserId(ctx.req.session!.userId);
+        if (msgs.entities) {
+          return {
+            msgs: msgs.entities,
+          };
+        }
+        return {
+          messages: msgs.messages ? msgs.messages : [STANDARD_ERROR],
+        };
+      } catch (ex) {
+        console.error(ex);
+        throw ex;
+      }
+    },
+
+    getUnReadMessagesByUserId: async (
+      _obj: any,
+      _args: null,
+      ctx: GqlContext,
+      _info: any
+    ): Promise<{ msgs: Array<Message> } | EntityResult> => {
+      let msgs: QueryArrayResult<Message>;
+      try {
+        if (!ctx.req.session || !ctx.req.session?.userId) {
+          return {
+            messages: 'You must be logged in to join this course.',
+          };
+        }
+
+        // const userId = '51';
+        // msgs = await getUnReadMessagesByUserId(userId);
+        msgs = await getUnReadMessagesByUserId(ctx.req.session!.userId);
         if (msgs.entities) {
           return {
             msgs: msgs.entities,

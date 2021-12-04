@@ -1,0 +1,3 @@
+mutation EditProfileImage($profileImage: String!) {
+  editProfileImage(profileImage: $profileImage)
+}

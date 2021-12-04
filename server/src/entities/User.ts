@@ -20,6 +20,15 @@ export class User extends SharedEntity {
   id: string;
 
   @Column('varchar', {
+    name: 'UserIdSlug',
+    default: "",
+    length: 250,
+    unique: true,
+    nullable: false,
+  })
+  userIdSlug: string;
+
+  @Column('varchar', {
     name: 'Email',
     length: 120,
     unique: true,
@@ -67,6 +76,9 @@ export class User extends SharedEntity {
   @Column('boolean', { name: 'IsDisabled', default: false, nullable: false })
   isDisabled: boolean;
 
+  @Column('boolean', { name: 'IsOnline', default: false, nullable: false })
+  isOnline: boolean;
+
   // @ManyToOne(() => Group, (group: Group) => group.users)
   // group: Group;
 
@@ -101,7 +113,7 @@ export class User extends SharedEntity {
 
   @OneToMany(() => Chat, (chat) => chat.owner)
   ownerChats: Chat[];
-  
+
   @OneToMany(() => Chat, (chat) => chat.recipient)
   recipientChats: Chat[];
 

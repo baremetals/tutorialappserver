@@ -90,7 +90,6 @@ export const respondToChatMessage = async (
 ): Promise<ChatMsgResult> => {
   // const userRepository = getRepository(User);
   // const chatRepository = getRepository(Chat);
-
   const bodyMsg = isPostBodyValid(body);
   if (bodyMsg) {
     return {
@@ -229,7 +228,7 @@ export const getChatMessagesByChatId = async (
     .leftJoinAndSelect('cm.sender', 'sender')
     .leftJoinAndSelect('cm.receiver', 'receiver')
     .leftJoinAndSelect('cm.chat', 'chat')
-    .orderBy('cm.createdOn', 'DESC')
+    .orderBy('cm.createdOn', 'ASC')
     .getMany();
   if (!chatMsgs || chatMsgs.length === 0) {
     return {
@@ -249,6 +248,27 @@ export const getAllChatMsgs = async (): Promise<QueryArrayResult<ChatMsg>> => {
     .leftJoinAndSelect('cm.chat', 'chat')
     .orderBy('cm.createdOn', 'DESC')
     .take(10)
+    .getMany();
+
+  if (!chatMsgs || chatMsgs.length === 0) {
+    return {
+      messages: ['No chats found.'],
+    };
+  }
+  // console.log(posts);
+  return {
+    entities: chatMsgs,
+  };
+};
+
+export const getAllUnReadChatMsgsByUserId = async (userId: string): Promise<QueryArrayResult<ChatMsg>> => {
+  const chatMsgs = await ChatMsg.createQueryBuilder('cm')
+    .where(`cm."receiverId" = :userId`, { userId })
+    .andWhere(`cm."IsRead" = :isRead`, { isRead: false })
+    .leftJoinAndSelect('cm.sender', 'sender')
+    .leftJoinAndSelect('cm.receiver', 'receiver')
+    .leftJoinAndSelect('cm.chat', 'chat')
+    .orderBy('cm.createdOn', 'DESC')
     .getMany();
 
   if (!chatMsgs || chatMsgs.length === 0) {

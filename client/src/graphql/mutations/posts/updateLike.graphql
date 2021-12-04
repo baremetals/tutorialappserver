@@ -1,17 +1,3 @@
 mutation UpdatePostPoint($postId: ID!, $increment: Boolean!) {
-  updatePostPoint(postId: $postId, increment: $increment) {
-    ... on EntityResult {
-      messages
-    }
-    ... on Message {
-      id
-      from
-      image
-      isRead
-      title
-      body
-      type
-      createdOn
-    }
-  }
+  updatePostPoint(postId: $postId, increment: $increment)
 }

@@ -9,4 +9,4 @@ export const successMsg = createSelector(selectUI, (state) => state.success);
 
 export const isLoading = createSelector(selectUI, (state) => state.loading);
 
-export const getCategories = createSelector(selectUI, (state) => state.category);
+export const getCategories = createSelector(selectUI, (state) => state);

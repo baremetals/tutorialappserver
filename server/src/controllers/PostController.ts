@@ -75,8 +75,10 @@ export const getPostById = async (id: string): Promise<QueryOneResult<Post>> => 
     relations: [
       'creator',
       'comments',
-      'comments.user',
-      'comments.post',
+      // 'comments.user',
+      // 'comments.post',
+      'postPoints',
+      'postPoints.user',
       'category',
     ],
   });
@@ -121,11 +123,13 @@ export const getPostsByCategoryId = async (
 };
 
 export const getLatestPosts = async (): Promise<QueryArrayResult<Post>> => {
-  const posts = await Post.createQueryBuilder("post")
-    .leftJoinAndSelect("post.category", "category")
-    .leftJoinAndSelect("post.creator", "creator")
-    .leftJoinAndSelect("post.comments", "comments")
-    .orderBy("post.createdOn", "DESC")
+  const posts = await Post.createQueryBuilder('post')
+    .leftJoinAndSelect('post.category', 'category')
+    .leftJoinAndSelect('post.creator', 'creator')
+    .leftJoinAndSelect('post.comments', 'comments')
+    .leftJoinAndSelect('post.postPoints', 'postPoints')
+    // .leftJoinAndSelect('post.postPoints.user', 'postPoints')
+    .orderBy('post.createdOn', 'DESC')
     .take(10)
     .getMany();
 

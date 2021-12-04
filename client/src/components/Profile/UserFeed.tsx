@@ -37,9 +37,8 @@ export default function UserFeed() {
           ) : (
             sortedUsers?.map((post) =>
               !post ? null : (
-                <ForumColumn>
+                <ForumColumn key={post.id}>
                   <ImagePostCard
-                    key={post.id}
                     username={"maguyva"}
                     image={"/D.jpg"}
                     date={post.createdOn}

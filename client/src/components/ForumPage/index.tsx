@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import TopBar from "../Dashboard/TopBar";
 import LeftSideBar from "../Dashboard/LeftSideBar";
 import SmallFooter from "../Dashboard/SmallFooter";
 import Share from "../Dashboard/Share";
 import styled from "styled-components";
+import { useCategoryQuery } from "generated/graphql";
 
 
 import {
@@ -22,8 +23,50 @@ import ImagePostCard from "components/Dashboard/Forum/ImagePostCard";
 
 
 const ForumPage = ({ ...props }: any) => {
+  const { data } = useCategoryQuery();
+
   const postData = props.props;
-  // console.log(postData)
+  const categories = data?.getAllCategories;
+  const [filteredcategories, setFilteredcategories] = useState([]);
+  const [values, setValues] = useState({
+    category: "",
+    search: "",
+  });
+  // console.log(postData);
+
+  useEffect(() => {
+    setFilteredcategories(postData);
+  }, [postData]);
+
+  const handleCategorySearch =
+    (name: string) => (event: { target: { value: any } }) => {
+      setValues({ ...values, [name]: event.target.value });
+      // console.log(event.target.value);
+      const categoryName = event.target.value;
+      if (categoryName !== "" || null || undefined) {
+        const filteredData = postData.filter((post: any) => {
+          return post.category.name == categoryName;
+          // return cat.vote_average == ratings;
+        });
+        setFilteredcategories(filteredData);
+      } else setFilteredcategories(postData);
+    };
+
+  const handleSearch =
+    (name: string) => (event: { target: { value: string } }) => {
+      setValues({ ...values, [name]: event.target.value });
+      // console.log(event.target.value);
+      const searchValue = event.target.value;
+      if (searchValue !== "") {
+        const filteredData = postData.filter((post: string) => {
+          return Object.values(post)
+            .join(" ")
+            .toLowerCase()
+            .includes(searchValue.toLowerCase());
+        });
+        setFilteredcategories(filteredData);
+      } else setFilteredcategories(postData);
+    };
   return (
     <>
       <TopBar />
@@ -35,23 +78,31 @@ const ForumPage = ({ ...props }: any) => {
           <ForumRow>
             <ForumFilter>
               <ForumFilterSortBy>
-                <SelectCategory>
-                  <CategoryOption>Category 01</CategoryOption>
-                  <CategoryOption>Category 02</CategoryOption>
-                  <CategoryOption>Category 03</CategoryOption>
-                  <CategoryOption>Category 04</CategoryOption>
+                <SelectCategory onChange={handleCategorySearch("category")}>
+                  <CategoryOption value={values.category}>
+                    Category Search
+                  </CategoryOption>
+                  {categories?.map((c: { name: string; id: string }) => (
+                    <CategoryOption key={c.id} value={c.name}>
+                      {c.name}
+                    </CategoryOption>
+                  ))}
                 </SelectCategory>
               </ForumFilterSortBy>
-              <FilterSearch placeholder="Search"></FilterSearch>
+              <FilterSearch
+                type="text"
+                name="search"
+                onChange={handleSearch("category")}
+                placeholder="Search"
+              ></FilterSearch>
             </ForumFilter>
-            {!postData ? (
+            {!filteredcategories ? (
               <div>loading...</div>
             ) : (
-              postData.map((post: any, id: string) =>
+              filteredcategories.map((post: any, id) =>
                 !post ? null : (
-                  <ForumContainer>
+                  <ForumContainer key={id}>
                     <ImagePostCard
-                      key={id}
                       username={post.creator.username}
                       image="/D.jpg"
                       date={post.createdOn}

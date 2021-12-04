@@ -5,7 +5,7 @@ import { withFilter } from 'graphql-subscriptions';
 import { STANDARD_ERROR, EntityResult } from '../resolvers';
 import { Chat } from '../../entities/Chat';
 import { NEW_CHAT, NEW_CHAT_MESSAGE } from '../../lib/constants';
-import { createChatMessage, getAllChatMsgs, getAllChats, getChatMessagesByChatId, getChatMessagesByUserId, respondToChatMessage } from '../../controllers/ChatController';
+import { createChatMessage, getAllChatMsgs, getAllChats, getAllUnReadChatMsgsByUserId, getChatMessagesByChatId, getChatMessagesByUserId, respondToChatMessage } from '../../controllers/ChatController';
 import { ChatMsg } from '../../entities/ChatMsg';
 
 
@@ -67,20 +67,20 @@ const chatResolver = {
     getChatMessagesByUserId: async (
       _obj: any,
       _args: null,
-      _ctx: GqlContext,
+      ctx: GqlContext,
       _info: any
     ): Promise<{ chats: Array<Chat> } | EntityResult> => {
       let chats: QueryArrayResult<Chat>;
       try {
-        // if (!ctx.req.session || !ctx.req.session?.userId) {
-        //   return {
-        //     messages: 'You must be logged in to join this course.',
-        //   };
-        // }
+        if (!ctx.req.session || !ctx.req.session?.userId) {
+          return {
+            messages: 'You must be logged in to join this course.',
+          };
+        }
 
-        const userId = '46';
-        chats = await getChatMessagesByUserId(userId);
-        // msgs = await getMessagesByUserId(ctx.req.session!.userId);
+        // const userId = '46';
+        // chats = await getChatMessagesByUserId(userId);
+        chats = await getChatMessagesByUserId(ctx.req.session!.userId);
         if (chats.entities) {
           // console.log('this is the console log ', chats.entities);
           return {
@@ -89,6 +89,38 @@ const chatResolver = {
         }
         return {
           messages: chats.messages ? chats.messages : [STANDARD_ERROR],
+        };
+      } catch (ex) {
+        console.error(ex);
+        throw ex;
+      }
+    },
+
+    getAllUnReadChatMsgsByUserId: async (
+      _obj: any,
+      _args: null,
+      ctx: GqlContext,
+      _info: any
+    ): Promise<{ chatMsgs: Array<ChatMsg> } | EntityResult> => {
+      let chatMsgs: QueryArrayResult<ChatMsg>;
+      try {
+        if (!ctx.req.session || !ctx.req.session?.userId) {
+          return {
+            messages: 'You must be logged in to join this course.',
+          };
+        }
+
+        // const userId = '46';
+        // chatMsgs = await getAllUnReadChatMsgsByUserId(userId);
+        chatMsgs = await getAllUnReadChatMsgsByUserId(ctx.req.session!.userId);
+        if (chatMsgs.entities) {
+          // console.log('this is the console log ', chatMsgs.entities);
+          return {
+            chatMsgs: chatMsgs.entities,
+          };
+        }
+        return {
+          messages: chatMsgs.messages ? chatMsgs.messages : [STANDARD_ERROR],
         };
       } catch (ex) {
         console.error(ex);

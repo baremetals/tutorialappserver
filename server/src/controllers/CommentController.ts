@@ -67,28 +67,6 @@ export const createComment = async (
     };
   }
 
-  // const notice = await Message.create({
-  //   from: user?.username,
-  //   image: user?.profileImage,
-  //   title: 'new comment',
-  //   body: `${user?.username} commented on your post`,
-  //   type: 'NEW_COMMENT',
-  //   user: postOwner,
-  // }).save();
-
-  // pubsub.publish(NEW_MESSAGE, {
-  //   newMessage: {
-  //     id: notice.id,
-  //     from: user?.username,
-  //     image: user?.profileImage,
-  //     title: 'new comment',
-  //     body: notice.body,
-  //     createdBy: notice.createdBy,
-  //     createdOn: notice.createdOn,
-  //     user: postOwner,
-  //   },
-  // });
-
   return {
     comment: comment,
     messages: ["Comment created successfully."],

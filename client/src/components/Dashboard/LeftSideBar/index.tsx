@@ -15,7 +15,7 @@ import {
   LeftSideBarListItem,
   LeftSideBarIcon,
   LeftSideBarListItemText,
-  IconBadge,
+  // IconBadge,
   ToggleButton,
   BackOverlay,
 } from "./leftside.styles";
@@ -77,7 +77,7 @@ const LeftSideBar = () => {
           </LeftSideBarListItem>
           <LeftSideBarListItem>
             <LeftSideBarIcon>
-              <IconBadge></IconBadge>
+              {/* <IconBadge></IconBadge> */}
               <Link href="/messages">
                 <div>
                   <BsFillChatSquareFill />
@@ -102,7 +102,7 @@ const LeftSideBar = () => {
           </LeftSideBarListItem>
           <LeftSideBarListItem>
             <LeftSideBarIcon>
-              <IconBadge>2</IconBadge>
+              {/* <IconBadge>2</IconBadge> */}
               <Link href="/notifications">
                 <div>
                   <RiNotification2Fill />

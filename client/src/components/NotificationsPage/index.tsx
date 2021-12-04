@@ -39,6 +39,8 @@ function NotificationsPage() {
   const newNotice = data?.newMessage;
   const [noticeArray, setNoticeArray] = useState([]);
 
+  const errrorMessage = result.data?.getMessagesByUserId.messages || ""
+
   useEffect(() => {
     if (newNotice) {
       const newMessageItem: NotificationsPageType = newNotice;
@@ -49,10 +51,17 @@ function NotificationsPage() {
     }
   }, [newNotice]);
 
+  // console.log(result.data);
+  // console.log(data?.newMessage);
+  // console.log(data?.newMessage);
   // console.log(data?.newMessage);
 
   if (!result.data || result.loading) {
     return <div>loading...</div>;
+  }
+
+  if (result.error) {
+    return <div>oh mate this is embarrasing.....</div>;
   }
 
   // console.log(noticeArray);
@@ -64,8 +73,8 @@ function NotificationsPage() {
         <LeftSideBar />
         <InnerContainer>
           <PageHeading>Notifications</PageHeading>
-          {result.error ? (
-            <div> oh mate this is embarrasing.....</div>
+          {errrorMessage ? (
+            <div> You do not have any notifications</div>
           ) : (
             <>
               {noticeArray

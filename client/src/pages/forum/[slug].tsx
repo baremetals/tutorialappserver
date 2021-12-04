@@ -2,6 +2,8 @@ import DetailPost from "components/Dashboard/Forum/DetailPost";
 import LeftSideBar from "components/Dashboard/LeftSideBar";
 import SmallFooter from "components/Dashboard/SmallFooter";
 import Topbar from "components/Dashboard/TopBar";
+import { GetPostByIdDocument, GetPostByIdQueryResult } from 'generated/graphql';
+import { client } from 'lib/initApollo';
 import { useIsAuth } from 'lib/isAuth';
 import { requireAuthentication } from 'lib/requireAuthentication';
 import { GetServerSideProps } from 'next';
@@ -12,7 +14,9 @@ import {
   PageRightSide,
 } from "styles/common.styles";
 
-const PostDetails = () => {
+const PostDetails = (props: any) => {
+  const postData = props.data;
+
   useIsAuth();
   return (
     <>
@@ -21,13 +25,7 @@ const PostDetails = () => {
         <LeftSideBar />
         <InnerContainer>
           <DetailPost
-            username="maguyva"
-            image="/D.jpg"
-            date="5 min ago"
-            title="tweet tweet tweet"
-            body="tweet tweet tweet"
-            likeCount={10}
-            commentCount={16}
+          props={postData}
           />
         </InnerContainer>
         <PageRightSide>Live Forever Young</PageRightSide>
@@ -38,9 +36,16 @@ const PostDetails = () => {
 };
 
 export const getServerSideProps: GetServerSideProps = requireAuthentication(
-  async (_ctx) => {
+  async (ctx) => {
+    const { slug } = ctx.query;
+    const data = await client.query<GetPostByIdQueryResult>({
+      query: GetPostByIdDocument,
+      variables: {
+        postId: slug as string,
+      },
+    });
     return {
-      props: {},
+      props: {data},
     };
   }
 );

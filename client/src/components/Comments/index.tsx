@@ -56,12 +56,13 @@ type userComment = {
   user: User
 };
 
-const Comment = ({ showComments, ...props }: any) => {
+const Comment = () => {
   const router = useRouter();
   const { slug } = router.query;
   const [newComment] = useCreateCommentMutation();
   const { user: user } = useAppSelector(isUser);
   const [showDropdown, setShowDropdown] = useState(0);
+  const [comArray, setComArray] = useState([]);
   const [editorState, setEditorState] = useState<EditorState>(
     EditorState.createEmpty()
   );
@@ -69,9 +70,14 @@ const Comment = ({ showComments, ...props }: any) => {
   const {
     setValue,
     handleSubmit,
+    // handleSubmit as handlePasswordSubmit,
     formState: { errors },
   } = useForm<FormInput>();
+
+  
   useEffect(() => {
+    // let mounted = true;
+    
     subscribeToMore({
       document: NewCommentDocument,
       variables: { postID: slug },
@@ -84,6 +90,9 @@ const Comment = ({ showComments, ...props }: any) => {
         setComArray(newArrayItem);
       },
     });
+    // return () => {
+    //   mounted = false;
+    // };
   }, []);
   
   const { subscribeToMore, ...result } = useQuery(GetCommentsByPostIdDocument, {
@@ -93,7 +102,7 @@ const Comment = ({ showComments, ...props }: any) => {
   });
 
   const comments = result.data?.getCommentsByPostId.comments;
-  const [comArray, setComArray] = useState([]);
+  
   // console.log(comArray);
   // console.log(result.data);
   const me: string | undefined | any = user?.id
@@ -146,71 +155,66 @@ const Comment = ({ showComments, ...props }: any) => {
 
   return (
     <>
-      {showComments ? (
-        <div showComments={showComments} {...props}>
-          <CommentHorizontalRule />
-          <CommentCard>
-            {result.error ||
-              !comments ||
-              (comments.length === 0 && <div> no comments </div>)}
+      <div>
+        <CommentHorizontalRule />
+        <CommentCard>
+          {result.error ||
+            !comArray.concat(comments) ||
+            (comArray.concat(comments).length === 0 && <div> no comments </div>)}
 
-            {!result.loading &&
-              comArray
-                .concat(comments)
-                .map(
-                  ({
-                    id,
-                    body,
-                    createdBy,
-                    createdOn,
-                    user: { username, profileImage },
-                  }) => (
-                    <>
-                      <CommentWrapper key={id}>
-                        <CommentLeftWrap>
-                          <UserProfileImge
-                            alt="sender profile image"
-                            src={user?.profileImage}
-                          />
-                          <CommentText>
-                            <UserName>{createdBy}</UserName>
-                            <CommentDate>
-                              {dayjs(createdOn).fromNow()}
-                            </CommentDate>
-                            {body}
-                          </CommentText>
-                        </CommentLeftWrap>
-                        <CommentTopRightWrap>
-                          <PostDropdown>
-                            <ExpandIcon onClick={() => toggleDropdown(id)} />
-                            <Dropdown
-                              onClick={() => toggleDropdown(id)}
-                              showDropdown={showDropdown === id}
-                            />
-                          </PostDropdown>
-                        </CommentTopRightWrap>
-                      </CommentWrapper>
-                    </>
-                  )
-                )}
-            <form onSubmit={handleSubmit(onSubmit)}>
-              {errors.body && <span>text is required</span>}
-              <PostEditor
-                editorState={editorState}
-                onEditorStateChange={(newState: EditorState) => {
-                  setEditorState(newState);
-                  setContent(
-                    draftToHtml(convertToRaw(newState.getCurrentContent()))
-                  );
-                  setValue("body", content);
-                }}
-              />
-              <br />
-              <SubmitButton type="submit">Submit</SubmitButton>
-            </form>
-          </CommentCard>
-        </div>
-      ) : null}
+          {!result.loading &&
+            comArray.concat(comments).map(
+              (
+                {
+                  id,
+                  body,
+                  createdOn,
+                  user: { username, profileImage },
+                }
+              ) => (
+                <div key={id}>
+                  <CommentWrapper key={id}>
+                    <CommentLeftWrap>
+                      <UserProfileImge
+                        alt="sender profile image"
+                        src={profileImage}
+                      />
+                      <CommentText>
+                        <UserName>{username}</UserName>
+                        <CommentDate>{dayjs(createdOn).fromNow()}</CommentDate>
+                        {body}
+                      </CommentText>
+                    </CommentLeftWrap>
+                    <CommentTopRightWrap>
+                      <PostDropdown>
+                        <ExpandIcon onClick={() => toggleDropdown(id)} />
+                        <Dropdown
+                          onClick={() => toggleDropdown(id)}
+                          showDropdown={showDropdown === id}
+                        />
+                      </PostDropdown>
+                    </CommentTopRightWrap>
+                  </CommentWrapper>
+                </div>
+              )
+            )}
+          <form onSubmit={handleSubmit(onSubmit)}>
+            {errors.body && <span>text is required</span>}
+            <PostEditor
+              editorState={editorState}
+              onEditorStateChange={(newState: EditorState) => {
+                setEditorState(newState);
+                setContent(
+                  draftToHtml(convertToRaw(newState.getCurrentContent()))
+                );
+                setValue("body", content);
+              }}
+            />
+            <br />
+            <SubmitButton type="submit">Submit</SubmitButton>
+          </form>
+        </CommentCard>
+      </div>
     </>
   );
 };

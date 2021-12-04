@@ -10,6 +10,7 @@ const typeDefs = gql`
 
   type User {
     id: ID!
+    userIdSlug: String
     email: String!
     username: String!
     fullName: String!
@@ -17,6 +18,7 @@ const typeDefs = gql`
     confirmed: Boolean!
     # isAdmin: Boolean!
     isDisabled: Boolean!
+    isOnline: Boolean!
     profileImage: String!
     backgroundImg: String!
     posts: [Post!]
@@ -32,6 +34,10 @@ const typeDefs = gql`
     lastModifiedOn: Date!
   }
   union UserResult = User | EntityResult
+  type UserArray {
+    users: [User!]
+  }
+  union UserArrayResult = UserArray | EntityResult
 
   type Group {
     id: ID!
@@ -63,6 +69,7 @@ const typeDefs = gql`
     body: String!
     creator: User!
     comments: [Comment!]
+    postPoints: [PostPoint!]
     category: Category!
     createdBy: String!
     createdOn: Date!
@@ -114,6 +121,13 @@ const typeDefs = gql`
     lastModifiedBy: String!
     lastModifiedOn: Date!
   }
+
+  union PostPointResult = PostPoint | EntityResult
+
+  type PostPointArray {
+    postPoints: [PostPoint!]
+  }
+  union PostPointArrayResult = PostPointArray | EntityResult
 
   type CategoryPost {
     postId: ID!
@@ -268,6 +282,8 @@ const typeDefs = gql`
   type Query {
     # Users Query
     me: UserResult!
+    getUserBySlugId(userIdSlug: String!): UserResult
+    searchUsers(searchItem: String!): UserArrayResult!
 
     # Post Query
     getPostById(id: ID!): PostResult
@@ -293,6 +309,7 @@ const typeDefs = gql`
 
     # Notification Query
     getMessagesByUserId: MessageArrayResult!
+    getUnReadMessagesByUserId: MessageArrayResult!
 
     # Note Query
     getNotesByCourseId(courseId: ID!): NoteArrayResult!
@@ -302,6 +319,7 @@ const typeDefs = gql`
     getAllChats: ChatArrayResult!
     getChatMessagesByChatId(chatId: ID!): ChatMsgArrayResult!
     getAllChatMsgs: ChatMsgArrayResult!
+    getAllUnReadChatMsgsByUserId: ChatMsgArrayResult!
   }
 
   # Mutatiob types
@@ -315,10 +333,15 @@ const typeDefs = gql`
     ): String!
     login(usernameOrEmail: String!, password: String!): String!
     logout(username: String!): String!
-    changePassword(newPassword: String!): String!
+    changePassword(currentPassword: String!, newPassword: String!): String!
     activateAccount(token: String!): MsgResult!
     forgotPassword(usernameOrEmail: String!): String!
     resetPassword(token: String!, newPassword: String!): String!
+    editMe(email: String!, username: String!, fullName: String!): String!
+    editProfileImage(profileImage: String!): String!
+    editBackGroundImage(backgroundImg: String!): String!
+
+    deleteMe: String!
 
     # Post Mutation
     createPost(
@@ -334,7 +357,7 @@ const typeDefs = gql`
     newNoteComment(userId: ID!, noteId: ID!, body: String): EntityResult!
 
     # Likes Mutation
-    updatePostPoint(postId: ID!, increment: Boolean!): MsgResult!
+    updatePostPoint(postId: ID!, increment: Boolean!): String!
 
     # Course Mutation
     createCourse(

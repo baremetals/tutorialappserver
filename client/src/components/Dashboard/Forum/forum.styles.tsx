@@ -1,7 +1,7 @@
 import styled from "styled-components";
-import { FcLike } from "react-icons/fc";
+// import { FcLike } from "react-icons/fc";
 import { FcComments } from "react-icons/fc";
-import { AiOutlineFolderView } from "react-icons/ai";
+import { AiOutlineFolderView, AiOutlineLike, AiFillLike } from "react-icons/ai";
 import { MdExpandMore } from "react-icons/md";
 
 export const ForumWrapper = styled.div`
@@ -59,6 +59,7 @@ export const PostProfileImge = styled.img`
   height: 2rem;
   border-radius: 50%;
   object-fit: cover;
+  margin-right: .2rem;
 `;
 export const UserName = styled.span`
   font-size: 1rem;
@@ -137,11 +138,20 @@ export const BottomLeftWrap = styled.div`
   display: flex;
   align-items: center;
 `;
-export const LikeIcon = styled(FcLike)`
+export const FilledLikeIcon = styled(AiFillLike)`
   width: 24px;
   height: 24px;
   margin-right: 5px;
   cursor: pointer;
+  color: blue;
+`;
+
+export const UnFilledLikeIcon = styled(AiOutlineLike)`
+  width: 24px;
+  height: 24px;
+  margin-right: 5px;
+  cursor: pointer;
+
 `;
 export const ViewIcon = styled(AiOutlineFolderView)`
   width: 24px;
@@ -154,6 +164,7 @@ export const LikeCounter = styled.span`
   margin-right: 1rem;
 `;
 export const ViewCounter = styled.span``;
+
 export const BottomRightWrap = styled.div`
   display: flex;
   align-items: center;

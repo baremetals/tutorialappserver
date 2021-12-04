@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Link from "next/link";
+
 import {
   PostTop,
   PostLeftWrap,
@@ -11,13 +12,13 @@ import {
   PostCenterWrap,
   PostText,
   PostBottomWrapper,
-  BottomLeftWrap,
-  LikeIcon,
-  LikeCounter,
+  // BottomLeftWrap,
+  // LikeIcon,
+  // LikeCounter,
   BottomRightWrap,
   ForumWrapper,
   PostDropdown,
-  LikeGroup,
+  // LikeGroup,
   ViewMore,
   PostTitle,
   // DropAndCenterWrap,
@@ -76,12 +77,12 @@ const ImagePostCard = ({
           <PostText>{body}</PostText>
         </PostCenterWrap>
         <PostBottomWrapper>
-          <BottomLeftWrap>
+          {/* <BottomLeftWrap>
             <LikeGroup>
-              <LikeIcon />
+              <LikeIcon onClick={handleLikeOrUnlike} />
               <LikeCounter>{likeCount} </LikeCounter>
             </LikeGroup>
-          </BottomLeftWrap>
+          </BottomLeftWrap> */}
           <BottomRightWrap>
             <Link href={`/forum/${postId}`}>
               <ViewMore>View more</ViewMore>

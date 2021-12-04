@@ -27,6 +27,27 @@ export const getMessagesByUserId = async (
   };
 };
 
+export const getUnReadMessagesByUserId = async (
+  userId: string
+): Promise<QueryArrayResult<Message>> => {
+  const msgs = await Message.createQueryBuilder('msg')
+    .where(`msg."userId" = :userId`, { userId })
+    .andWhere(`msg."IsRead" = :isRead`, { isRead: false })
+    // .leftJoinAndSelect('msg.user', 'user')
+    .orderBy('msg.createdOn', 'DESC')
+    .getMany();
+
+  if (!msgs || msgs.length === 0) {
+    return {
+      messages: ['Messages of user not found.'],
+    };
+  }
+  // console.log(msgs);
+  return {
+    entities: msgs,
+  };
+};
+
 // export const createNotification = async (
 //   userId: string | undefined | null,
 //   ownerId: string | undefined | null,
