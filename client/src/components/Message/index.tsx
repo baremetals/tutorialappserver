@@ -18,10 +18,12 @@ import {
   ScrollChat,
 } from "./message.styles";
 import {
-  GetChatMessagesByChatIdDocument,
+  SearchAllChatsByUserIdDocument,
   User,
   useNewChatMessageSubscription,
 } from "generated/graphql";
+import { ChatBoxTop } from 'components/UserMessages/msg.styles';
+import UserMessages from 'components/UserMessages';
 
 type MessagePageType = {
   body: string;
@@ -33,23 +35,32 @@ type MessagePageType = {
   sender: User;
 };
 
-function Message() {
+function Message(props: any) {
   const router = useRouter();
-  const { chatId } = router.query;
+  const { username } = router.query;
   const { user: user } = useAppSelector(isUser);
+  // const [filteredId, setFilteredId] = useState("");
+  const pathname = router.pathname;
 
-  const { ...result } = useQuery(GetChatMessagesByChatIdDocument, {
+  const { ...result } = useQuery(SearchAllChatsByUserIdDocument, {
     variables: {
-      chatId: chatId,
+      username,
     },
   });
 
+
+  // console.log(chatData);
+
   const { data } = useNewChatMessageSubscription();
   const newChatMessage = data?.newChatMessage;
-  const messages = result.data?.getChatMessagesByChatId.chatMsgs;
+  const messages = result.data?.searchAllChatsByUserId.chatMsgs || [];
+  const errorMessages = result.data?.searchAllChatsByUserId.messages;
   const [msgArray, setMsgArray] = useState([]);
-  // console.log(newChatMessage);
-  // console.log(result.error);
+  const [chatId, setChatId] = useState("" || undefined);
+
+  // console.log(result.data?.searchAllChatsByUserId);
+  // console.log(messages);
+
   const me: string | undefined | any = user?.id;
   const scrollUpdate: any = useRef(null || undefined);
 
@@ -70,40 +81,62 @@ function Message() {
       setMsgArray(newArrayItem);
     }
   }, [newChatMessage]);
+  
+  useEffect(() => {
+    if (messages && messages.length > 0) {
+      const id = messages[0].chat.id
+      // console.log(id)
+      setChatId(id)
+    }
+  })
 
   if (!result.data || result.loading) {
     return <div>loading...</div>;
   }
 
   return (
-    <ScrollChat
-      ref={scrollUpdate} 
-    >
-      {result.error ||
-        !messages ||
-        (messages.length === 0 && <div> no messages </div>)}
+    <>
+      <ChatBoxTop>
+        {pathname !== "/messages" && (
+          <ScrollChat ref={scrollUpdate}>
+            {result.error ||
+              !messages ||
+              errorMessages || 
+              (messages.length === 0 && <div> no messages </div>)}
 
-      {!result.loading &&
-        [...messages, ...msgArray].map((msg: any, id: any) =>
-          me === msg.sender.id ? (
-            <OwnerMessageWrap key={id}>
-              <MessageTop>
-                <MessageImg alt="Message image" src={msg.sender.profileImage} />
-                <OwnerMessageText>{msg.body}</OwnerMessageText>
-              </MessageTop>
-              <MessageDate>{dayjs(msg.createdOn).fromNow()}</MessageDate>
-            </OwnerMessageWrap>
-          ) : (
-            <MessageWrap key={id}>
-              <MessageTop>
-                <MessageImg alt="Message image" src="/prettygirl.jpg" />
-                <MessageText>{msg.body}</MessageText>
-              </MessageTop>
-              <MessageBottom>{dayjs(msg.createdOn).fromNow()}</MessageBottom>
-            </MessageWrap>
-          )
+            {!result.loading &&
+              [...messages, ...msgArray].map((msg: any, id: any) =>
+                me === msg.sender.id ? (
+                  <OwnerMessageWrap key={id}>
+                    <MessageTop>
+                      <MessageImg
+                        alt="Message image"
+                        src={msg.sender.profileImage}
+                      />
+                      <OwnerMessageText>{msg.body}</OwnerMessageText>
+                    </MessageTop>
+                    <MessageDate>{dayjs(msg.createdOn).fromNow()}</MessageDate>
+                  </OwnerMessageWrap>
+                ) : (
+                  <MessageWrap key={id}>
+                    <MessageTop>
+                      <MessageImg
+                        alt="Message image"
+                        src={msg.sender.profileImage}
+                      />
+                      <MessageText>{msg.body}</MessageText>
+                    </MessageTop>
+                    <MessageBottom>
+                      {dayjs(msg.createdOn).fromNow()}
+                    </MessageBottom>
+                  </MessageWrap>
+                )
+              )}
+          </ScrollChat>
         )}
-    </ScrollChat>
+      </ChatBoxTop>
+      <UserMessages props={chatId} {...props} />
+    </>
   );
 }
 

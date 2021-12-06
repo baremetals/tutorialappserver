@@ -1,13 +1,15 @@
 mutation CreateChatMessage(
   $ownerUserId: String!
-  $recipientUserId: String!
+  $username: String!
   $body: String!
 ) {
   createChatMessage(
     ownerUserId: $ownerUserId
-    recipientUserId: $recipientUserId
+    username: $username
     body: $body
   ) {
-    messages
+    ... on EntityResult {
+      messages
+    }
   }
 }

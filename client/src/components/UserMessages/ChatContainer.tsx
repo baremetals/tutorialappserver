@@ -16,7 +16,7 @@ type FormInput = {
 
 const ChatContainer = () => {
   const router = useRouter();
-  const {chatId } = router.query
+  const {username } = router.query
   const [newChatMsg] = useRespondToChatMessageMutation();
    const { user: user } = useAppSelector(isUser);
   const {
@@ -32,7 +32,7 @@ const ChatContainer = () => {
       const response = await newChatMsg({
         variables: {
           senderUserId: user?.id as string,
-          chatId: chatId as string,
+          chatId: username as string,
           body,
         },
       });
@@ -51,7 +51,7 @@ const ChatContainer = () => {
       <ChatSideBar>
         <ChatBoxTop>
           <div>
-            <Message />
+            <Message props={"testing"}/>
           </div>
         </ChatBoxTop>
         <ChatBoxBottom>

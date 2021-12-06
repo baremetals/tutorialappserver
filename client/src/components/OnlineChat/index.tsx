@@ -1,4 +1,5 @@
 import React from "react";
+import Link from "next/link";
 
 import {
   ChatContainer,
@@ -23,10 +24,15 @@ function OnlineChat({
       <ChatContainer>
         <OnlineUsersWrap>
           <OnlineUsersImageWrap>
-            <OnlineUsersImage alt="Online user image" src={profileImage} />
+            <Link href={`/messages/${username}`}>
+              <OnlineUsersImage alt="Online user image" src={profileImage} />
+            </Link>
+
             {online && <OnlineUsersImageBadge></OnlineUsersImageBadge>}
           </OnlineUsersImageWrap>
-          <OnlineUsersName>{username}</OnlineUsersName>
+          <Link href={`/messages/${username}`}>
+            <OnlineUsersName>{username}</OnlineUsersName>
+          </Link>
         </OnlineUsersWrap>
       </ChatContainer>
     </>

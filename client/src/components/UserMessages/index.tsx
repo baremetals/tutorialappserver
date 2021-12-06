@@ -1,16 +1,14 @@
 import React from "react";
 import { useForm } from "react-hook-form";
-import ChatSideBar from "./ChatSideBar"
-import Message from '../Message';
+
 
 import {
-  ChatBoxTop,
   ChatBoxBottom,
   ChatMessageInput,
   ChatSubmitButton,
 } from "./msg.styles";
 import { useRouter } from 'next/router';
-import { useCreateChatMessageMutation } from "generated/graphql";
+import { useCreateChatMessageMutation, useRespondToChatMessageMutation } from "generated/graphql";
 import { useAppSelector } from "app/hooks";
 import { isUser } from "features/auth/selectors";
 
@@ -19,9 +17,10 @@ type FormInput = {
 };
 
 
-function UserMessages() {
+function UserMessages(props: { props: string; }) {
   const router = useRouter();
   const [newChat] = useCreateChatMessageMutation();
+  const [newChatMsg] = useRespondToChatMessageMutation();
   const { user: user } = useAppSelector(isUser);
   const {
     // setValue,
@@ -31,42 +30,64 @@ function UserMessages() {
   } = useForm<FormInput>();
 
   const pathname = router.pathname;
+  const { username } = router.query;
   const me = user;
-  // console.log(me)
 
+  // console.log(props?.props);
+  const chatId = props?.props as string;
 
-  const onSubmit = async ({body}: any) => {
+  const onSubmit = async ({ body }: any) => {
 
-    try {
-      const response = await newChat({
-        variables: {
-          ownerUserId: me?.id as string,
-          recipientUserId: "4",
-          body,
-        },
-      });
+    if (chatId !== "" && chatId !== undefined) {
+      // console.log(chatId, "are you shooting this off?");
+      try {
+        const response = await newChatMsg({
+          variables: {
+            senderUserId: user?.id as string,
+            chatId,
+            body,
+          },
+        });
 
-      if (response.data?.createChatMessage) {
-
-        console.log(response.data?.createChatMessage);
+        if (response.data?.respondToChatMessage) {
+          console.log(response.data?.respondToChatMessage);
+        }
+      } catch (ex) {
+        console.log(ex);
+        throw ex;
       }
-    } catch (ex) {
-      console.log(ex);
-      throw ex;
+    } else {
+      try {
+        const response = await newChat({
+          variables: {
+            ownerUserId: me?.id as string,
+            username: username as string,
+            body,
+          },
+        });
+
+        if (response.data?.createChatMessage) {
+          console.log(response.data?.createChatMessage);
+        }
+      } catch (ex) {
+        console.log(ex);
+        throw ex;
+      }
     }
   };
+    
 
   return (
     <>
-      <ChatSideBar>
-        <ChatBoxTop>
-          {pathname === "/messages" ? null : (
-            <div>
-              <Message />
-            </div>
-          )}
-        </ChatBoxTop>
-        <ChatBoxBottom>
+      {/* <ChatBoxTop>
+        {pathname === "/messages" ? null : (
+          <div>
+            <Message />
+          </div>
+        )}
+      </ChatBoxTop> */}
+      <ChatBoxBottom>
+        {pathname !== "/messages" && (
           <form onSubmit={handleSubmit(onSubmit)}>
             {errors.body && <span>text is required</span>}
             <ChatMessageInput
@@ -76,8 +97,8 @@ function UserMessages() {
             ></ChatMessageInput>
             <ChatSubmitButton type="submit">send</ChatSubmitButton>
           </form>
-        </ChatBoxBottom>
-      </ChatSideBar>
+        )}
+      </ChatBoxBottom>
     </>
   );
 }

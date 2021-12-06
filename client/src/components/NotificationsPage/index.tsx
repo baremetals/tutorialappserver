@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import Link from "next/link";
 import LeftSideBar from "../Dashboard/LeftSideBar";
 import SmallFooter from "../Dashboard/SmallFooter";
 import TopBar from "../Dashboard/TopBar";
@@ -31,6 +32,7 @@ type NotificationsPageType = {
   body: string;
   createdOn: string;
   id: string;
+  from: string;
 };
 function NotificationsPage() {
   const { ...result } = useQuery(GetMessagesByUserIdDocument);
@@ -80,13 +82,19 @@ function NotificationsPage() {
               {noticeArray
                 .concat(notices)
                 .map(
-                  ({ body, image, createdOn }: NotificationsPageType, id) => (
+                  (
+                    { body, image, createdOn, from }: NotificationsPageType,
+                    id
+                  ) => (
                     <NoticesWrapper key={id}>
                       <NoticeLeftWrap>
-                        <SenderProfileImge
-                          alt="sender profile image"
-                          src={image}
-                        />
+                        <Link href={`user-profile/${from}`}>
+                          <SenderProfileImge
+                            alt="sender profile image"
+                            src={image}
+                          />
+                        </Link>
+
                         <NoticeMessage>{body}</NoticeMessage>
                         <NoticeDate>{dayjs(createdOn).fromNow()}</NoticeDate>
                       </NoticeLeftWrap>

@@ -1,4 +1,4 @@
-import DetailPost from "components/Dashboard/Forum/DetailPost";
+import DetailPost from "components/ForumPage/DetailPost";
 import LeftSideBar from "components/Dashboard/LeftSideBar";
 import SmallFooter from "components/Dashboard/SmallFooter";
 import Topbar from "components/Dashboard/TopBar";

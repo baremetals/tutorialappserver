@@ -199,7 +199,7 @@ export type Mutation = {
   activateAccount: MsgResult;
   addABook: EntityResult;
   changePassword: Scalars['String'];
-  createChatMessage?: Maybe<EntityResult>;
+  createChatMessage?: Maybe<ChatMsgResult>;
   createComment: CommentResult;
   createCourse: EntityResult;
   createPost: EntityResult;
@@ -247,7 +247,7 @@ export type MutationChangePasswordArgs = {
 export type MutationCreateChatMessageArgs = {
   body: Scalars['String'];
   ownerUserId: Scalars['String'];
-  recipientUserId: Scalars['String'];
+  username: Scalars['String'];
 };
 
 
@@ -456,11 +456,11 @@ export type Query = {
   getAllCategories?: Maybe<Array<Category>>;
   getAllChatMsgs: ChatMsgArrayResult;
   getAllChats: ChatArrayResult;
+  getAllChatsByUserId: ChatArrayResult;
   getAllUnReadChatMsgsByUserId: ChatMsgArrayResult;
   getBooks: BookArrayResult;
   getBooksByCategoryId: BookArrayResult;
   getChatMessagesByChatId: ChatMsgArrayResult;
-  getChatMessagesByUserId: ChatArrayResult;
   getCommentsByCourseId: CommentArrayResult;
   getCommentsByNoteId: CommentArrayResult;
   getCommentsByPostId: CommentArrayResult;
@@ -477,6 +477,7 @@ export type Query = {
   getUnReadMessagesByUserId: MessageArrayResult;
   getUserBySlugId?: Maybe<UserResult>;
   me: UserResult;
+  searchAllChatsByUserId: ChatMsgArrayResult;
   searchUsers: UserArrayResult;
 };
 
@@ -538,6 +539,11 @@ export type QueryGetStudentsByCourseIdArgs = {
 
 export type QueryGetUserBySlugIdArgs = {
   userIdSlug: Scalars['String'];
+};
+
+
+export type QuerySearchAllChatsByUserIdArgs = {
+  username?: Maybe<Scalars['String']>;
 };
 
 
@@ -622,6 +628,15 @@ export type ChangePasswordMutationVariables = Exact<{
 
 export type ChangePasswordMutation = { __typename?: 'Mutation', changePassword: string };
 
+export type EditMeMutationVariables = Exact<{
+  email: Scalars['String'];
+  username: Scalars['String'];
+  fullName: Scalars['String'];
+}>;
+
+
+export type EditMeMutation = { __typename?: 'Mutation', editMe: string };
+
 export type ForgotPasswordMutationVariables = Exact<{
   usernameOrEmail: Scalars['String'];
 }>;
@@ -664,12 +679,21 @@ export type ResetPasswordMutation = { __typename?: 'Mutation', resetPassword: st
 
 export type CreateChatMessageMutationVariables = Exact<{
   ownerUserId: Scalars['String'];
-  recipientUserId: Scalars['String'];
+  username: Scalars['String'];
   body: Scalars['String'];
 }>;
 
 
-export type CreateChatMessageMutation = { __typename?: 'Mutation', createChatMessage?: { __typename?: 'EntityResult', messages?: Array<string> | null | undefined } | null | undefined };
+export type CreateChatMessageMutation = { __typename?: 'Mutation', createChatMessage?: { __typename?: 'ChatMsg' } | { __typename?: 'EntityResult', messages?: Array<string> | null | undefined } | null | undefined };
+
+export type RespondToChatMessageMutationVariables = Exact<{
+  senderUserId: Scalars['String'];
+  chatId: Scalars['String'];
+  body: Scalars['String'];
+}>;
+
+
+export type RespondToChatMessageMutation = { __typename?: 'Mutation', respondToChatMessage?: { __typename?: 'ChatMsg' } | { __typename?: 'EntityResult', messages?: Array<string> | null | undefined } | null | undefined };
 
 export type CreateCommentMutationVariables = Exact<{
   userId: Scalars['ID'];
@@ -718,15 +742,6 @@ export type EditBackGroundImageMutationVariables = Exact<{
 
 export type EditBackGroundImageMutation = { __typename?: 'Mutation', editBackGroundImage: string };
 
-export type EditMeMutationVariables = Exact<{
-  email: Scalars['String'];
-  username: Scalars['String'];
-  fullName: Scalars['String'];
-}>;
-
-
-export type EditMeMutation = { __typename?: 'Mutation', editMe: string };
-
 export type EditProfileImageMutationVariables = Exact<{
   profileImage: Scalars['String'];
 }>;
@@ -744,26 +759,24 @@ export type GetAllUnReadChatMsgsByUserIdQueryVariables = Exact<{ [key: string]: 
 
 export type GetAllUnReadChatMsgsByUserIdQuery = { __typename?: 'Query', getAllUnReadChatMsgsByUserId: { __typename?: 'ChatMsgArray', chatMsgs?: Array<{ __typename?: 'ChatMsg', id: string, body: string }> | null | undefined } | { __typename?: 'EntityResult', messages?: Array<string> | null | undefined } };
 
+export type GetAllChatsByUserIdQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetAllChatsByUserIdQuery = { __typename?: 'Query', getAllChatsByUserId: { __typename?: 'ChatArray', chats?: Array<{ __typename?: 'Chat', id: string, owner: { __typename?: 'User', id: string, username: string, profileImage: string }, recipient: { __typename?: 'User', id: string, username: string, profileImage: string }, chatMsgs?: Array<{ __typename?: 'ChatMsg', id: string, isRead: boolean, body: string, createdOn: any }> | null | undefined }> | null | undefined } | { __typename?: 'EntityResult', messages?: Array<string> | null | undefined } };
+
 export type GetChatMessagesByChatIdQueryVariables = Exact<{
   chatId: Scalars['ID'];
 }>;
 
 
-export type GetChatMessagesByChatIdQuery = { __typename?: 'Query', getChatMessagesByChatId: { __typename?: 'ChatMsgArray', chatMsgs?: Array<{ __typename?: 'ChatMsg', id: string, isRead: boolean, body: string, createdOn: any, sender: { __typename?: 'User', id: string, username: string, profileImage: string }, receiver: { __typename?: 'User', id: string, username: string, profileImage: string } }> | null | undefined } | { __typename?: 'EntityResult', messages?: Array<string> | null | undefined } };
+export type GetChatMessagesByChatIdQuery = { __typename?: 'Query', getChatMessagesByChatId: { __typename?: 'ChatMsgArray', chatMsgs?: Array<{ __typename?: 'ChatMsg', id: string, body: string, createdOn: any, sender: { __typename?: 'User', id: string, userIdSlug?: string | null | undefined, username: string, isOnline: boolean, profileImage: string }, receiver: { __typename?: 'User', id: string, userIdSlug?: string | null | undefined, username: string, isOnline: boolean, profileImage: string } }> | null | undefined } | { __typename?: 'EntityResult', messages?: Array<string> | null | undefined } };
 
-export type GetChatMessagesByUserIdQueryVariables = Exact<{ [key: string]: never; }>;
-
-
-export type GetChatMessagesByUserIdQuery = { __typename?: 'Query', getChatMessagesByUserId: { __typename?: 'ChatArray', chats?: Array<{ __typename?: 'Chat', id: string, owner: { __typename?: 'User', id: string, username: string, profileImage: string }, recipient: { __typename?: 'User', id: string, username: string, profileImage: string }, chatMsgs?: Array<{ __typename?: 'ChatMsg', id: string, isRead: boolean, body: string, createdOn: any }> | null | undefined }> | null | undefined } | { __typename?: 'EntityResult', messages?: Array<string> | null | undefined } };
-
-export type RespondToChatMessageMutationVariables = Exact<{
-  senderUserId: Scalars['String'];
-  chatId: Scalars['String'];
-  body: Scalars['String'];
+export type SearchAllChatsByUserIdQueryVariables = Exact<{
+  username?: Maybe<Scalars['String']>;
 }>;
 
 
-export type RespondToChatMessageMutation = { __typename?: 'Mutation', respondToChatMessage?: { __typename?: 'ChatMsg' } | { __typename?: 'EntityResult', messages?: Array<string> | null | undefined } | null | undefined };
+export type SearchAllChatsByUserIdQuery = { __typename?: 'Query', searchAllChatsByUserId: { __typename?: 'ChatMsgArray', chatMsgs?: Array<{ __typename?: 'ChatMsg', id: string, body: string, createdOn: any, sender: { __typename?: 'User', id: string, userIdSlug?: string | null | undefined, username: string, isOnline: boolean, profileImage: string }, receiver: { __typename?: 'User', id: string, userIdSlug?: string | null | undefined, username: string, isOnline: boolean, profileImage: string }, chat: { __typename?: 'Chat', id: string } }> | null | undefined } | { __typename?: 'EntityResult', messages?: Array<string> | null | undefined } };
 
 export type GetLatestCoursesQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -830,10 +843,15 @@ export type SearchUsersQueryVariables = Exact<{
 
 export type SearchUsersQuery = { __typename?: 'Query', searchUsers: { __typename?: 'EntityResult', messages?: Array<string> | null | undefined } | { __typename?: 'UserArray', users?: Array<{ __typename?: 'User', id: string, userIdSlug?: string | null | undefined, username: string, profileImage: string, isOnline: boolean }> | null | undefined } };
 
+export type NewChatSubscriptionVariables = Exact<{ [key: string]: never; }>;
+
+
+export type NewChatSubscription = { __typename?: 'Subscription', newChat: { __typename?: 'Chat', id: string, owner: { __typename?: 'User', id: string, userIdSlug?: string | null | undefined, username: string, isOnline: boolean, profileImage: string }, recipient: { __typename?: 'User', id: string, userIdSlug?: string | null | undefined, username: string, isOnline: boolean, profileImage: string }, chatMsgs?: Array<{ __typename?: 'ChatMsg', id: string }> | null | undefined } };
+
 export type NewChatMessageSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
 
-export type NewChatMessageSubscription = { __typename?: 'Subscription', newChatMessage: { __typename?: 'ChatMsg', id: string, isRead: boolean, body: string, createdOn: any, sender: { __typename?: 'User', id: string, username: string, profileImage: string }, receiver: { __typename?: 'User', id: string, username: string, profileImage: string } } };
+export type NewChatMessageSubscription = { __typename?: 'Subscription', newChatMessage: { __typename?: 'ChatMsg', id: string, body: string, createdOn: any, sender: { __typename?: 'User', id: string, userIdSlug?: string | null | undefined, username: string, isOnline: boolean, profileImage: string }, receiver: { __typename?: 'User', id: string, userIdSlug?: string | null | undefined, username: string, isOnline: boolean, profileImage: string } } };
 
 export type NewCommentSubscriptionVariables = Exact<{ [key: string]: never; }>;
 
@@ -923,6 +941,39 @@ export function useChangePasswordMutation(baseOptions?: Apollo.MutationHookOptio
 export type ChangePasswordMutationHookResult = ReturnType<typeof useChangePasswordMutation>;
 export type ChangePasswordMutationResult = Apollo.MutationResult<ChangePasswordMutation>;
 export type ChangePasswordMutationOptions = Apollo.BaseMutationOptions<ChangePasswordMutation, ChangePasswordMutationVariables>;
+export const EditMeDocument = gql`
+    mutation EditMe($email: String!, $username: String!, $fullName: String!) {
+  editMe(email: $email, username: $username, fullName: $fullName)
+}
+    `;
+export type EditMeMutationFn = Apollo.MutationFunction<EditMeMutation, EditMeMutationVariables>;
+
+/**
+ * __useEditMeMutation__
+ *
+ * To run a mutation, you first call `useEditMeMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useEditMeMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [editMeMutation, { data, loading, error }] = useEditMeMutation({
+ *   variables: {
+ *      email: // value for 'email'
+ *      username: // value for 'username'
+ *      fullName: // value for 'fullName'
+ *   },
+ * });
+ */
+export function useEditMeMutation(baseOptions?: Apollo.MutationHookOptions<EditMeMutation, EditMeMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<EditMeMutation, EditMeMutationVariables>(EditMeDocument, options);
+      }
+export type EditMeMutationHookResult = ReturnType<typeof useEditMeMutation>;
+export type EditMeMutationResult = Apollo.MutationResult<EditMeMutation>;
+export type EditMeMutationOptions = Apollo.BaseMutationOptions<EditMeMutation, EditMeMutationVariables>;
 export const ForgotPasswordDocument = gql`
     mutation ForgotPassword($usernameOrEmail: String!) {
   forgotPassword(usernameOrEmail: $usernameOrEmail)
@@ -1089,13 +1140,11 @@ export type ResetPasswordMutationHookResult = ReturnType<typeof useResetPassword
 export type ResetPasswordMutationResult = Apollo.MutationResult<ResetPasswordMutation>;
 export type ResetPasswordMutationOptions = Apollo.BaseMutationOptions<ResetPasswordMutation, ResetPasswordMutationVariables>;
 export const CreateChatMessageDocument = gql`
-    mutation CreateChatMessage($ownerUserId: String!, $recipientUserId: String!, $body: String!) {
-  createChatMessage(
-    ownerUserId: $ownerUserId
-    recipientUserId: $recipientUserId
-    body: $body
-  ) {
-    messages
+    mutation CreateChatMessage($ownerUserId: String!, $username: String!, $body: String!) {
+  createChatMessage(ownerUserId: $ownerUserId, username: $username, body: $body) {
+    ... on EntityResult {
+      messages
+    }
   }
 }
     `;
@@ -1115,7 +1164,7 @@ export type CreateChatMessageMutationFn = Apollo.MutationFunction<CreateChatMess
  * const [createChatMessageMutation, { data, loading, error }] = useCreateChatMessageMutation({
  *   variables: {
  *      ownerUserId: // value for 'ownerUserId'
- *      recipientUserId: // value for 'recipientUserId'
+ *      username: // value for 'username'
  *      body: // value for 'body'
  *   },
  * });
@@ -1127,6 +1176,43 @@ export function useCreateChatMessageMutation(baseOptions?: Apollo.MutationHookOp
 export type CreateChatMessageMutationHookResult = ReturnType<typeof useCreateChatMessageMutation>;
 export type CreateChatMessageMutationResult = Apollo.MutationResult<CreateChatMessageMutation>;
 export type CreateChatMessageMutationOptions = Apollo.BaseMutationOptions<CreateChatMessageMutation, CreateChatMessageMutationVariables>;
+export const RespondToChatMessageDocument = gql`
+    mutation RespondToChatMessage($senderUserId: String!, $chatId: String!, $body: String!) {
+  respondToChatMessage(senderUserId: $senderUserId, chatId: $chatId, body: $body) {
+    ... on EntityResult {
+      messages
+    }
+  }
+}
+    `;
+export type RespondToChatMessageMutationFn = Apollo.MutationFunction<RespondToChatMessageMutation, RespondToChatMessageMutationVariables>;
+
+/**
+ * __useRespondToChatMessageMutation__
+ *
+ * To run a mutation, you first call `useRespondToChatMessageMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRespondToChatMessageMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [respondToChatMessageMutation, { data, loading, error }] = useRespondToChatMessageMutation({
+ *   variables: {
+ *      senderUserId: // value for 'senderUserId'
+ *      chatId: // value for 'chatId'
+ *      body: // value for 'body'
+ *   },
+ * });
+ */
+export function useRespondToChatMessageMutation(baseOptions?: Apollo.MutationHookOptions<RespondToChatMessageMutation, RespondToChatMessageMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RespondToChatMessageMutation, RespondToChatMessageMutationVariables>(RespondToChatMessageDocument, options);
+      }
+export type RespondToChatMessageMutationHookResult = ReturnType<typeof useRespondToChatMessageMutation>;
+export type RespondToChatMessageMutationResult = Apollo.MutationResult<RespondToChatMessageMutation>;
+export type RespondToChatMessageMutationOptions = Apollo.BaseMutationOptions<RespondToChatMessageMutation, RespondToChatMessageMutationVariables>;
 export const CreateCommentDocument = gql`
     mutation CreateComment($userId: ID!, $postId: ID!, $body: String) {
   createComment(userId: $userId, postId: $postId, body: $body) {
@@ -1340,39 +1426,6 @@ export function useEditBackGroundImageMutation(baseOptions?: Apollo.MutationHook
 export type EditBackGroundImageMutationHookResult = ReturnType<typeof useEditBackGroundImageMutation>;
 export type EditBackGroundImageMutationResult = Apollo.MutationResult<EditBackGroundImageMutation>;
 export type EditBackGroundImageMutationOptions = Apollo.BaseMutationOptions<EditBackGroundImageMutation, EditBackGroundImageMutationVariables>;
-export const EditMeDocument = gql`
-    mutation EditMe($email: String!, $username: String!, $fullName: String!) {
-  editMe(email: $email, username: $username, fullName: $fullName)
-}
-    `;
-export type EditMeMutationFn = Apollo.MutationFunction<EditMeMutation, EditMeMutationVariables>;
-
-/**
- * __useEditMeMutation__
- *
- * To run a mutation, you first call `useEditMeMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useEditMeMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [editMeMutation, { data, loading, error }] = useEditMeMutation({
- *   variables: {
- *      email: // value for 'email'
- *      username: // value for 'username'
- *      fullName: // value for 'fullName'
- *   },
- * });
- */
-export function useEditMeMutation(baseOptions?: Apollo.MutationHookOptions<EditMeMutation, EditMeMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<EditMeMutation, EditMeMutationVariables>(EditMeDocument, options);
-      }
-export type EditMeMutationHookResult = ReturnType<typeof useEditMeMutation>;
-export type EditMeMutationResult = Apollo.MutationResult<EditMeMutation>;
-export type EditMeMutationOptions = Apollo.BaseMutationOptions<EditMeMutation, EditMeMutationVariables>;
 export const EditProfileImageDocument = gql`
     mutation EditProfileImage($profileImage: String!) {
   editProfileImage(profileImage: $profileImage)
@@ -1495,6 +1548,63 @@ export function useGetAllUnReadChatMsgsByUserIdLazyQuery(baseOptions?: Apollo.La
 export type GetAllUnReadChatMsgsByUserIdQueryHookResult = ReturnType<typeof useGetAllUnReadChatMsgsByUserIdQuery>;
 export type GetAllUnReadChatMsgsByUserIdLazyQueryHookResult = ReturnType<typeof useGetAllUnReadChatMsgsByUserIdLazyQuery>;
 export type GetAllUnReadChatMsgsByUserIdQueryResult = Apollo.QueryResult<GetAllUnReadChatMsgsByUserIdQuery, GetAllUnReadChatMsgsByUserIdQueryVariables>;
+export const GetAllChatsByUserIdDocument = gql`
+    query GetAllChatsByUserId {
+  getAllChatsByUserId {
+    ... on EntityResult {
+      messages
+    }
+    ... on ChatArray {
+      chats {
+        id
+        owner {
+          id
+          username
+          profileImage
+        }
+        recipient {
+          id
+          username
+          profileImage
+        }
+        chatMsgs {
+          id
+          isRead
+          body
+          createdOn
+        }
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useGetAllChatsByUserIdQuery__
+ *
+ * To run a query within a React component, call `useGetAllChatsByUserIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetAllChatsByUserIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetAllChatsByUserIdQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetAllChatsByUserIdQuery(baseOptions?: Apollo.QueryHookOptions<GetAllChatsByUserIdQuery, GetAllChatsByUserIdQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetAllChatsByUserIdQuery, GetAllChatsByUserIdQueryVariables>(GetAllChatsByUserIdDocument, options);
+      }
+export function useGetAllChatsByUserIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAllChatsByUserIdQuery, GetAllChatsByUserIdQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetAllChatsByUserIdQuery, GetAllChatsByUserIdQueryVariables>(GetAllChatsByUserIdDocument, options);
+        }
+export type GetAllChatsByUserIdQueryHookResult = ReturnType<typeof useGetAllChatsByUserIdQuery>;
+export type GetAllChatsByUserIdLazyQueryHookResult = ReturnType<typeof useGetAllChatsByUserIdLazyQuery>;
+export type GetAllChatsByUserIdQueryResult = Apollo.QueryResult<GetAllChatsByUserIdQuery, GetAllChatsByUserIdQueryVariables>;
 export const GetChatMessagesByChatIdDocument = gql`
     query GetChatMessagesByChatId($chatId: ID!) {
   getChatMessagesByChatId(chatId: $chatId) {
@@ -1504,17 +1614,20 @@ export const GetChatMessagesByChatIdDocument = gql`
     ... on ChatMsgArray {
       chatMsgs {
         id
-        isRead
         body
         createdOn
         sender {
           id
+          userIdSlug
           username
+          isOnline
           profileImage
         }
         receiver {
           id
+          userIdSlug
           username
+          isOnline
           profileImage
         }
       }
@@ -1550,30 +1663,33 @@ export function useGetChatMessagesByChatIdLazyQuery(baseOptions?: Apollo.LazyQue
 export type GetChatMessagesByChatIdQueryHookResult = ReturnType<typeof useGetChatMessagesByChatIdQuery>;
 export type GetChatMessagesByChatIdLazyQueryHookResult = ReturnType<typeof useGetChatMessagesByChatIdLazyQuery>;
 export type GetChatMessagesByChatIdQueryResult = Apollo.QueryResult<GetChatMessagesByChatIdQuery, GetChatMessagesByChatIdQueryVariables>;
-export const GetChatMessagesByUserIdDocument = gql`
-    query GetChatMessagesByUserId {
-  getChatMessagesByUserId {
+export const SearchAllChatsByUserIdDocument = gql`
+    query SearchAllChatsByUserId($username: String) {
+  searchAllChatsByUserId(username: $username) {
     ... on EntityResult {
       messages
     }
-    ... on ChatArray {
-      chats {
+    ... on ChatMsgArray {
+      chatMsgs {
         id
-        owner {
+        body
+        createdOn
+        sender {
           id
+          userIdSlug
           username
+          isOnline
           profileImage
         }
-        recipient {
+        receiver {
           id
+          userIdSlug
           username
+          isOnline
           profileImage
         }
-        chatMsgs {
+        chat {
           id
-          isRead
-          body
-          createdOn
         }
       }
     }
@@ -1582,68 +1698,32 @@ export const GetChatMessagesByUserIdDocument = gql`
     `;
 
 /**
- * __useGetChatMessagesByUserIdQuery__
+ * __useSearchAllChatsByUserIdQuery__
  *
- * To run a query within a React component, call `useGetChatMessagesByUserIdQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetChatMessagesByUserIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useSearchAllChatsByUserIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useSearchAllChatsByUserIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGetChatMessagesByUserIdQuery({
+ * const { data, loading, error } = useSearchAllChatsByUserIdQuery({
  *   variables: {
+ *      username: // value for 'username'
  *   },
  * });
  */
-export function useGetChatMessagesByUserIdQuery(baseOptions?: Apollo.QueryHookOptions<GetChatMessagesByUserIdQuery, GetChatMessagesByUserIdQueryVariables>) {
+export function useSearchAllChatsByUserIdQuery(baseOptions?: Apollo.QueryHookOptions<SearchAllChatsByUserIdQuery, SearchAllChatsByUserIdQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetChatMessagesByUserIdQuery, GetChatMessagesByUserIdQueryVariables>(GetChatMessagesByUserIdDocument, options);
+        return Apollo.useQuery<SearchAllChatsByUserIdQuery, SearchAllChatsByUserIdQueryVariables>(SearchAllChatsByUserIdDocument, options);
       }
-export function useGetChatMessagesByUserIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetChatMessagesByUserIdQuery, GetChatMessagesByUserIdQueryVariables>) {
+export function useSearchAllChatsByUserIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SearchAllChatsByUserIdQuery, SearchAllChatsByUserIdQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetChatMessagesByUserIdQuery, GetChatMessagesByUserIdQueryVariables>(GetChatMessagesByUserIdDocument, options);
+          return Apollo.useLazyQuery<SearchAllChatsByUserIdQuery, SearchAllChatsByUserIdQueryVariables>(SearchAllChatsByUserIdDocument, options);
         }
-export type GetChatMessagesByUserIdQueryHookResult = ReturnType<typeof useGetChatMessagesByUserIdQuery>;
-export type GetChatMessagesByUserIdLazyQueryHookResult = ReturnType<typeof useGetChatMessagesByUserIdLazyQuery>;
-export type GetChatMessagesByUserIdQueryResult = Apollo.QueryResult<GetChatMessagesByUserIdQuery, GetChatMessagesByUserIdQueryVariables>;
-export const RespondToChatMessageDocument = gql`
-    mutation RespondToChatMessage($senderUserId: String!, $chatId: String!, $body: String!) {
-  respondToChatMessage(senderUserId: $senderUserId, chatId: $chatId, body: $body) {
-    ... on EntityResult {
-      messages
-    }
-  }
-}
-    `;
-export type RespondToChatMessageMutationFn = Apollo.MutationFunction<RespondToChatMessageMutation, RespondToChatMessageMutationVariables>;
-
-/**
- * __useRespondToChatMessageMutation__
- *
- * To run a mutation, you first call `useRespondToChatMessageMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useRespondToChatMessageMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [respondToChatMessageMutation, { data, loading, error }] = useRespondToChatMessageMutation({
- *   variables: {
- *      senderUserId: // value for 'senderUserId'
- *      chatId: // value for 'chatId'
- *      body: // value for 'body'
- *   },
- * });
- */
-export function useRespondToChatMessageMutation(baseOptions?: Apollo.MutationHookOptions<RespondToChatMessageMutation, RespondToChatMessageMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<RespondToChatMessageMutation, RespondToChatMessageMutationVariables>(RespondToChatMessageDocument, options);
-      }
-export type RespondToChatMessageMutationHookResult = ReturnType<typeof useRespondToChatMessageMutation>;
-export type RespondToChatMessageMutationResult = Apollo.MutationResult<RespondToChatMessageMutation>;
-export type RespondToChatMessageMutationOptions = Apollo.BaseMutationOptions<RespondToChatMessageMutation, RespondToChatMessageMutationVariables>;
+export type SearchAllChatsByUserIdQueryHookResult = ReturnType<typeof useSearchAllChatsByUserIdQuery>;
+export type SearchAllChatsByUserIdLazyQueryHookResult = ReturnType<typeof useSearchAllChatsByUserIdLazyQuery>;
+export type SearchAllChatsByUserIdQueryResult = Apollo.QueryResult<SearchAllChatsByUserIdQuery, SearchAllChatsByUserIdQueryVariables>;
 export const GetLatestCoursesDocument = gql`
     query GetLatestCourses {
   getLatestCourses {
@@ -2231,23 +2311,72 @@ export function useSearchUsersLazyQuery(baseOptions?: Apollo.LazyQueryHookOption
 export type SearchUsersQueryHookResult = ReturnType<typeof useSearchUsersQuery>;
 export type SearchUsersLazyQueryHookResult = ReturnType<typeof useSearchUsersLazyQuery>;
 export type SearchUsersQueryResult = Apollo.QueryResult<SearchUsersQuery, SearchUsersQueryVariables>;
+export const NewChatDocument = gql`
+    subscription NewChat {
+  newChat {
+    id
+    owner {
+      id
+      userIdSlug
+      username
+      isOnline
+      profileImage
+    }
+    recipient {
+      id
+      userIdSlug
+      username
+      isOnline
+      profileImage
+    }
+    chatMsgs {
+      id
+    }
+  }
+}
+    `;
+
+/**
+ * __useNewChatSubscription__
+ *
+ * To run a query within a React component, call `useNewChatSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useNewChatSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useNewChatSubscription({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useNewChatSubscription(baseOptions?: Apollo.SubscriptionHookOptions<NewChatSubscription, NewChatSubscriptionVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useSubscription<NewChatSubscription, NewChatSubscriptionVariables>(NewChatDocument, options);
+      }
+export type NewChatSubscriptionHookResult = ReturnType<typeof useNewChatSubscription>;
+export type NewChatSubscriptionResult = Apollo.SubscriptionResult<NewChatSubscription>;
 export const NewChatMessageDocument = gql`
     subscription NewChatMessage {
   newChatMessage {
     id
-    isRead
     body
+    createdOn
     sender {
       id
+      userIdSlug
       username
+      isOnline
       profileImage
     }
     receiver {
       id
+      userIdSlug
       username
+      isOnline
       profileImage
     }
-    createdOn
   }
 }
     `;

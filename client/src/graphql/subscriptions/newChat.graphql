@@ -1,21 +1,22 @@
-subscription NewChatMessage {
-  newChatMessage {
+subscription NewChat {
+  newChat {
     id
-    body
-    createdOn
-    sender {
+    owner {
       id
       userIdSlug
       username
       isOnline
       profileImage
     }
-    receiver {
+    recipient {
       id
       userIdSlug
       username
       isOnline
       profileImage
+    }
+    chatMsgs {
+      id
     }
   }
 }

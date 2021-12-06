@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/router";
+import Link from "next/link";
 // import ReactiveButton from "reactive-button";
 import {
   NewCommentDocument,
@@ -160,44 +161,49 @@ const Comment = () => {
         <CommentCard>
           {result.error ||
             !comArray.concat(comments) ||
-            (comArray.concat(comments).length === 0 && <div> no comments </div>)}
+            (comArray.concat(comments).length === 0 && (
+              <div> no comments </div>
+            ))}
 
           {!result.loading &&
-            comArray.concat(comments).map(
-              (
-                {
-                  id,
-                  body,
-                  createdOn,
-                  user: { username, profileImage },
-                }
-              ) => (
-                <div key={id}>
-                  <CommentWrapper key={id}>
-                    <CommentLeftWrap>
-                      <UserProfileImge
-                        alt="sender profile image"
-                        src={profileImage}
-                      />
-                      <CommentText>
-                        <UserName>{username}</UserName>
-                        <CommentDate>{dayjs(createdOn).fromNow()}</CommentDate>
-                        {body}
-                      </CommentText>
-                    </CommentLeftWrap>
-                    <CommentTopRightWrap>
-                      <PostDropdown>
-                        <ExpandIcon onClick={() => toggleDropdown(id)} />
-                        <Dropdown
-                          onClick={() => toggleDropdown(id)}
-                          showDropdown={showDropdown === id}
-                        />
-                      </PostDropdown>
-                    </CommentTopRightWrap>
-                  </CommentWrapper>
-                </div>
-              )
-            )}
+            comArray
+              .concat(comments)
+              .map(
+                ({ id, body, createdOn, user: { username, profileImage } }) => (
+                  <div key={id}>
+                    <CommentWrapper key={id}>
+                      <CommentLeftWrap>
+                        <Link href={`user-profile/${username}`}>
+                          <UserProfileImge
+                            alt="sender profile image"
+                            src={profileImage}
+                          />
+                        </Link>
+
+                        <CommentText>
+                          <Link href={`user-profile/${username}`}>
+                            <UserName>{username}</UserName>
+                          </Link>
+
+                          <CommentDate>
+                            {dayjs(createdOn).fromNow()}
+                          </CommentDate>
+                          {body}
+                        </CommentText>
+                      </CommentLeftWrap>
+                      <CommentTopRightWrap>
+                        <PostDropdown>
+                          <ExpandIcon onClick={() => toggleDropdown(id)} />
+                          <Dropdown
+                            onClick={() => toggleDropdown(id)}
+                            showDropdown={showDropdown === id}
+                          />
+                        </PostDropdown>
+                      </CommentTopRightWrap>
+                    </CommentWrapper>
+                  </div>
+                )
+              )}
           <form onSubmit={handleSubmit(onSubmit)}>
             {errors.body && <span>text is required</span>}
             <PostEditor

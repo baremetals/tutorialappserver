@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
+import Link from "next/link";
 import { useUpdatePostPointMutation, User, PostPoint, Category, useNewCommentSubscription } from "generated/graphql";
 import { useAppSelector } from "app/hooks";
 import { isUser } from "features/auth/selectors";
@@ -27,11 +28,11 @@ import {
   LikeGroup,
   // DropAndCenterWrap,
   PostMediaVideoIF,
-} from "./forum.styles";
+} from "../Dashboard/Forum/forum.styles";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 dayjs.extend(relativeTime);
-import Comment  from "../../Comments";
+import Comment  from "../Comments";
 import { ErrorMsg } from 'components/Input';
 // import Dropdown from "../../Dropdown";
 
@@ -231,12 +232,18 @@ const DetailPost = (props: { props: { data: any; loading: any; }; }) => {
     <>
       <PostTop>
         <PostLeftWrap>
-          <PostProfileImge
-            src={creator.profileImage}
-            alt="user profile image"
-          />
+          <Link href={`user-profile/${creator.username}`}>
+            <PostProfileImge
+              src={creator.profileImage}
+              alt="user profile image"
+            />
+          </Link>
+
           <UserName>
-            {creator.username}
+            <Link href={`user-profile/${creator.username}`}>
+              {creator.username}
+            </Link>
+
             <PostDate>{dayjs(createdOn).fromNow()}</PostDate>
           </UserName>
         </PostLeftWrap>

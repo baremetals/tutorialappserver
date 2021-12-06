@@ -1,5 +1,5 @@
-query GetChatMessagesByUserId {
-  getChatMessagesByUserId {
+query GetAllChatsByUserId {
+  getAllChatsByUserId {
     ... on EntityResult {
       messages
     }

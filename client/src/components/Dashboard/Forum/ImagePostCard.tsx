@@ -57,9 +57,13 @@ const ImagePostCard = ({
       <ForumWrapper>
         <PostTop>
           <PostLeftWrap>
-            <PostProfileImge src={image} alt="user profile image" />
+            <Link href={`user-profile/${username}`}>
+              <PostProfileImge src={image} alt="user profile image" />
+            </Link>
+
             <UserName>
-              {username}
+              <Link href={`user-profile/${username}`}>{username}</Link>
+
               <PostDate>{dayjs(date).fromNow()}</PostDate>
             </UserName>
           </PostLeftWrap>

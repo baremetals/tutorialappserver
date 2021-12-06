@@ -315,11 +315,12 @@ const typeDefs = gql`
     getNotesByCourseId(courseId: ID!): NoteArrayResult!
 
     # Chat Query
-    getChatMessagesByUserId: ChatArrayResult!
+    getAllChatsByUserId: ChatArrayResult!
     getAllChats: ChatArrayResult!
     getChatMessagesByChatId(chatId: ID!): ChatMsgArrayResult!
     getAllChatMsgs: ChatMsgArrayResult!
     getAllUnReadChatMsgsByUserId: ChatMsgArrayResult!
+    searchAllChatsByUserId(username: String): ChatMsgArrayResult!
   }
 
   # Mutatiob types
@@ -388,9 +389,9 @@ const typeDefs = gql`
     # Chat Mutation
     createChatMessage(
       ownerUserId: String!
-      recipientUserId: String!
+      username: String!
       body: String!
-    ): EntityResult
+    ): ChatMsgResult
 
     # ChatMessage  Mutation
     respondToChatMessage(

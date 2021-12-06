@@ -3,9 +3,13 @@ import { Chat } from '../entities/Chat';
 import {
   isPostBodyValid,
 } from '../utils/validators/PostValidators';
-import { QueryArrayResult, QueryOneResult } from './QuerryArrayResult';
+import { QueryArrayResult } from './QuerryArrayResult';
 import { getRepository } from 'typeorm';
 import { ChatMsg } from '../entities/ChatMsg';
+// import { pubsub } from '../graphql/GqlContext';
+// import { NEW_CHAT } from '../lib/constants';
+// import { pubsub } from '../graphql/GqlContext';
+// import { NEW_CHAT_MESSAGE } from '../lib/constants';
 
 
 export class ChatMsgResult {
@@ -16,7 +20,7 @@ export const createChatMessage = async (
   ownerUserId: string | undefined | null,
   recipientUserId: string | undefined | null,
   body: string
-): Promise<QueryOneResult<Chat>> => {
+): Promise<ChatMsgResult> => {
   const userRepository = getRepository(User);
   const bodyMsg = isPostBodyValid(body);
   if (bodyMsg) {
@@ -34,7 +38,7 @@ export const createChatMessage = async (
   const owner = await userRepository.findOne({
     id: ownerUserId,
   });
-  console.log('this is the owner: ', owner);
+  // console.log('this is the owner: ', owner);
 
   if (!recipientUserId) {
     return {
@@ -45,7 +49,7 @@ export const createChatMessage = async (
   const recipient = await userRepository.findOne({
     id: recipientUserId,
   });
-  console.log("this is the receiver: ", recipient)
+  // console.log('this is the receiver: ', recipient);
 
   const chatMsgs = await ChatMsg.create({
     body,
@@ -64,7 +68,7 @@ export const createChatMessage = async (
   const chat = await Chat.create({
     owner,
     recipient,
-    chatMsgs: [chatMsgs]
+    chatMsgs: [chatMsgs],
   }).save();
 
   if (!chat) {
@@ -77,8 +81,19 @@ export const createChatMessage = async (
   chatMsgs!.lastModifiedOn = new Date();
   await chatMsgs!.save();
 
+  // pubsub.publish(NEW_CHAT, {
+  //   newChat: {
+  //     id: chat.id,
+  //     owner: owner,
+  //     recipient: recipient,
+  //     chatMsgs: chatMsgs,
+  //     createdBy: chatMsgs.createdBy,
+  //     createdOn: chatMsgs.createdOn,
+  //   },
+  // });
+
   return {
-    entity: chat,
+    chatMsg: chatMsgs,
     messages: ['Chat created successfully.'],
   };
 };
@@ -177,12 +192,13 @@ export const respondToChatMessage = async (
   };
 };
 
-export const getChatMessagesByUserId = async (
+export const getAllChatsByUserId = async (
   userId: string
 ): Promise<QueryArrayResult<Chat>> => {
   const chats = await Chat.createQueryBuilder('chat')
-    .where(`chat."ownerId" = :userId`, { userId })
-    .where(`chat."recipientId" = :userId`, { userId })
+    .where(`chat."ownerId" = :userId OR chat."recipientId" = :userId`, {
+      userId,
+    })
     .leftJoinAndSelect('chat.owner', 'owner')
     .leftJoinAndSelect('chat.recipient', 'recipient')
     .leftJoinAndSelect('chat.chatMsgs', 'chatMsgs')
@@ -221,10 +237,10 @@ export const getAllChats = async (): Promise<QueryArrayResult<Chat>> => {
 };
 
 export const getChatMessagesByChatId = async (
-  chatId: string,
+  chatId: string
 ): Promise<QueryArrayResult<ChatMsg>> => {
   const chatMsgs = await ChatMsg.createQueryBuilder('cm')
-    .where(`cm."chatId" = :chatId`, { chatId })
+    .where(`cm."chatId" = :chatId `, {chatId})
     .leftJoinAndSelect('cm.sender', 'sender')
     .leftJoinAndSelect('cm.receiver', 'receiver')
     .leftJoinAndSelect('cm.chat', 'chat')
@@ -279,6 +295,29 @@ export const getAllUnReadChatMsgsByUserId = async (userId: string): Promise<Quer
   // console.log(posts);
   return {
     entities: chatMsgs,
+  };
+};
+
+export const searchAllChatsByUserId = async (
+  userId: string
+): Promise<QueryArrayResult<Chat>> => {
+  const chats = await Chat.createQueryBuilder('chat')
+    .where(`chat."ownerId" = :userId OR chat."recipientId" = :userId`, {
+      userId,
+    })
+    .leftJoinAndSelect('chat.owner', 'owner')
+    .leftJoinAndSelect('chat.recipient', 'recipient')
+    .orderBy('user.createdOn', 'DESC')
+    .getMany();
+
+  if (!chats || chats.length === 0) {
+    return {
+      messages: ['No messages found.'],
+    };
+  }
+
+  return {
+    entities: chats,
   };
 };
 

@@ -1,5 +1,5 @@
-query GetChatMessagesByChatId($chatId: ID!) {
-  getChatMessagesByChatId(chatId: $chatId) {
+query SearchAllChatsByUserId($username: String) {
+  searchAllChatsByUserId(username: $username) {
     ... on EntityResult {
       messages
     }
@@ -21,6 +21,9 @@ query GetChatMessagesByChatId($chatId: ID!) {
           username
           isOnline
           profileImage
+        }
+        chat {
+          id
         }
       }
     }

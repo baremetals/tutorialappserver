@@ -17,10 +17,10 @@ function Conversation({ username, image, id }: PageProps) {
   return (
     <>
       <ConversationWrap>
-        <Link href={`http://localhost:3000/messages/${id}`}>
+        <Link href={`http://localhost:3000/messages/${username}`}>
           <ConversationImg alt="image of the recipient" src={image} />
         </Link>
-        <Link href={`http://localhost:3000/messages/${id}`}>
+        <Link href={`http://localhost:3000/messages/${username}`}>
           <ConversationUserName>{username}</ConversationUserName>
         </Link>
       </ConversationWrap>
