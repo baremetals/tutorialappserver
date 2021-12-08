@@ -54,7 +54,7 @@ function Message(props: any) {
   const { data } = useNewChatMessageSubscription();
   const newChatMessage = data?.newChatMessage;
   const messages = result.data?.searchAllChatsByUserId.chatMsgs || [];
-  const errorMessages = result.data?.searchAllChatsByUserId.messages;
+  // const errorMessages = result.data?.searchAllChatsByUserId.messages;
   const [msgArray, setMsgArray] = useState([]);
   const [chatId, setChatId] = useState("" || undefined);
 
@@ -72,6 +72,7 @@ function Message(props: any) {
       });
     }
   }, [messages, msgArray]);
+
   useEffect(() => {
     if (newChatMessage) {
       const newChatMessageItem = newChatMessage;
@@ -101,8 +102,7 @@ function Message(props: any) {
           <ScrollChat ref={scrollUpdate}>
             {result.error ||
               !messages ||
-              errorMessages || 
-              (messages.length === 0 && <div> no messages </div>)}
+              (msgArray.length === 0 && null)}
 
             {!result.loading &&
               [...messages, ...msgArray].map((msg: any, id: any) =>

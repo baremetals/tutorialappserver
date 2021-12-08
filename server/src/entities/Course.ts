@@ -12,6 +12,14 @@ export class Course extends SharedEntity {
   id: string;
 
   @Column('varchar', {
+    name: 'Slug',
+    length: 500,
+    unique: true,
+    nullable: false,
+  })
+  slug: string;
+
+  @Column('varchar', {
     name: 'Title',
     length: 250,
     unique: false,
@@ -46,10 +54,9 @@ export class Course extends SharedEntity {
   @Column('varchar', {
     name: 'StartDate',
     length: 100,
-    unique: false,
     nullable: false,
   })
-  startDate: string;
+  startDate: Date;
 
   @Column('varchar', {
     name: 'EndDate',
@@ -57,7 +64,7 @@ export class Course extends SharedEntity {
     unique: false,
     nullable: false,
   })
-  endDate: string;
+  endDate: Date;
 
   @Column('int', { name: 'TotalStudents', default: 0, nullable: false })
   totalStudents: number;

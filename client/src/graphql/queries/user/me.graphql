@@ -5,13 +5,14 @@ query Me {
     }
     ... on User {
       id
+      userIdSlug
       username
       email
       fullName
-      confirmed
+      description
+      isDisabled
       profileImage
       backgroundImg
-      isDisabled
       createdOn
       groups {
         id
@@ -21,7 +22,6 @@ query Me {
         id
         views
         points
-        isDisabled
         title
         body
         createdOn

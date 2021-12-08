@@ -6,7 +6,7 @@ import { GqlContext } from "../GqlContext";
 import {
 } from "../../controllers/PostController";
 import { STANDARD_ERROR, EntityResult } from "../resolvers";
-import { createCourse, getCourseById, getCoursesByCategoryId, getLatestCourses, getStudentsByCourseId } from "../../controllers/CourseController";
+import { createCourse, deleteCourse, editCourse, getCourseById, getCoursesByCategoryId, getLatestCourses, getStudentsByCourseId } from "../../controllers/CourseController";
 import { Course } from "../../entities/Course";
 import { joinOrLeaveCourse } from "../../controllers/StudentController";
 import { Student } from "../../entities/Student";
@@ -159,6 +159,72 @@ const courseResolver = {
         throw ex;
       }
     },
+
+    editCourse: async (
+      _obj: any,
+      args: {
+        id: string;
+        title: string;
+        duration: string;
+        description: string;
+        image: string;
+        startDate: string;
+        endDate: string;
+        categoryId: string;
+      },
+      _ctx: GqlContext,
+      _info: any
+    ): Promise<EntityResult> => {
+      try {
+        // if (!ctx.req.session || !ctx.req.session!.userId) {
+        //   return {
+        //     messages: ['You must be logged in to make changes.'],
+        //   };
+        // }
+
+        const userId = "46"
+        const result = await editCourse(
+          args.id,
+          // ctx.req.session!.userId,
+          userId,
+          args.title,
+          args.duration,
+          args.description,
+          args.image,
+          args.startDate,
+          args.endDate,
+          args.categoryId
+        );
+
+        return {
+          messages: result.messages ? result.messages : [STANDARD_ERROR],
+        };
+      } catch (ex) {
+        console.log(ex);
+        throw ex;
+      }
+    },
+
+    deleteCourse: async (
+      _obj: any,
+      args: { id: string },
+      _ctx: GqlContext,
+      _info: any
+    ): Promise<string> => {
+      try {
+        // if (!ctx.req.session || !ctx.req.session!.userId) {
+        //   return 'You must be logged in to make this change.';
+        // }
+
+        const result = await deleteCourse(args.id);
+
+        return result;
+      } catch (ex) {
+        console.log(ex);
+        throw ex;
+      }
+    },
+
     joinOrLeaveCourse: async (
       _obj: any,
       args: { courseId: string; join: boolean },
@@ -169,7 +235,7 @@ const courseResolver = {
       //const userId = '44';
       try {
         if (!ctx.req.session || !ctx.req.session?.userId) {
-          return "You must be logged in to join this course.";
+          return 'You must be logged in to join this course.';
         }
         result = await joinOrLeaveCourse(
           ctx.req.session!.userId,
@@ -184,11 +250,6 @@ const courseResolver = {
       }
     },
 
-    // Todo
-
-    // editCourse: async (): Promise<>{}
-    // deleteCourse: async (): Promise<>{}
-    // removeStudent: async (): Promise<>{}
   },
 };
 

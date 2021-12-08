@@ -4,7 +4,7 @@ import { User } from "../entities/User";
 import { Comment } from '../entities/Comment';
 import { isPostBodyValid, isPostTitleValid } from "../utils/validators/PostValidators";
 import { QueryArrayResult, QueryOneResult } from "./QuerryArrayResult";
-import { getRepository } from "typeorm";
+import { getConnection, getRepository } from "typeorm";
 
 export const createPost = async (
   userId: string | undefined | null,
@@ -53,7 +53,8 @@ export const createPost = async (
     body,
     creator,
     category,
-    createdBy: creator?.username
+    createdBy: creator?.username,
+    lastModifiedBy: creator?.username
   }).save();
 
   if (!post) {
@@ -67,6 +68,103 @@ export const createPost = async (
   };
 };
 
+export const editPost = async (
+  id: string,
+  userId: string,
+  body: string,
+  title: string,
+  categoryId: string
+): Promise<QueryArrayResult<Post>> => {
+  const titleMsg = isPostTitleValid(title);
+  if (titleMsg) {
+    return {
+      messages: [titleMsg],
+    };
+  }
+  const bodyMsg = isPostBodyValid(body);
+  if (bodyMsg) {
+    return {
+      messages: [bodyMsg],
+    };
+  }
+
+  const category = await Category.findOne({
+    id: categoryId,
+  });
+
+  const creator = await User.findOne({
+    id: userId,
+  });
+
+  const post = await Post.findOne({
+    where: { id },
+  });
+
+  if (!post) {
+    return {
+      messages: ['Post not found.'],
+    };
+  }
+
+  await getConnection()
+    .createQueryBuilder()
+    .update(Post)
+    .set({
+      body,
+      title,
+      category,
+      lastModifiedBy: creator?.username,
+      lastModifiedOn: new Date(),
+    })
+    .where('id = :id', { id: id })
+    .execute();
+
+  return {
+    messages: ['Post edited successfully.'],
+  };
+};
+
+export const deletePost = async (id: string): Promise<string> => {
+  const post = await Post.findOne({
+    where: { id },
+  });
+
+  if (!post) {
+    return 'Post not found.';
+  }
+
+
+  const comments = await Comment.find({
+    where: { id },
+  });
+
+  if (!comments) {
+    await getConnection()
+      .createQueryBuilder()
+      .delete()
+      .from(Post)
+      .where('id = :id', { id: id })
+      .execute();
+    return 'Your post has been deleted.';
+  }
+
+  await getConnection()
+    .createQueryBuilder()
+    .delete()
+    .from(Comment)
+    .where('postId = :postId', { postId: id })
+    .execute();
+
+  await getConnection()
+    .createQueryBuilder()
+    .delete()
+    .from(Post)
+    .where('id = :id', { id: id })
+    .execute();
+  return 'Your post has been deleted.';
+};
+
+// Queries
 export const getPostById = async (id: string): Promise<QueryOneResult<Post>> => {
   const post = await Post.findOne({
     where: {

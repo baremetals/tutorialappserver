@@ -4,7 +4,7 @@ import { Post } from "../../entities/Post";
 import { QueryArrayResult, QueryOneResult } from "../../controllers/QuerryArrayResult";
 import { GqlContext } from "../GqlContext";
 // import { withFilter } from "graphql-subscriptions";
-import { createPost, getLatestPosts, getPostById, getPostsByCategoryId } from "../../controllers/PostController";
+import { createPost, deletePost, editPost, getLatestPosts, getPostById, getPostsByCategoryId } from "../../controllers/PostController";
 import { STANDARD_ERROR, EntityResult } from "../resolvers"
 import { Category } from "../../entities/Category";
 import { getAllCategories } from "../../controllers/CategoryController";
@@ -200,6 +200,62 @@ const postResolver = {
       }
     },
 
+    editPost: async (
+      _obj: any,
+      args: {
+        id: string;
+        body: string;
+        title: string;
+        categoryId: string;
+      },
+      ctx: GqlContext,
+      _info: any
+    ): Promise<EntityResult> => {
+      try {
+        if (!ctx.req.session || !ctx.req.session!.userId) {
+          return {
+            messages: ['You must be logged in to make changes.'],
+          };
+        }
+        // const userId = "51"
+        const result = await editPost(
+          args.id,
+          ctx.req.session!.userId,
+          // userId,
+          args.body,
+          args.title,
+          args.categoryId
+        );
+
+        return {
+          messages: result.messages ? result.messages : [STANDARD_ERROR],
+        };
+      } catch (ex) {
+        console.log(ex);
+        throw ex;
+      }
+    },
+
+    deletePost: async (
+      _obj: any,
+      args: { id: string },
+      ctx: GqlContext,
+      _info: any
+    ): Promise<string> => {
+      try {
+        if (!ctx.req.session || !ctx.req.session!.userId) {
+          return 'You must be logged in to make this change.';
+        }
+
+        const result = await deletePost(args.id);
+
+        return result;
+      } catch (ex) {
+        console.log(ex);
+        throw ex;
+      }
+    },
+
     updatePostPoint: async (
       _obj: any,
       args: { postId: string; increment: boolean },
@@ -225,11 +281,6 @@ const postResolver = {
         throw ex;
       }
     },
-
-    // Todo
-
-    // editPost: async (): Promise<string>{}
-    // deletePost: async (): Promise<string>{}
   },
 };
 

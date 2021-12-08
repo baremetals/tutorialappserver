@@ -7,7 +7,14 @@ import { withFilter } from 'graphql-subscriptions';
 import { STANDARD_ERROR, EntityResult } from '../resolvers';
 import { Message } from '../../entities/Message';
 import {  NEW_MESSAGE } from '../../lib/constants';
-import { getMessagesByUserId, getUnReadMessagesByUserId } from '../../controllers/MsgController';
+import {
+  deleteAllMessagesByUserId,
+  deleteMessage,
+  getMessagesByUserId,
+  getUnReadMessagesByUserId,
+  markAllMessagesReadByUserId,
+  markMessageRead,
+} from '../../controllers/MsgController';
 
 const messageResolver = {
   MsgResult: {
@@ -101,9 +108,83 @@ const messageResolver = {
   },
 
   Mutation: {
-    // Todo
-    // deleteMessage: async (): Promise<string>{}
-    // editMessage: async (): Promise<string>{}
+    markMessageRead: async (
+      _obj: any,
+      args: {
+        id: string;
+      },
+      _ctx: GqlContext,
+      _info: any
+    ): Promise<string> => {
+      try {
+        // if (!ctx.req.session || !ctx.req.session!.userId) {
+        //   return 'You must be logged in to make changes.';
+        // }
+
+        const userId = '46';
+        return await markMessageRead(args.id, userId);
+      } catch (ex) {
+        console.log(ex);
+        throw ex;
+      }
+    },
+
+    markAllMessagesReadByUserId: async (
+      _obj: any,
+      args: {
+        id: string;
+      },
+      _ctx: GqlContext,
+      _info: any
+    ): Promise<string> => {
+      try {
+        // if (!ctx.req.session || !ctx.req.session!.userId) {
+        //   return 'You must be logged in to make changes.';
+        // }
+
+        return await markAllMessagesReadByUserId(args.id);
+      } catch (ex) {
+        console.log(ex);
+        throw ex;
+      }
+    },
+
+    deleteMessage: async (
+      _obj: any,
+      args: { id: string },
+      _ctx: GqlContext,
+      _info: any
+    ): Promise<string> => {
+      try {
+        // if (!ctx.req.session || !ctx.req.session!.userId) {
+        //   return 'You must be logged in to make this change.';
+        // }
+
+        return await deleteMessage(args.id);
+      } catch (ex) {
+        console.log(ex);
+        throw ex;
+      }
+    },
+
+    deleteAllMessagesByUserId: async (
+      _obj: any,
+      args: { id: string },
+      _ctx: GqlContext,
+      _info: any
+    ): Promise<string> => {
+      try {
+        // if (!ctx.req.session || !ctx.req.session!.userId) {
+        //   return 'You must be logged in to make this change.';
+        // }
+
+        return await deleteAllMessagesByUserId(args.id);
+
+      } catch (ex) {
+        console.log(ex);
+        throw ex;
+      }
+    },
   },
 };
 

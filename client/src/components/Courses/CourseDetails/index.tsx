@@ -165,7 +165,7 @@ function CourseDetails(props: { props: { data: any; loading: any; }; }, userId: 
               </CoursesTeacherNameAndImageWrap>
             </CoursesTeacherWrap>
             <CoursesH2>Course Updates</CoursesH2>
-            <MediaContainer>
+            {/* <MediaContainer>
               <TextPostCard
                 username="maguyva"
                 image="/D.jpg"
@@ -178,8 +178,8 @@ function CourseDetails(props: { props: { data: any; loading: any; }; }, userId: 
                   the release of Letraset sheets containing Lorem Ipsum
                   passages, and more recently with desktop publishing"
               />
-            </MediaContainer>
-            <MediaContainer>
+            </MediaContainer> */}
+            {/* <MediaContainer>
               <VideoPostCard
                 username="hotness"
                 image="/prettygirl.jpg"
@@ -190,7 +190,7 @@ function CourseDetails(props: { props: { data: any; loading: any; }; }, userId: 
                 title="leap into electronic typesetting, remaining
                   essentially unchanged."
               />
-            </MediaContainer>
+            </MediaContainer> */}
             <MediaContainer>
               <ImagePostCard
                 username="aleah"

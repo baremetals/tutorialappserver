@@ -1,10 +1,11 @@
-import { getRepository } from "typeorm";
+import { getConnection, getRepository } from "typeorm";
 import { Category } from "../entities/Category";
 import { Course } from "../entities/Course";
 import { Note } from '../entities/Note';
 import { Student } from "../entities/Student";
 import { User } from "../entities/User";
 import { QueryArrayResult, QueryOneResult } from "./QuerryArrayResult";
+import { v4 } from 'uuid';
 
 
 export const createCourse = async (
@@ -45,8 +46,11 @@ export const createCourse = async (
       messages: ["category not found."],
     };
   }
+  const generatedToken = v4();
+  const slug = generatedToken + title;
 
   const course = await Course.create({
+    slug,
     title,
     duration,
     description,
@@ -55,9 +59,11 @@ export const createCourse = async (
     endDate,
     teacher,
     category,
+    createdBy: teacher?.username,
+    lastModifiedBy: teacher?.username,
   }).save();
 
-  console.log(course)
+  // console.log(course)
 
   if (!course) {
     return {
@@ -66,11 +72,113 @@ export const createCourse = async (
   }
 
   return {
-    messages: ["Course created successfully."],
+    messages: [`${course.slug}`],
   };
 };
 
+export const editCourse = async (
+  id: string,
+  userId: string,
+  title: string,
+  duration: string,
+  description: string,
+  image: string,
+  startDate: string,
+  endDate: string,
+  categoryId: string
+): Promise<QueryArrayResult<Course>> => {
+  const course = await Course.findOne({
+    where: { id },
+  });
 
+  if (!course) {
+    return {
+      messages: ['Course not found.'],
+    };
+  }
+
+  const category = await Category.findOne({
+    where: { categoryId },
+  });
+
+  if (!category) {
+    return {
+      messages: ['Category not found.'],
+    };
+  }
+
+  const teacher = await User.findOne({
+    where: { id: userId },
+  });
+
+  if (!teacher) {
+    return {
+      messages: ['Teacher not found.'],
+    };
+  }
+
+  await getConnection()
+    .createQueryBuilder()
+    .update(Course)
+    .set({
+      title,
+      duration,
+      description,
+      image,
+      startDate,
+      endDate,
+      category,
+      lastModifiedBy: teacher?.username,
+      lastModifiedOn: new Date(),
+    })
+    .where('id = :id', { id: id })
+    .execute();
+
+  return {
+    messages: ['Course edited successfully.'],
+  };
+};
+
+export const deleteCourse = async (id: string): Promise<string> => {
+  const course = await Course.findOne({
+    where: { id },
+  });
+
+  if (!course) {
+    return 'Course not found.';
+  }
+
+  const notes = await Note.find({
+    where: { id },
+  });
+
+  if (!notes) {
+    await getConnection()
+      .createQueryBuilder()
+      .delete()
+      .from(Course)
+      .where('id = :id', { id: id })
+      .execute();
+    return 'Your course has been deleted.';
+  }
+
+  await getConnection()
+    .createQueryBuilder()
+    .delete()
+    .from(Note)
+    .where('courseId = :courseId', { courseId: id })
+    .execute();
+
+  await getConnection()
+    .createQueryBuilder()
+    .delete()
+    .from(Course)
+    .where('id = :id', { id: id })
+    .execute();
+  return 'Your course has been deleted.';
+};
+
+// Queries
 export const getLatestCourses = async (): Promise<QueryArrayResult<Course>> => {
   const courses = await Course.createQueryBuilder('course')
     .leftJoinAndSelect('course.category', 'category')
@@ -169,9 +277,5 @@ export const getCourseById = async (
   };
 };
 
-// Todo
 
-// export const editCourse = async (): Promise{}
-// export const deleteCourse = async (): Promise{}
-// export const removeStudent = async (): Promise{}
 

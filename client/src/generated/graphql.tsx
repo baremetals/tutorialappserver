@@ -588,6 +588,7 @@ export type User = {
   courses?: Maybe<Array<Course>>;
   createdBy: Scalars['String'];
   createdOn: Scalars['Date'];
+  description: Scalars['String'];
   email: Scalars['String'];
   fullName: Scalars['String'];
   groups?: Maybe<Array<Group>>;
@@ -829,12 +830,12 @@ export type GetUserBySlugIdQueryVariables = Exact<{
 }>;
 
 
-export type GetUserBySlugIdQuery = { __typename?: 'Query', getUserBySlugId?: { __typename?: 'EntityResult', messages?: Array<string> | null | undefined } | { __typename?: 'User', id: string, userIdSlug?: string | null | undefined, username: string, fullName: string, isOnline: boolean, profileImage: string, backgroundImg: string, createdOn: any, posts?: Array<{ __typename?: 'Post', id: string, views: number, points: number, title: string, body: string, comments?: Array<{ __typename?: 'Comment', id: string, body: string, createdOn: any, createdBy: string, user: { __typename?: 'User', id: string, userIdSlug?: string | null | undefined, username: string, profileImage: string } }> | null | undefined }> | null | undefined } | null | undefined };
+export type GetUserBySlugIdQuery = { __typename?: 'Query', getUserBySlugId?: { __typename?: 'EntityResult', messages?: Array<string> | null | undefined } | { __typename?: 'User', id: string, userIdSlug?: string | null | undefined, username: string, fullName: string, description: string, isOnline: boolean, profileImage: string, backgroundImg: string, createdOn: any, posts?: Array<{ __typename?: 'Post', id: string, views: number, points: number, title: string, body: string, comments?: Array<{ __typename?: 'Comment', id: string, body: string, createdOn: any, createdBy: string, user: { __typename?: 'User', id: string, userIdSlug?: string | null | undefined, username: string, profileImage: string } }> | null | undefined }> | null | undefined } | null | undefined };
 
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type MeQuery = { __typename?: 'Query', me: { __typename?: 'EntityResult', messages?: Array<string> | null | undefined } | { __typename?: 'User', id: string, username: string, email: string, fullName: string, confirmed: boolean, profileImage: string, backgroundImg: string, isDisabled: boolean, createdOn: any, groups?: Array<{ __typename?: 'Group', id: string, codename: string }> | null | undefined, posts?: Array<{ __typename?: 'Post', id: string, views: number, points: number, isDisabled: boolean, title: string, body: string, createdOn: any, comments?: Array<{ __typename?: 'Comment', id: string, body: string, isDisabled: boolean, createdOn: any, createdBy: string }> | null | undefined }> | null | undefined } };
+export type MeQuery = { __typename?: 'Query', me: { __typename?: 'EntityResult', messages?: Array<string> | null | undefined } | { __typename?: 'User', id: string, userIdSlug?: string | null | undefined, username: string, email: string, fullName: string, description: string, isDisabled: boolean, profileImage: string, backgroundImg: string, createdOn: any, groups?: Array<{ __typename?: 'Group', id: string, codename: string }> | null | undefined, posts?: Array<{ __typename?: 'Post', id: string, views: number, points: number, title: string, body: string, createdOn: any, comments?: Array<{ __typename?: 'Comment', id: string, body: string, isDisabled: boolean, createdOn: any, createdBy: string }> | null | undefined }> | null | undefined } };
 
 export type SearchUsersQueryVariables = Exact<{
   searchItem: Scalars['String'];
@@ -2143,6 +2144,7 @@ export const GetUserBySlugIdDocument = gql`
       userIdSlug
       username
       fullName
+      description
       isOnline
       profileImage
       backgroundImg
@@ -2206,13 +2208,14 @@ export const MeDocument = gql`
     }
     ... on User {
       id
+      userIdSlug
       username
       email
       fullName
-      confirmed
+      description
+      isDisabled
       profileImage
       backgroundImg
-      isDisabled
       createdOn
       groups {
         id
@@ -2222,7 +2225,6 @@ export const MeDocument = gql`
         id
         views
         points
-        isDisabled
         title
         body
         createdOn

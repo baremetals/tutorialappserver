@@ -80,7 +80,7 @@ const VideoPostCard = ({
               <CommentText>{commentCount}</CommentText>
             </BottomRightWrap>
           </PostBottomWrapper>
-          <Comment showComments={showComments} postId={postId} />
+          {/* <Comment showComments={showComments} postId={postId} /> */}
         </ForumWrapper>
       </ForumContainer>
     </>

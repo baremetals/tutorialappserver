@@ -1,5 +1,4 @@
-import { gql } from "apollo-server-express";
-
+import { gql } from 'apollo-server-express';
 
 const typeDefs = gql`
   scalar Date
@@ -17,6 +16,7 @@ const typeDefs = gql`
     password: String!
     confirmed: Boolean!
     # isAdmin: Boolean!
+    description: String!
     isDisabled: Boolean!
     isOnline: Boolean!
     profileImage: String!
@@ -352,8 +352,19 @@ const typeDefs = gql`
       body: String!
     ): EntityResult!
 
+    editPost(
+      id: ID!
+      title: String!
+      body: String!
+      categoryId: ID!
+    ): EntityResult!
+    deletePost(id: ID!): String!
+
     # Comment Mutation
     createComment(userId: ID!, postId: ID!, body: String): CommentResult!
+    editComment(id: ID!, body: String!): CommentResult!
+    deleteComment(id: ID!): String!
+
     newCourseComment(userId: ID!, courseId: ID!, body: String): EntityResult!
     newNoteComment(userId: ID!, noteId: ID!, body: String): EntityResult!
 
@@ -372,7 +383,24 @@ const typeDefs = gql`
       endDate: String!
       group: String!
     ): EntityResult!
+
+    editCourse(
+      id: ID!
+      title: String!
+      duration: String!
+      description: String!
+      image: String!
+      startDate: String!
+      endDate: String!
+      categoryId: String!
+    ): EntityResult!
+    deleteCourse(id: ID!): String!
     joinOrLeaveCourse(courseId: ID!, join: Boolean!): String!
+
+    markMessageRead(id: ID!): String!
+    markAllMessagesReadByUserId(id: ID!): String!
+    deleteMessage(id: ID!): String!
+    deleteAllMessagesByUserId(id: ID!): String!
 
     # Book Mutation
     addABook(
@@ -399,6 +427,9 @@ const typeDefs = gql`
       chatId: String!
       body: String!
     ): ChatMsgResult
+    editChatMsg(id: ID!, body: String!): ChatMsgResult
+    deleteChatMsg(id: ID!): String!
+    deleteChat(id: ID!): String!
 
     # Note Mutation
     newNote(
@@ -408,6 +439,9 @@ const typeDefs = gql`
       body: String!
       noteType: String!
     ): EntityResult!
+
+    editNote(id: ID!, body: String!, title: String!): EntityResult!
+    deleteNote(id: ID!): String!
   }
 
   # Subscription types

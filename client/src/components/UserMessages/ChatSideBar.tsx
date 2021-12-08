@@ -17,19 +17,30 @@ import {
   ChatBoxWrapper,
 } from "./msg.styles";
 import {
+  ChatMsg,
+  GetAllChatsByUserIdDocument,
   SearchUsersDocument,
   SearchUsersQueryResult,
-  useGetAllChatsByUserIdQuery,
+  useNewChatSubscription,
+  User,
 } from "generated/graphql";
 import { useAppSelector } from "app/hooks";
 import { isUser } from "features/auth/selectors";
 import { client } from 'lib/initApollo';
 import Message from 'components/Message';
+import { useQuery } from '@apollo/client';
 
+type ChatBarType = {
+  id: string;
+  chatMsgs: ChatMsg;
+  owner: User;
+  recipient: User;
+};
 
+const ChatSideBar = () => {
+  const { ...result } = useQuery(GetAllChatsByUserIdDocument);
 
-const ChatSideBar = ({children}: any) => {
-  const { data, loading } = useGetAllChatsByUserIdQuery();
+  const { data } = useNewChatSubscription();
   const [menuState, setMenuState] = useState(false);
   const { user: user } = useAppSelector(isUser);
   {
@@ -39,19 +50,32 @@ const ChatSideBar = ({children}: any) => {
   }
   const [filteredMessages, setFilteredMessages] = useState([]);
 
-  const  chats: any  = data?.getAllChatsByUserId;
-  const messages = chats.chats;
-  const errMsg: any = data?.getAllChatsByUserId
-  const errorMsg = errMsg.messages;
+  const chats: any = result.data?.getAllChatsByUserId;
+  const messages = chats?.chats;
+  const errMsg: any = result.data?.getAllChatsByUserId;
+  const errorMsg = errMsg?.messages;
   const me = user;
-  
+
+  // chat subscription data
+  const newChat = data?.newChat;
+
   const [searchedUsers, setSearchedUsers] = useState([]);
   const [searchItem, setSearchItem] = useState("");
-  // console.log(chats?.chats);
+  // console.log(messages);
 
   useEffect(() => {
     setFilteredMessages(messages);
   }, [messages]);
+
+  useEffect(() => {
+    if (newChat) {
+      const newChatItem = newChat;
+      const newArrayItem: any = (prevArray: ChatBarType[]) => {
+        return [...prevArray, newChatItem];
+      };
+      setFilteredMessages(newArrayItem);
+    }
+  }, [newChat]);
 
   const handleSearch = async (event: { target: { value: string } }) => {
     setSearchItem(event.target.value);
@@ -97,7 +121,7 @@ const ChatSideBar = ({children}: any) => {
     }
   };
 
-  if (!data?.getAllChatsByUserId || loading) {
+  if (!result.data?.getAllChatsByUserId || result.loading) {
     return <div>loading...</div>;
   }
   return (
@@ -196,3 +220,5 @@ const ChatSideBar = ({children}: any) => {
 };
 
 export default ChatSideBar
+
+

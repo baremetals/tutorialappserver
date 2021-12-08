@@ -8,6 +8,7 @@ query GetUserBySlugId($userIdSlug: String!) {
       userIdSlug
       username
       fullName
+      description
       isOnline
       profileImage
       backgroundImg

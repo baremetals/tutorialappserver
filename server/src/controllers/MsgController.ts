@@ -1,5 +1,6 @@
-// import { getRepository } from "typeorm";
+import { getConnection } from 'typeorm';
 import { Message } from "../entities/Message";
+import { User } from '../entities/User';
 import { QueryArrayResult } from './QuerryArrayResult';
 // import { User } from "../entities/User";
 
@@ -7,6 +8,105 @@ export class MsgResult {
   constructor(public messages?: Array<string>, public msg?: Message) {}
 }
 
+
+export const markMessageRead = async (id: string, userId: string): Promise<string> => {
+  const user = await User.findOne({
+    where: { id: userId },
+  });
+
+  if (!user) {
+    return 'User not found.';
+  }
+
+  const msg = await Message.findOne({
+    where: { id },
+  });
+
+  if (!msg) {
+    return 'Message not found.';
+  }
+
+  await getConnection()
+    .createQueryBuilder()
+    .update(Message)
+    .set({
+      isRead: true,
+      lastModifiedBy: user.username,
+      lastModifiedOn: new Date(),
+    })
+    .where('id = :id', { id: id })
+    .execute();
+
+  return 'Message edited successfully.';
+};
+
+export const markAllMessagesReadByUserId = async (id: string): Promise<string> => {
+  const user = await User.findOne({
+    where: { id },
+  });
+
+  if (!user) {
+    return 'User not found.';
+  }
+
+  await getConnection()
+    .createQueryBuilder()
+    .update(Message)
+    .set({
+      isRead: true,
+      lastModifiedBy: user.username,
+      lastModifiedOn: new Date(),
+    })
+    .where('userId = :userId', { userId: id })
+    .andWhere('IsRead = :isRead', {isRead: false})
+    .execute();
+
+  return 'Your messages has been edited.';
+};
+
+export const deleteMessage = async (id: string): Promise<string> => {
+   const msg = await Message.findOne({
+     where: { id },
+   });
+
+   if (!msg) {
+     return 'Message not found.';
+   }
+  await getConnection()
+    .createQueryBuilder()
+    .delete()
+    .from(Message)
+    .where('id = :id', { id: id })
+    .execute();
+  return 'Your message has been deleted.';
+};
+
+export const deleteAllMessagesByUserId = async (
+  id: string,
+): Promise<string> => {
+  const user = await User.findOne({
+    where: { id },
+  });
+
+  if (!user) {
+    return 'User not found.';
+  }
+
+  const msgs = await getConnection()
+    .createQueryBuilder()
+    .delete()
+    .from(Message)
+    .where('userId = :userId', { userId: id })
+    .execute();
+
+  if (!msgs) {
+    return 'No messages not found.';
+  }
+
+  return 'Your messages has been deleted.';
+};
+
+// Queries
 export const getMessagesByUserId = async (
   userId: string
 ): Promise<QueryArrayResult<Message>> => {

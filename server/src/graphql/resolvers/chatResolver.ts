@@ -13,6 +13,9 @@ import {
   getChatMessagesByChatId,
   getAllChatsByUserId,
   respondToChatMessage,
+  editChatMsg,
+  deleteChatMsg,
+  deleteChat,
   // searchAllChatsByUserId,
 } from '../../controllers/ChatController';
 import { ChatMsg } from '../../entities/ChatMsg';
@@ -344,7 +347,6 @@ const chatResolver = {
       _ctx: GqlContext,
       _info: any
     ): Promise<ChatMsg | EntityResult> => {
-
       try {
         const result = await respondToChatMessage(
           args.senderUserId,
@@ -372,9 +374,82 @@ const chatResolver = {
         throw ex;
       }
     },
-    // Todo
-    // deleteMessage: async (): Promise<string>{}
-    // editMessage: async (): Promise<string>{}
+
+    editChatMsg: async (
+      _obj: any,
+      args: { id: string; body: string },
+      ctx: GqlContext,
+      _info: any
+    ): Promise<ChatMsg | EntityResult> => {
+      try {
+        if (!ctx.req.session || !ctx.req.session!.userId) {
+          return {
+            messages: ['You must be logged in to make changes.'],
+          };
+        }
+
+        const result = await editChatMsg(args.id, args.body);
+
+        if (result && result.chatMsg) {
+          pubsub.publish(NEW_CHAT_MESSAGE, {
+            newChatMessage: {
+              id: result.chatMsg.id,
+              body: args.body,
+              sender: result.chatMsg.sender,
+              receiver: result.chatMsg.receiver,
+              chat: result.chatMsg.chat,
+              createdBy: result.chatMsg.createdBy,
+              createdOn: result.chatMsg.createdOn,
+            },
+          });
+        }
+
+        return {
+          messages: result.messages ? result.messages : [STANDARD_ERROR],
+        };
+      } catch (ex) {
+        console.log(ex);
+        throw ex;
+      }
+    },
+
+    deleteChatMsg: async (
+      _obj: any,
+      args: { id: string },
+      ctx: GqlContext,
+      _info: any
+    ): Promise<string> => {
+      try {
+        if (!ctx.req.session || !ctx.req.session!.userId) {
+          return 'You must be logged in to make this change.';
+        }
+
+        return await deleteChatMsg(args.id);
+      } catch (ex) {
+        console.log(ex);
+        throw ex;
+      }
+    },
+
+    deleteChat: async (
+      _obj: any,
+      args: { id: string },
+      ctx: GqlContext,
+      _info: any
+    ): Promise<string> => {
+      try {
+        if (!ctx.req.session || !ctx.req.session!.userId) {
+          return 'You must be logged in to make this change.';
+        }
+
+        return await deleteChat(args.id);
+
+        
+      } catch (ex) {
+        console.log(ex);
+        throw ex;
+      }
+    },
   },
 };
 

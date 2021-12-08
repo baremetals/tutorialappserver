@@ -4,7 +4,7 @@ import {
   isPostBodyValid,
 } from '../utils/validators/PostValidators';
 import { QueryArrayResult } from './QuerryArrayResult';
-import { getRepository } from 'typeorm';
+import { getConnection, getRepository } from 'typeorm';
 import { ChatMsg } from '../entities/ChatMsg';
 // import { pubsub } from '../graphql/GqlContext';
 // import { NEW_CHAT } from '../lib/constants';
@@ -55,6 +55,7 @@ export const createChatMessage = async (
     body,
     sender: owner,
     receiver: recipient,
+    createdBy: owner?.username,
   }).save();
 
   if (!chatMsgs) {
@@ -151,6 +152,7 @@ export const respondToChatMessage = async (
       sender,
       receiver,
       chat,
+      createdBy: sender?.username,
     }).save();
 
     chat!.lastModifiedOn = new Date();
@@ -172,6 +174,7 @@ export const respondToChatMessage = async (
     sender,
     receiver: recipient, // chat?.recipient,
     chat,
+    createdBy: sender?.username,
   }).save();
 
   console.log(" no I just did forsake my g")
@@ -190,6 +193,106 @@ export const respondToChatMessage = async (
     chatMsg: chatMsgs,
     messages: ['Chat message created successfully.'],
   };
+};
+
+export const editChatMsg = async (
+  id: string,
+  body: string
+): Promise<ChatMsgResult> => {
+  const bodyMsg = isPostBodyValid(body);
+  if (bodyMsg) {
+    return {
+      messages: [bodyMsg],
+    };
+  }
+  const chatMsgs = await ChatMsg.findOne({
+    where: { id },
+  });
+
+  if (!chatMsgs) {
+    return {
+      messages: ['Chat message not found.'],
+    };
+  }
+
+  // const sender = await User.findOne({
+  //   id: senderUserId,
+  // });
+
+  console.log(chatMsgs);
+
+  await getConnection()
+    .createQueryBuilder()
+    .update(ChatMsg)
+    .set({
+      body,
+      lastModifiedBy: chatMsgs?.createdBy,
+      lastModifiedOn: new Date(),
+    })
+    .where('id = :id', { id: id })
+    .execute();
+
+  return {
+    chatMsg: chatMsgs,
+    messages: ['Message edited successfully.'],
+  };
+};
+
+export const deleteChatMsg = async (id: string): Promise<string> => {
+  const chatMsgs = await ChatMsg.findOne({
+    where: { id },
+  });
+
+  if (!chatMsgs) {
+    return 'Chat message not found.';
+  }
+
+  await getConnection()
+    .createQueryBuilder()
+    .delete()
+    .from(ChatMsg)
+    .where('id = :id', { id: id })
+    .execute();
+  return 'Your message has been deleted.';
+};
+
+export const deleteChat = async (id: string): Promise<string> => {
+  const chat = await Chat.findOne({
+    where: { id },
+  });
+
+  if (!chat) {
+    return 'Chat not found.';
+  }
+
+  const chatMsgs = await ChatMsg.find({
+    where: { id },
+  });
+
+  if (!chatMsgs) {
+    await getConnection()
+      .createQueryBuilder()
+      .delete()
+      .from(Chat)
+      .where('id = :id', { id: id })
+      .execute();
+    return 'Your chats has been deleted.';
+  }
+
+  await getConnection()
+    .createQueryBuilder()
+    .delete()
+    .from(ChatMsg)
+    .where('chatId = :chatId', { chatId: id })
+    .execute();
+
+  await getConnection()
+    .createQueryBuilder()
+    .delete()
+    .from(Chat)
+    .where('id = :id', { id: id })
+    .execute();
+  return 'Your chats has been deleted.';
 };
 
 export const getAllChatsByUserId = async (

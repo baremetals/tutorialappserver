@@ -152,7 +152,7 @@ const Topbar = () => {
       <TopRightWrap>
         <Icons>
           <IconItem>
-            <Link href={`/user-profile/${me?.username}`}>
+            <Link href={`/user-profile/${me?.userIdSlug}`}>
               <div>
                 <RiHome4Fill />
               </div>
@@ -182,13 +182,13 @@ const Topbar = () => {
             onClick={() => setDropdown(!dropdown)}
           >
             <ProfileItem>
-              <Link href={`/user-profile/${me?.username}`}>Setting</Link>
+              <Link href={`/user-profile/${me?.userIdSlug}`}>Setting</Link>
             </ProfileItem>
             <ProfileItem>
-              <Link href={`/user-profile/${me?.username}`}>Profile</Link>
+              <Link href={`/user-profile/${me?.userIdSlug}`}>Profile</Link>
             </ProfileItem>
             <ProfileItem>
-              <Link href={`/user-profile/${me?.username}/edit-profile`}>
+              <Link href={`/user-profile/${me?.userIdSlug}/edit-profile`}>
                 Edit
               </Link>
             </ProfileItem>

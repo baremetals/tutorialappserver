@@ -12,6 +12,7 @@ import { darkTheme } from "../styles/theme";
 import NavDropDown from "../components/NavDropDown";
 import "../styles/globals.css";
 import { useApollo } from "../lib/apolloClient";
+import NavBar from 'components/NavBar/NavBar';
 
 
 function MyApp({ Component, pageProps }: AppProps) {
@@ -43,7 +44,7 @@ function MyApp({ Component, pageProps }: AppProps) {
           <ThemeProvider theme={darkTheme}>
             <CssBaseline />
             <NavDropDown toggle={toggle} isOpen={isOpen} />
-            {/* <NavBar toggle={toggle} /> */}
+            <NavBar toggle={toggle} />
             <Component {...pageProps} />
             {/* <Footer /> */}
           </ThemeProvider>

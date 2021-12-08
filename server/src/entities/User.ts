@@ -21,7 +21,6 @@ export class User extends SharedEntity {
 
   @Column('varchar', {
     name: 'UserIdSlug',
-    default: "",
     length: 250,
     unique: true,
     nullable: false,
@@ -51,6 +50,15 @@ export class User extends SharedEntity {
     nullable: false,
   })
   fullName: string;
+
+  @Column('varchar', {
+    name: 'description',
+    length: 120,
+    unique: false,
+    default: "",
+    nullable: false,
+  })
+  description: string;
 
   @Column('varchar', { name: 'Password', length: 100, nullable: false })
   @Length(8, 100)

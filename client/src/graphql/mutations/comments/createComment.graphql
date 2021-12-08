@@ -1,8 +1,5 @@
 mutation CreateComment($userId: ID!, $postId: ID!, $body: String) {
   createComment(userId: $userId, postId: $postId, body: $body) {
-    ... on EntityResult {
-      messages
-    }
     ... on Comment {
       id
       body
@@ -11,7 +8,11 @@ mutation CreateComment($userId: ID!, $postId: ID!, $body: String) {
       user {
         id
         username
+        userIdSlug
       }
+    }
+    ... on EntityResult {
+      messages
     }
   }
 }

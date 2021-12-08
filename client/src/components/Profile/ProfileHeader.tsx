@@ -1,25 +1,69 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import { useRouter } from "next/router";
 import { ProfileCover, ProfileCoverImage, ProfileInfo, UserDescription, UserName, UserProfileImage } from './profile.styles';
 import { useAppSelector } from "app/hooks";
 import { isUser } from "features/auth/selectors";
 
-const ProfileHeader = () => {
-    const { user: user } = useAppSelector(isUser);
-    return (
-      <>
-        <ProfileCover>
-          <ProfileCoverImage
-            alt="user profile cover image"
-            src={user?.backgroundImg}
-          />
-          <UserProfileImage alt="user profile image" src={user?.profileImage} />
-        </ProfileCover>
-        <ProfileInfo>
-          <UserName>{user?.fullName}</UserName>
-          <UserDescription>Badboy for Life!</UserDescription>
-        </ProfileInfo>
-      </>
-    );
-}
+type profilePageProps = {
+  backgroundImg: string | undefined;
+  profileImage: string | undefined;
+  fullName: string | undefined;
+  description: string | undefined;
+};
+const ProfileHeader = ({
+  backgroundImg,
+  profileImage,
+  fullName,
+  description,
+}: profilePageProps) => {
+  const router = useRouter();
+  const { user: user } = useAppSelector(isUser);
+  const { userIdSlug } = router.query;
+  // console.log(userIdSlug);
+  const [loggedIUser, setLoggedIUser] = useState(false);
+
+  useEffect(() => {
+    if (user?.userIdSlug === userIdSlug) {
+      setLoggedIUser(true);
+    }
+  }, [user, userIdSlug]);
+  return (
+    <>
+      {loggedIUser && (
+        <>
+          <ProfileCover>
+            <ProfileCoverImage
+              alt="user profile cover image"
+              src={user?.backgroundImg}
+            />
+            <UserProfileImage
+              alt="user profile image"
+              src={user?.profileImage}
+            />
+          </ProfileCover>
+          <ProfileInfo>
+            <UserName>{user?.fullName}</UserName>
+            <UserDescription>{user?.description}</UserDescription>
+          </ProfileInfo>
+        </>
+      )}
+      {!loggedIUser && (
+        <>
+          <ProfileCover>
+            <ProfileCoverImage
+              alt="user profile cover image"
+              src={backgroundImg}
+            />
+            <UserProfileImage alt="user profile image" src={profileImage} />
+          </ProfileCover>
+          <ProfileInfo>
+            <UserName>{fullName}</UserName>
+            <UserDescription>{description}!</UserDescription>
+          </ProfileInfo>
+        </>
+      )}
+    </>
+  );
+};
 
 export default ProfileHeader

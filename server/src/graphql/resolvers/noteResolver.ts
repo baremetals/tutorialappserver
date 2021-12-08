@@ -1,4 +1,4 @@
-import { getNotesByCourseId, newNote } from "../../controllers/NoteController";
+import { deleteNote, editNote, getNotesByCourseId, newNote } from "../../controllers/NoteController";
 import { QueryArrayResult, QueryOneResult } from "../../controllers/QuerryArrayResult";
 import { Note } from "../../entities/Note";
 import { GqlContext } from "../GqlContext";
@@ -9,18 +9,18 @@ const NoteResolver = {
   NoteResult: {
     __resolveType(obj: any, _context: GqlContext, _info: any) {
       if (obj.messages) {
-        return "EntityResult";
+        return 'EntityResult';
       }
-      return "Note";
+      return 'Note';
     },
   },
 
   NoteArrayResult: {
     __resolveType(obj: any, _context: GqlContext, _info: any) {
       if (obj.messages) {
-        return "EntityResult";
+        return 'EntityResult';
       }
-      return "NoteArray";
+      return 'NoteArray';
     },
   },
 
@@ -63,7 +63,13 @@ const NoteResolver = {
     ): Promise<EntityResult> => {
       let result: QueryOneResult<Note>;
       try {
-        result = await newNote(args.userId, args.courseId, args.title, args.body, args.noteType);
+        result = await newNote(
+          args.userId,
+          args.courseId,
+          args.title,
+          args.body,
+          args.noteType
+        );
         return {
           messages: result.messages ? result.messages : [STANDARD_ERROR],
         };
@@ -73,10 +79,54 @@ const NoteResolver = {
       }
     },
 
-    // Todo
+    editNote: async (
+      _obj: any,
+      args: { id: string; body: string; title: string },
+      ctx: GqlContext,
+      _info: any
+    ): Promise<EntityResult> => {
+      try {
+        if (!ctx.req.session || !ctx.req.session!.userId) {
+          return {
+            messages: ['You must be logged in to make changes.'],
+          };
+        }
 
-    // editNote: async (): Promise<string>{}
-    // deleteNote: async (): Promise<string>{}
+        const result = await editNote(
+          args.id,
+          ctx.req.session!.userId,
+          args.body,
+          args.title,
+        );
+
+        return {
+          messages: result.messages ? result.messages : [STANDARD_ERROR],
+        };
+      } catch (ex) {
+        console.log(ex);
+        throw ex;
+      }
+    },
+
+    deleteNote: async (
+      _obj: any,
+      args: { id: string },
+      _ctx: GqlContext,
+      _info: any
+    ): Promise<string> => {
+      try {
+        // if (!ctx.req.session || !ctx.req.session!.userId) {
+        //   return 'You must be logged in to make this change.';
+        // }
+
+        const result = await deleteNote(args.id);
+
+        return result;
+      } catch (ex) {
+        console.log(ex);
+        throw ex;
+      }
+    },
   },
 };
 

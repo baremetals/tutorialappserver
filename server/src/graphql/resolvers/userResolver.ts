@@ -253,7 +253,7 @@ const userResolver = {
           ctx.req.session!.userId = user.user.id;
           //console.log(ctx.req.session);
 
-          return `bm-user=${user.user.userIdSlug}-${user.user.id}`;
+          return `${user.user.userIdSlug}`;
         }
 
         return user && user.messages ? user.messages[0] : STANDARD_ERROR;

@@ -497,18 +497,7 @@ export const getUserBySlugId = async (userIdSlug: string): Promise<UserResult> =
 };
 
 export const searchUsers = async (): Promise<QueryArrayResult<User>> => {
-  // const userRepository = getRepository(User);
-  // const users = await userRepository.find({
-  //   username: Equal(searchItem)
-  //   // where: [{ username: searchItem }, { fullName: searchItem}, ,{email: searchItem} ],
-  // });
-
-  const users = await User.createQueryBuilder('user')
-    // .leftJoinAndSelect('post.category', 'category')
-    // .leftJoinAndSelect('post.creator', 'creator')
-    // .leftJoinAndSelect('post.comments', 'comments')
-    // .leftJoinAndSelect('post.postPoints', 'postPoints')
-    // .leftJoinAndSelect('post.postPoints.user', 'postPoints')
+const users = await User.createQueryBuilder('user')
     .orderBy('user.createdOn', 'DESC')
     .take(10)
     .getMany();
@@ -518,12 +507,7 @@ export const searchUsers = async (): Promise<QueryArrayResult<User>> => {
       messages: ['No users found.'],
     };
   }
-
-  // if (!users) {
-  //   return {
-  //     messages: ['No user found.'],
-  //   };
-  // }
+  
   return {
     entities: users,
   };

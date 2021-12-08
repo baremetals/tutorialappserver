@@ -79,3 +79,6 @@ export const joinOrLeaveCourse = async (
 
   return message;
 };
+
+// Todo
+// export const removeStudent = async (): Promise{}

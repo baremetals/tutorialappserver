@@ -1,4 +1,4 @@
-import { getRepository } from "typeorm";
+import { getConnection, getRepository } from "typeorm";
 import { QueryArrayResult } from "./QuerryArrayResult";
 import { isPostBodyValid, isPostTitleValid } from "../utils/validators/PostValidators";
 import { Course } from "../entities/Course";
@@ -52,6 +52,8 @@ export const newNote = async (
     teacher,
     noteType,
     course,
+    createdBy: teacher?.username,
+    lastModifiedBy: teacher?.username,
   }).save();
 
   if (!note) {
@@ -65,7 +67,98 @@ export const newNote = async (
   };
 };
 
+export const editNote = async (
+  id: string,
+  userId: string,
+  body: string,
+  title: string
+): Promise<QueryArrayResult<Note>> => {
+  const titleMsg = isPostTitleValid(title);
+  if (titleMsg) {
+    return {
+      messages: [titleMsg],
+    };
+  }
+  const bodyMsg = isPostBodyValid(body);
+  if (bodyMsg) {
+    return {
+      messages: [bodyMsg],
+    };
+  }
+  const note = await Note.findOne({
+    where: { id },
+  });
 
+  if (!note) {
+    return {
+      messages: ['Note not found.'],
+    };
+  }
+
+  const teacher = await User.findOne({
+    where: { id: userId },
+  });
+
+  if (!teacher) {
+    return {
+      messages: ['Teacher not found.'],
+    };
+  }
+
+  await getConnection()
+    .createQueryBuilder()
+    .update(Note)
+    .set({
+      body,
+      title,
+      lastModifiedBy: teacher.username,
+      lastModifiedOn: new Date(),
+    })
+    .where('id = :id', { id: id })
+    .execute();
+
+  return {
+    messages: ['Note edited successfully.'],
+  };
+};
+
+export const deleteNote = async (id: string): Promise<string> => {
+  const note = await Note.findOne({
+    where: { id },
+  });
+
+  if (!note) {
+    return 'Note not found.';
+  }
+
+  await getConnection()
+    .createQueryBuilder()
+    .delete()
+    .from(Note)
+    .where('id = :id', { id: id })
+    .execute();
+  return 'Your note has been deleted.';
+};
+
+export const deleteAllNotesByCourseId = async (id: string): Promise<string> => {
+  const note = await Note.find({
+    where: { id },
+  });
+
+  if (!note) {
+    return 'Note not found.';
+  }
+
+  await getConnection()
+    .createQueryBuilder()
+    .delete()
+    .from(Note)
+    .where('courseId = :courseId', { courseId: id })
+    .execute();
+  return 'Your notes has been deleted.';
+};
+
+// Queries
 export const getNotesByCourseId = async (
   courseId: string
 ): Promise<QueryArrayResult<Note>> => {
@@ -86,8 +179,4 @@ export const getNotesByCourseId = async (
   };
 };
 
-// Todo List
 
-// export const deleteAllNotes = async (): Promise{}
-// export const deleteNote = async (): Promise{}
-// export const editNote = async (): Promise{}

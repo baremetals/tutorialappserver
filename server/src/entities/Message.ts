@@ -19,7 +19,7 @@ export class Message extends SharedEntity {
   @Column("varchar", {
     name: "Image",
     default: "BM",
-    length: 150,
+    length: 250,
     nullable: false,
   })
   image: string;

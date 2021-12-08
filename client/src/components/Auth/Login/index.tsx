@@ -54,7 +54,7 @@ const Login = () => {
           ...values,
         },
       });
-      if (!response.data?.login.includes("bm-user")) {
+      if (!response.data?.login) {
         err = response.data?.login;
         initialValues.error = err;
         setErrorMsg(true);

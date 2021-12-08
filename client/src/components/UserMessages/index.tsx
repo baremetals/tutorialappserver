@@ -1,7 +1,6 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 
-
 import {
   ChatBoxBottom,
   ChatMessageInput,
@@ -15,7 +14,6 @@ import { isUser } from "features/auth/selectors";
 type FormInput = {
   body: string;
 };
-
 
 function UserMessages(props: { props: string; }) {
   const router = useRouter();

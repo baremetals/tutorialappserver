@@ -1,5 +1,7 @@
 import {
   createComment,
+  deleteComment,
+  editComment,
   getCommentsByCourseId,
   getCommentsByNoteId,
   getCommentsByPostId,
@@ -179,6 +181,73 @@ const commentResolver = {
         return {
           messages: result.messages ? result.messages : [STANDARD_ERROR],
         };
+      } catch (ex) {
+        console.log(ex);
+        throw ex;
+      }
+    },
+
+    editComment: async (
+      _obj: any,
+      args: { id: string; body: string },
+      ctx: GqlContext,
+      _info: any
+    ): Promise<Comment | EntityResult> => {
+      try {
+        if (!ctx.req.session || !ctx.req.session!.userId) {
+          return {
+            messages: ['You must be logged in to make changes.'],
+          };
+        }
+        
+        // const userId = "46"
+        const result = await editComment(
+          args.id,
+          ctx.req.session!.userId,
+          // userId,
+          args.body,
+        );
+
+        if (result && result.comment) {
+
+          pubsub.publish(NEW_COMMENT, {
+            newComment: {
+              id: result.comment.id,
+              body: args.body,
+              createdBy: result.comment.createdBy,
+              createdOn: result.comment.createdOn,
+              isDisabled: result.comment.isDisabled,
+              user: result.comment.user,
+              post: result.comment.post,
+            },
+          });
+
+          return result.comment;
+        }
+
+        return {
+          messages: result.messages ? result.messages : [STANDARD_ERROR],
+        };
+      } catch (ex) {
+        console.log(ex);
+        throw ex;
+      }
+    },
+
+    deleteComment: async (
+      _obj: any,
+      args: { id: string },
+      ctx: GqlContext,
+      _info: any
+    ): Promise<string> => {
+      try {
+        if (!ctx.req.session || !ctx.req.session!.userId) {
+          return 'You must be logged in to make this change.';
+        }
+
+        const result = await deleteComment(args.id);
+
+        return result;
       } catch (ex) {
         console.log(ex);
         throw ex;
