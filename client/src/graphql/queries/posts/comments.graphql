@@ -1,5 +1,5 @@
-query GetCommentsByPostId($postId: ID!) {
-  getCommentsByPostId(postId: $postId) {
+query GetCommentsByPostSlug($slug: String!) {
+  getCommentsByPostSlug(slug: $slug) {
     ... on CommentArray {
       comments {
         id
@@ -9,6 +9,7 @@ query GetCommentsByPostId($postId: ID!) {
         createdBy
         user {
           id
+          userIdSlug
           username
           profileImage
         }

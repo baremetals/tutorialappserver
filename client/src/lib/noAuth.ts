@@ -14,7 +14,7 @@ export const useNoAuth = () => {
 
     if (!loading && !data?.me.messages) {
         const me = data?.me as User;
-      router.push(`/user-profile/${me.username}`);
+      router.push(`/user-profile/${me.userIdSlug}`);
     } 
   }, [loading, data, router]);
 };

@@ -1,6 +1,8 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useSpring, animated } from "react-spring";
 import { useForm } from "react-hook-form";
+import { useRouter } from "next/router";
+
 import {
   PageContainer,
   CloseButtonWrap,
@@ -11,20 +13,14 @@ import {
   TitleInput,
   Select,
   CategoryOptions,
-  // BodyText,
   ButtonContainer,
-  // UploadWrapper,
-  // UploadLabel,
   BodyTextWrapper,
-  // UploadInput,
   SubmitButton,
   CloseButton,
   Background,
-  // EditorBodyText,
 } from "./modal.styles";
 import { AiFillCloseCircle } from "react-icons/ai";
-import { uploadBytes, ref, getDownloadURL } from "firebase/storage";
-import { storage } from "lib/admin"
+
 import { useCategoryQuery, useCreatePostMutation } from "generated/graphql";
 import { useAppDispatch, useAppSelector } from "app/hooks";
 import { setCategory } from "features/ui/reducers";
@@ -32,8 +28,6 @@ import { isUser } from 'features/auth';
 import { EditorState, convertToRaw } from "draft-js";
 import draftToHtml from "draftjs-to-html";
 import ModalEditor from "./ModalEditor";
-
-
 
 
 type FormInput = {
@@ -45,6 +39,7 @@ type FormInput = {
 
 
 export const Modal = ({ closeM, showModal, setShowModal, ...props }: any) => {
+  const router = useRouter();
   const dispatch = useAppDispatch();
   const [post] = useCreatePostMutation();
   const { data } = useCategoryQuery();
@@ -104,24 +99,58 @@ export const Modal = ({ closeM, showModal, setShowModal, ...props }: any) => {
 
   const onSubmit = async (info: FormInput) => {
     setShowModal(false);
-    console.log(info);
-    const testingRef = ref(storage, `testing folder/${info.upload.name}`) || null;
-    let url: string;
-    console.log(info.upload.name);
-    try {
-      await uploadBytes(testingRef, info?.upload).then(async () => {
-        url = await getDownloadURL(testingRef) || "";
-        const response = post({
-          variables: {
-            userId: user?.id as string,
-            categoryName: info.category,
-            title: info.title,
-            body: info.body || url,
-            // postType: "",
-          },
-        });
-        console.log(response);
+    
+    
+    if (info.upload) {
+      console.log(info.upload);
+      // const testingRef = ref(storage, `testing folder/${info.upload?.name ? info.upload.name : null}`) || null;
+      console.log(info);
+    } else {
+      console.log("lets get started");
+      const response = await post({
+        variables: {
+          userId: user?.id as string,
+          categoryName: info.category,
+          title: info.title,
+          body: info.body,
+          mediaUrl: "",
+        },
       });
+      const detailpage = response?.data?.createPost?.messages![0] as string
+      // console.log(response?.data?.createPost?.messages);
+      router.push(`/forum/${detailpage}`)
+    }
+    
+    // let url: string;
+    // console.log(info.upload?.name);
+    try {
+      // await uploadBytes(testingRef, info?.upload).then(async () => {
+      //   url = await getDownloadURL(testingRef) || "";
+      //   const response = post({
+      //     variables: {
+      //       userId: user?.id as string,
+      //       categoryName: info.category,
+      //       title: info.title,
+      //       body: info.body || url,
+      //       // postType: "",
+      //     },
+      //   });
+      //   console.log(response.data);
+      // });
+
+
+      // await uploadBytes(testingRef, info?.upload);
+      // const url = (await getDownloadURL(testingRef)) || "";
+      // const response = post({
+      //   variables: {
+      //     userId: user?.id as string,
+      //     categoryName: info.category,
+      //     title: info.title,
+      //     body: info.body || url,
+      //     // postType: "",
+      //   },
+      // });
+      // console.log(response.data);
     } catch (err) {
       console.log("");
     }
@@ -180,6 +209,7 @@ export const Modal = ({ closeM, showModal, setShowModal, ...props }: any) => {
                         placeholder="write something...."
                       ></BodyText> */}
                       <ModalEditor
+                        id={user?.id}
                         editorState={editorState}
                         onEditorStateChange={(newState: EditorState) => {
                           setEditorState(newState);

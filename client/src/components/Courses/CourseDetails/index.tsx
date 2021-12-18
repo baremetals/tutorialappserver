@@ -1,10 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import ImagePostCard from '../../Dashboard/Forum/ImagePostCard';
-import TextPostCard from '../../Dashboard/Forum/TextPostCard';
-import VideoPostCard from '../../Dashboard/Forum/VideoPostCard';
-import LeftSideBar from '../../Dashboard/LeftSideBar';
-import SmallFooter from '../../Dashboard/SmallFooter';
-import Topbar from '../../Dashboard/TopBar'
+import Card from '../../ForumPage/Card';
+
 import { useRouter } from "next/router";
 import { useJoinOrLeaveCourseMutation, User } from "generated/graphql";
 import { useAppSelector } from "app/hooks";
@@ -25,17 +21,16 @@ import {
   CoursesTeacherNameAndImageWrap,
   CoursesTeacherName,
   CoursesTeacherImage,
+  MediaRow,
 } from "./details.styles";
 
 import {
-  PageContainer,
-  InnerContainer,
-  PageRightSide,
   PageHeading,
   CardBottom,
   ApplyButton,
 } from "../../../styles/common.styles";
 import { ErrorMsg } from 'components/Input';
+import Dashboard from 'components/Dashboard';
 
 interface Details {
   description: string;
@@ -112,104 +107,70 @@ function CourseDetails(props: { props: { data: any; loading: any; }; }, userId: 
   };
 
   return (
-    <>
-      <Topbar />
-      <PageContainer>
-        <LeftSideBar />
-        <InnerContainer>
-          <div>
-            <PageHeading>{title}</PageHeading>
-          </div>
-          <DetailsCardWrapper>
-            <CardTop>
-              <CardLeftWrap>
-                <StartDateTitle>
-                  Start Date{" "}
-                  <StartDate>
-                    {" "}
-                    - {startDate} to {endDate}
-                  </StartDate>
-                </StartDateTitle>
-                <CardTitle>Course Description</CardTitle>
-              </CardLeftWrap>
-            </CardTop>
-            <CardCenterWrap>
-              <CardText>{description}</CardText>
-            </CardCenterWrap>
-            <CardBottom>
-              {!isTeacher && (
-                <>
-                  {isStudent ? (
-                    <ApplyButton
-                      onClick={joinCourse}
-                      style={{ backgroundColor: "red" }}
-                      type="button"
-                      // disabled={true}
-                    >
-                      applied
-                    </ApplyButton>
-                  ) : (
-                    <ApplyButton onClick={joinCourse} type="button">
-                      apply
-                    </ApplyButton>
-                  )}
-                  {errorMsg && <ErrorMsg>{message}</ErrorMsg>}
-                </>
+    <Dashboard>
+      <PageHeading>{title}</PageHeading>
+      <DetailsCardWrapper>
+        <CardTop>
+          <CardLeftWrap>
+            <StartDateTitle>
+              Start Date{" "}
+              <StartDate>
+                {" "}
+                - {startDate} to {endDate}
+              </StartDate>
+            </StartDateTitle>
+            <CardTitle>Course Description</CardTitle>
+          </CardLeftWrap>
+        </CardTop>
+        <CardCenterWrap>
+          <CardText>{description}</CardText>
+        </CardCenterWrap>
+        <CardBottom>
+          {!isTeacher && (
+            <>
+              {isStudent ? (
+                <ApplyButton
+                  onClick={joinCourse}
+                  style={{ backgroundColor: "red" }}
+                  type="button"
+                  // disabled={true}
+                >
+                  applied
+                </ApplyButton>
+              ) : (
+                <ApplyButton onClick={joinCourse} type="button">
+                  apply
+                </ApplyButton>
               )}
-            </CardBottom>
-            <CoursesTeacherWrap>
-              <CardTitle>Teacher</CardTitle>
-              <CoursesTeacherNameAndImageWrap>
-                <CoursesTeacherImage src="/Aleah.jpg" />
-                <CoursesTeacherName>Beth Summertime</CoursesTeacherName>
-              </CoursesTeacherNameAndImageWrap>
-            </CoursesTeacherWrap>
-            <CoursesH2>Course Updates</CoursesH2>
-            {/* <MediaContainer>
-              <TextPostCard
-                username="maguyva"
-                image="/D.jpg"
-                date="5 hours ago"
-                likeCount={12}
-                commentCount={2}
-                title={""}
-                body="leap into electronic typesetting, remaining
-                  essentially unchanged. It was popularised in the 1960s with
-                  the release of Letraset sheets containing Lorem Ipsum
-                  passages, and more recently with desktop publishing"
-              />
-            </MediaContainer> */}
-            {/* <MediaContainer>
-              <VideoPostCard
-                username="hotness"
-                image="/prettygirl.jpg"
-                body="/exvid.mp4"
-                date="5 hours ago"
-                likeCount={12}
-                commentCount={2}
-                title="leap into electronic typesetting, remaining
+              {errorMsg && <ErrorMsg>{message}</ErrorMsg>}
+            </>
+          )}
+        </CardBottom>
+        <CoursesTeacherWrap>
+          <CardTitle>Teacher</CardTitle>
+          <CoursesTeacherNameAndImageWrap>
+            <CoursesTeacherImage src="/Aleah.jpg" />
+            <CoursesTeacherName>Beth Summertime</CoursesTeacherName>
+          </CoursesTeacherNameAndImageWrap>
+        </CoursesTeacherWrap>
+        <CoursesH2>Course Updates</CoursesH2>
+        <MediaRow>
+          <MediaContainer>
+            <Card
+              username="aleah"
+              image="/Aleah.jpg"
+              body="/assets/images/forum.svg"
+              date="5 hours ago"
+              likeCount={12}
+              commentCount={2}
+              title="leap into electronic typesetting, remaining
                   essentially unchanged."
-              />
-            </MediaContainer> */}
-            <MediaContainer>
-              <ImagePostCard
-                username="aleah"
-                image="/Aleah.jpg"
-                body="/assets/images/forum.svg"
-                date="5 hours ago"
-                likeCount={12}
-                commentCount={2}
-                title="leap into electronic typesetting, remaining
-                  essentially unchanged."
-                postId="1"
-              />
-            </MediaContainer>
-          </DetailsCardWrapper>
-        </InnerContainer>
-        <PageRightSide>blow my wig</PageRightSide>
-      </PageContainer>
-      <SmallFooter />
-    </>
+              postId="1"
+            />
+          </MediaContainer>
+        </MediaRow>
+      </DetailsCardWrapper>
+    </Dashboard>
   );
 }
 

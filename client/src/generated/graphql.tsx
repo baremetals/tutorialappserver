@@ -13,6 +13,8 @@ export type Scalars = {
   Int: number;
   Float: number;
   Date: any;
+  /** The `Upload` scalar type represents a file upload. */
+  Upload: any;
 };
 
 export type Book = {
@@ -157,6 +159,13 @@ export type EntityResult = {
   messages?: Maybe<Array<Scalars['String']>>;
 };
 
+export type File = {
+  __typename?: 'File';
+  encoding: Scalars['String'];
+  filename: Scalars['String'];
+  mimetype: Scalars['String'];
+};
+
 export type Group = {
   __typename?: 'Group';
   codename: Scalars['String'];
@@ -203,14 +212,29 @@ export type Mutation = {
   createComment: CommentResult;
   createCourse: EntityResult;
   createPost: EntityResult;
+  deleteAllMessagesByUserId: Scalars['String'];
+  deleteChat: Scalars['String'];
+  deleteChatMsg: Scalars['String'];
+  deleteComment: Scalars['String'];
+  deleteCourse: Scalars['String'];
   deleteMe: Scalars['String'];
+  deleteMessage: Scalars['String'];
+  deleteNote: Scalars['String'];
+  deletePost: Scalars['String'];
   editBackGroundImage: Scalars['String'];
+  editChatMsg?: Maybe<ChatMsgResult>;
+  editComment: CommentResult;
+  editCourse: EntityResult;
   editMe: Scalars['String'];
+  editNote: EntityResult;
+  editPost: EntityResult;
   editProfileImage: Scalars['String'];
   forgotPassword: Scalars['String'];
   joinOrLeaveCourse: Scalars['String'];
   login: Scalars['String'];
   logout: Scalars['String'];
+  markAllMessagesReadByUserId: Scalars['String'];
+  markMessageRead: Scalars['String'];
   newCourseComment: EntityResult;
   newNote: EntityResult;
   newNoteComment: EntityResult;
@@ -218,6 +242,7 @@ export type Mutation = {
   resetPassword: Scalars['String'];
   respondToChatMessage?: Maybe<ChatMsgResult>;
   updatePostPoint: Scalars['String'];
+  uploadFile: Scalars['String'];
 };
 
 
@@ -274,8 +299,49 @@ export type MutationCreateCourseArgs = {
 export type MutationCreatePostArgs = {
   body: Scalars['String'];
   categoryName: Scalars['String'];
+  mediaUrl: Scalars['String'];
   title: Scalars['String'];
   userId: Scalars['ID'];
+};
+
+
+export type MutationDeleteAllMessagesByUserIdArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type MutationDeleteChatArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type MutationDeleteChatMsgArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type MutationDeleteCommentArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type MutationDeleteCourseArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type MutationDeleteMessageArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type MutationDeleteNoteArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type MutationDeletePostArgs = {
+  id: Scalars['ID'];
 };
 
 
@@ -284,10 +350,49 @@ export type MutationEditBackGroundImageArgs = {
 };
 
 
+export type MutationEditChatMsgArgs = {
+  body: Scalars['String'];
+  id: Scalars['ID'];
+};
+
+
+export type MutationEditCommentArgs = {
+  body: Scalars['String'];
+  id: Scalars['ID'];
+};
+
+
+export type MutationEditCourseArgs = {
+  categoryId: Scalars['String'];
+  description: Scalars['String'];
+  duration: Scalars['String'];
+  endDate: Scalars['String'];
+  id: Scalars['ID'];
+  image: Scalars['String'];
+  startDate: Scalars['String'];
+  title: Scalars['String'];
+};
+
+
 export type MutationEditMeArgs = {
   email: Scalars['String'];
   fullName: Scalars['String'];
   username: Scalars['String'];
+};
+
+
+export type MutationEditNoteArgs = {
+  body: Scalars['String'];
+  id: Scalars['ID'];
+  title: Scalars['String'];
+};
+
+
+export type MutationEditPostArgs = {
+  body: Scalars['String'];
+  categoryId: Scalars['ID'];
+  id: Scalars['ID'];
+  title: Scalars['String'];
 };
 
 
@@ -315,6 +420,16 @@ export type MutationLoginArgs = {
 
 export type MutationLogoutArgs = {
   username: Scalars['String'];
+};
+
+
+export type MutationMarkAllMessagesReadByUserIdArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type MutationMarkMessageReadArgs = {
+  id: Scalars['ID'];
 };
 
 
@@ -367,6 +482,12 @@ export type MutationUpdatePostPointArgs = {
   postId: Scalars['ID'];
 };
 
+
+export type MutationUploadFileArgs = {
+  file: Scalars['Upload'];
+  id: Scalars['ID'];
+};
+
 export type Note = {
   __typename?: 'Note';
   adminUser: User;
@@ -415,8 +536,10 @@ export type Post = {
   isDisabled: Scalars['Boolean'];
   lastModifiedBy: Scalars['String'];
   lastModifiedOn: Scalars['Date'];
+  mediaUrl: Scalars['String'];
   points: Scalars['Int'];
   postPoints?: Maybe<Array<PostPoint>>;
+  slug: Scalars['String'];
   title: Scalars['String'];
   views: Scalars['Int'];
 };
@@ -463,14 +586,14 @@ export type Query = {
   getChatMessagesByChatId: ChatMsgArrayResult;
   getCommentsByCourseId: CommentArrayResult;
   getCommentsByNoteId: CommentArrayResult;
-  getCommentsByPostId: CommentArrayResult;
+  getCommentsByPostSlug: CommentArrayResult;
   getCourseById: CourseResult;
   getCoursesByCategoryId: CourseArrayResult;
   getLatestCourses: CourseArrayResult;
   getLatestPosts: PostArrayResult;
   getMessagesByUserId: MessageArrayResult;
   getNotesByCourseId: NoteArrayResult;
-  getPostById?: Maybe<PostResult>;
+  getPostBySlug?: Maybe<PostResult>;
   getPostsByCategoryId: PostArrayResult;
   getStudentsByCourseId: StudentArrayResult;
   getTopCategoryPost?: Maybe<Array<CategoryPost>>;
@@ -479,6 +602,7 @@ export type Query = {
   me: UserResult;
   searchAllChatsByUserId: ChatMsgArrayResult;
   searchUsers: UserArrayResult;
+  uploads?: Maybe<Array<Maybe<File>>>;
 };
 
 
@@ -502,8 +626,8 @@ export type QueryGetCommentsByNoteIdArgs = {
 };
 
 
-export type QueryGetCommentsByPostIdArgs = {
-  postId: Scalars['ID'];
+export type QueryGetCommentsByPostSlugArgs = {
+  slug: Scalars['String'];
 };
 
 
@@ -522,8 +646,8 @@ export type QueryGetNotesByCourseIdArgs = {
 };
 
 
-export type QueryGetPostByIdArgs = {
-  id: Scalars['ID'];
+export type QueryGetPostBySlugArgs = {
+  slug: Scalars['String'];
 };
 
 
@@ -597,6 +721,7 @@ export type User = {
   isOnline: Scalars['Boolean'];
   lastModifiedBy: Scalars['String'];
   lastModifiedOn: Scalars['Date'];
+  location: Scalars['String'];
   notes?: Maybe<Array<Note>>;
   password: Scalars['String'];
   posts?: Maybe<Array<Post>>;
@@ -703,7 +828,7 @@ export type CreateCommentMutationVariables = Exact<{
 }>;
 
 
-export type CreateCommentMutation = { __typename?: 'Mutation', createComment: { __typename?: 'Comment', id: string, body: string, createdBy: string, createdOn: any, user: { __typename?: 'User', id: string, username: string } } | { __typename?: 'EntityResult', messages?: Array<string> | null | undefined } };
+export type CreateCommentMutation = { __typename?: 'Mutation', createComment: { __typename?: 'Comment', id: string, body: string, createdBy: string, createdOn: any, user: { __typename?: 'User', id: string, username: string, userIdSlug?: string | null | undefined } } | { __typename?: 'EntityResult', messages?: Array<string> | null | undefined } };
 
 export type JoinOrLeaveCourseMutationVariables = Exact<{
   courseId: Scalars['ID'];
@@ -718,10 +843,19 @@ export type CreatePostMutationVariables = Exact<{
   categoryName: Scalars['String'];
   title: Scalars['String'];
   body: Scalars['String'];
+  mediaUrl: Scalars['String'];
 }>;
 
 
 export type CreatePostMutation = { __typename?: 'Mutation', createPost: { __typename?: 'EntityResult', messages?: Array<string> | null | undefined } };
+
+export type UploadFileMutationVariables = Exact<{
+  file: Scalars['Upload'];
+  id: Scalars['ID'];
+}>;
+
+
+export type UploadFileMutation = { __typename?: 'Mutation', uploadFile: string };
 
 export type UpdatePostPointMutationVariables = Exact<{
   postId: Scalars['ID'];
@@ -806,36 +940,36 @@ export type GetUnReadMessagesByUserIdQueryVariables = Exact<{ [key: string]: nev
 
 export type GetUnReadMessagesByUserIdQuery = { __typename?: 'Query', getUnReadMessagesByUserId: { __typename?: 'EntityResult', messages?: Array<string> | null | undefined } | { __typename?: 'MessageArray', msgs?: Array<{ __typename?: 'Message', id: string }> | null | undefined } };
 
-export type GetCommentsByPostIdQueryVariables = Exact<{
-  postId: Scalars['ID'];
+export type GetCommentsByPostSlugQueryVariables = Exact<{
+  slug: Scalars['String'];
 }>;
 
 
-export type GetCommentsByPostIdQuery = { __typename?: 'Query', getCommentsByPostId: { __typename?: 'CommentArray', comments?: Array<{ __typename?: 'Comment', id: string, body: string, isDisabled: boolean, createdOn: any, createdBy: string, user: { __typename?: 'User', id: string, username: string, profileImage: string } }> | null | undefined } | { __typename?: 'EntityResult', messages?: Array<string> | null | undefined } };
+export type GetCommentsByPostSlugQuery = { __typename?: 'Query', getCommentsByPostSlug: { __typename?: 'CommentArray', comments?: Array<{ __typename?: 'Comment', id: string, body: string, isDisabled: boolean, createdOn: any, createdBy: string, user: { __typename?: 'User', id: string, userIdSlug?: string | null | undefined, username: string, profileImage: string } }> | null | undefined } | { __typename?: 'EntityResult', messages?: Array<string> | null | undefined } };
 
-export type GetPostByIdQueryVariables = Exact<{
-  postId: Scalars['ID'];
+export type GetPostBySlugQueryVariables = Exact<{
+  slug: Scalars['String'];
 }>;
 
 
-export type GetPostByIdQuery = { __typename?: 'Query', getPostById?: { __typename?: 'EntityResult' } | { __typename?: 'Post', id: string, views: number, points: number, title: string, body: string, createdOn: any, createdBy: string, creator: { __typename?: 'User', id: string, username: string, profileImage: string }, comments?: Array<{ __typename?: 'Comment', id: string }> | null | undefined, postPoints?: Array<{ __typename?: 'PostPoint', id: string, user: { __typename?: 'User', id: string } }> | null | undefined, category: { __typename?: 'Category', id: string, name: string } } | null | undefined };
+export type GetPostBySlugQuery = { __typename?: 'Query', getPostBySlug?: { __typename?: 'EntityResult' } | { __typename?: 'Post', id: string, slug: string, views: number, points: number, title: string, body: string, mediaUrl: string, createdOn: any, createdBy: string, creator: { __typename?: 'User', id: string, username: string, profileImage: string }, comments?: Array<{ __typename?: 'Comment', id: string }> | null | undefined, postPoints?: Array<{ __typename?: 'PostPoint', id: string, user: { __typename?: 'User', id: string } }> | null | undefined, category: { __typename?: 'Category', id: string, name: string } } | null | undefined };
 
 export type GetLatestPostsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetLatestPostsQuery = { __typename?: 'Query', getLatestPosts: { __typename?: 'EntityResult', messages?: Array<string> | null | undefined } | { __typename?: 'PostArray', posts?: Array<{ __typename?: 'Post', id: string, views: number, points: number, title: string, body: string, createdBy: string, createdOn: any, creator: { __typename?: 'User', id: string, username: string }, comments?: Array<{ __typename?: 'Comment', id: string, body: string, createdBy: string, createdOn: any }> | null | undefined, category: { __typename?: 'Category', id: string, name: string } }> | null | undefined } };
+export type GetLatestPostsQuery = { __typename?: 'Query', getLatestPosts: { __typename?: 'EntityResult', messages?: Array<string> | null | undefined } | { __typename?: 'PostArray', posts?: Array<{ __typename?: 'Post', id: string, slug: string, views: number, points: number, title: string, body: string, mediaUrl: string, createdBy: string, createdOn: any, creator: { __typename?: 'User', id: string, userIdSlug?: string | null | undefined, username: string, profileImage: string }, comments?: Array<{ __typename?: 'Comment', id: string, body: string, createdBy: string, createdOn: any }> | null | undefined, category: { __typename?: 'Category', id: string, name: string } }> | null | undefined } };
 
 export type GetUserBySlugIdQueryVariables = Exact<{
   userIdSlug: Scalars['String'];
 }>;
 
 
-export type GetUserBySlugIdQuery = { __typename?: 'Query', getUserBySlugId?: { __typename?: 'EntityResult', messages?: Array<string> | null | undefined } | { __typename?: 'User', id: string, userIdSlug?: string | null | undefined, username: string, fullName: string, description: string, isOnline: boolean, profileImage: string, backgroundImg: string, createdOn: any, posts?: Array<{ __typename?: 'Post', id: string, views: number, points: number, title: string, body: string, comments?: Array<{ __typename?: 'Comment', id: string, body: string, createdOn: any, createdBy: string, user: { __typename?: 'User', id: string, userIdSlug?: string | null | undefined, username: string, profileImage: string } }> | null | undefined }> | null | undefined } | null | undefined };
+export type GetUserBySlugIdQuery = { __typename?: 'Query', getUserBySlugId?: { __typename?: 'EntityResult', messages?: Array<string> | null | undefined } | { __typename?: 'User', id: string, userIdSlug?: string | null | undefined, username: string, fullName: string, description: string, location: string, isOnline: boolean, profileImage: string, backgroundImg: string, createdOn: any, posts?: Array<{ __typename?: 'Post', id: string, slug: string, views: number, points: number, title: string, body: string, comments?: Array<{ __typename?: 'Comment', id: string, body: string, createdOn: any, createdBy: string, user: { __typename?: 'User', id: string, userIdSlug?: string | null | undefined, username: string, profileImage: string } }> | null | undefined }> | null | undefined } | null | undefined };
 
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type MeQuery = { __typename?: 'Query', me: { __typename?: 'EntityResult', messages?: Array<string> | null | undefined } | { __typename?: 'User', id: string, userIdSlug?: string | null | undefined, username: string, email: string, fullName: string, description: string, isDisabled: boolean, profileImage: string, backgroundImg: string, createdOn: any, groups?: Array<{ __typename?: 'Group', id: string, codename: string }> | null | undefined, posts?: Array<{ __typename?: 'Post', id: string, views: number, points: number, title: string, body: string, createdOn: any, comments?: Array<{ __typename?: 'Comment', id: string, body: string, isDisabled: boolean, createdOn: any, createdBy: string }> | null | undefined }> | null | undefined } };
+export type MeQuery = { __typename?: 'Query', me: { __typename?: 'EntityResult', messages?: Array<string> | null | undefined } | { __typename?: 'User', id: string, userIdSlug?: string | null | undefined, username: string, email: string, fullName: string, description: string, location: string, isOnline: boolean, isDisabled: boolean, profileImage: string, backgroundImg: string, createdOn: any, groups?: Array<{ __typename?: 'Group', id: string, codename: string }> | null | undefined, posts?: Array<{ __typename?: 'Post', id: string, slug: string, views: number, points: number, title: string, body: string, createdOn: any, comments?: Array<{ __typename?: 'Comment', id: string, body: string, isDisabled: boolean, createdOn: any, createdBy: string }> | null | undefined }> | null | undefined } };
 
 export type SearchUsersQueryVariables = Exact<{
   searchItem: Scalars['String'];
@@ -1217,9 +1351,6 @@ export type RespondToChatMessageMutationOptions = Apollo.BaseMutationOptions<Res
 export const CreateCommentDocument = gql`
     mutation CreateComment($userId: ID!, $postId: ID!, $body: String) {
   createComment(userId: $userId, postId: $postId, body: $body) {
-    ... on EntityResult {
-      messages
-    }
     ... on Comment {
       id
       body
@@ -1228,7 +1359,11 @@ export const CreateCommentDocument = gql`
       user {
         id
         username
+        userIdSlug
       }
+    }
+    ... on EntityResult {
+      messages
     }
   }
 }
@@ -1294,12 +1429,13 @@ export type JoinOrLeaveCourseMutationHookResult = ReturnType<typeof useJoinOrLea
 export type JoinOrLeaveCourseMutationResult = Apollo.MutationResult<JoinOrLeaveCourseMutation>;
 export type JoinOrLeaveCourseMutationOptions = Apollo.BaseMutationOptions<JoinOrLeaveCourseMutation, JoinOrLeaveCourseMutationVariables>;
 export const CreatePostDocument = gql`
-    mutation CreatePost($userId: ID!, $categoryName: String!, $title: String!, $body: String!) {
+    mutation CreatePost($userId: ID!, $categoryName: String!, $title: String!, $body: String!, $mediaUrl: String!) {
   createPost(
     userId: $userId
     categoryName: $categoryName
     title: $title
     body: $body
+    mediaUrl: $mediaUrl
   ) {
     messages
   }
@@ -1324,6 +1460,7 @@ export type CreatePostMutationFn = Apollo.MutationFunction<CreatePostMutation, C
  *      categoryName: // value for 'categoryName'
  *      title: // value for 'title'
  *      body: // value for 'body'
+ *      mediaUrl: // value for 'mediaUrl'
  *   },
  * });
  */
@@ -1334,6 +1471,38 @@ export function useCreatePostMutation(baseOptions?: Apollo.MutationHookOptions<C
 export type CreatePostMutationHookResult = ReturnType<typeof useCreatePostMutation>;
 export type CreatePostMutationResult = Apollo.MutationResult<CreatePostMutation>;
 export type CreatePostMutationOptions = Apollo.BaseMutationOptions<CreatePostMutation, CreatePostMutationVariables>;
+export const UploadFileDocument = gql`
+    mutation UploadFile($file: Upload!, $id: ID!) {
+  uploadFile(file: $file, id: $id)
+}
+    `;
+export type UploadFileMutationFn = Apollo.MutationFunction<UploadFileMutation, UploadFileMutationVariables>;
+
+/**
+ * __useUploadFileMutation__
+ *
+ * To run a mutation, you first call `useUploadFileMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUploadFileMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [uploadFileMutation, { data, loading, error }] = useUploadFileMutation({
+ *   variables: {
+ *      file: // value for 'file'
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useUploadFileMutation(baseOptions?: Apollo.MutationHookOptions<UploadFileMutation, UploadFileMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UploadFileMutation, UploadFileMutationVariables>(UploadFileDocument, options);
+      }
+export type UploadFileMutationHookResult = ReturnType<typeof useUploadFileMutation>;
+export type UploadFileMutationResult = Apollo.MutationResult<UploadFileMutation>;
+export type UploadFileMutationOptions = Apollo.BaseMutationOptions<UploadFileMutation, UploadFileMutationVariables>;
 export const UpdatePostPointDocument = gql`
     mutation UpdatePostPoint($postId: ID!, $increment: Boolean!) {
   updatePostPoint(postId: $postId, increment: $increment)
@@ -1960,9 +2129,9 @@ export function useGetUnReadMessagesByUserIdLazyQuery(baseOptions?: Apollo.LazyQ
 export type GetUnReadMessagesByUserIdQueryHookResult = ReturnType<typeof useGetUnReadMessagesByUserIdQuery>;
 export type GetUnReadMessagesByUserIdLazyQueryHookResult = ReturnType<typeof useGetUnReadMessagesByUserIdLazyQuery>;
 export type GetUnReadMessagesByUserIdQueryResult = Apollo.QueryResult<GetUnReadMessagesByUserIdQuery, GetUnReadMessagesByUserIdQueryVariables>;
-export const GetCommentsByPostIdDocument = gql`
-    query GetCommentsByPostId($postId: ID!) {
-  getCommentsByPostId(postId: $postId) {
+export const GetCommentsByPostSlugDocument = gql`
+    query GetCommentsByPostSlug($slug: String!) {
+  getCommentsByPostSlug(slug: $slug) {
     ... on CommentArray {
       comments {
         id
@@ -1972,6 +2141,7 @@ export const GetCommentsByPostIdDocument = gql`
         createdBy
         user {
           id
+          userIdSlug
           username
           profileImage
         }
@@ -1985,41 +2155,43 @@ export const GetCommentsByPostIdDocument = gql`
     `;
 
 /**
- * __useGetCommentsByPostIdQuery__
+ * __useGetCommentsByPostSlugQuery__
  *
- * To run a query within a React component, call `useGetCommentsByPostIdQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetCommentsByPostIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useGetCommentsByPostSlugQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetCommentsByPostSlugQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGetCommentsByPostIdQuery({
+ * const { data, loading, error } = useGetCommentsByPostSlugQuery({
  *   variables: {
- *      postId: // value for 'postId'
+ *      slug: // value for 'slug'
  *   },
  * });
  */
-export function useGetCommentsByPostIdQuery(baseOptions: Apollo.QueryHookOptions<GetCommentsByPostIdQuery, GetCommentsByPostIdQueryVariables>) {
+export function useGetCommentsByPostSlugQuery(baseOptions: Apollo.QueryHookOptions<GetCommentsByPostSlugQuery, GetCommentsByPostSlugQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetCommentsByPostIdQuery, GetCommentsByPostIdQueryVariables>(GetCommentsByPostIdDocument, options);
+        return Apollo.useQuery<GetCommentsByPostSlugQuery, GetCommentsByPostSlugQueryVariables>(GetCommentsByPostSlugDocument, options);
       }
-export function useGetCommentsByPostIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetCommentsByPostIdQuery, GetCommentsByPostIdQueryVariables>) {
+export function useGetCommentsByPostSlugLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetCommentsByPostSlugQuery, GetCommentsByPostSlugQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetCommentsByPostIdQuery, GetCommentsByPostIdQueryVariables>(GetCommentsByPostIdDocument, options);
+          return Apollo.useLazyQuery<GetCommentsByPostSlugQuery, GetCommentsByPostSlugQueryVariables>(GetCommentsByPostSlugDocument, options);
         }
-export type GetCommentsByPostIdQueryHookResult = ReturnType<typeof useGetCommentsByPostIdQuery>;
-export type GetCommentsByPostIdLazyQueryHookResult = ReturnType<typeof useGetCommentsByPostIdLazyQuery>;
-export type GetCommentsByPostIdQueryResult = Apollo.QueryResult<GetCommentsByPostIdQuery, GetCommentsByPostIdQueryVariables>;
-export const GetPostByIdDocument = gql`
-    query GetPostById($postId: ID!) {
-  getPostById(id: $postId) {
+export type GetCommentsByPostSlugQueryHookResult = ReturnType<typeof useGetCommentsByPostSlugQuery>;
+export type GetCommentsByPostSlugLazyQueryHookResult = ReturnType<typeof useGetCommentsByPostSlugLazyQuery>;
+export type GetCommentsByPostSlugQueryResult = Apollo.QueryResult<GetCommentsByPostSlugQuery, GetCommentsByPostSlugQueryVariables>;
+export const GetPostBySlugDocument = gql`
+    query GetPostBySlug($slug: String!) {
+  getPostBySlug(slug: $slug) {
     ... on Post {
       id
+      slug
       views
       points
       title
       body
+      mediaUrl
       createdOn
       createdBy
       creator {
@@ -2046,32 +2218,32 @@ export const GetPostByIdDocument = gql`
     `;
 
 /**
- * __useGetPostByIdQuery__
+ * __useGetPostBySlugQuery__
  *
- * To run a query within a React component, call `useGetPostByIdQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetPostByIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useGetPostBySlugQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetPostBySlugQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGetPostByIdQuery({
+ * const { data, loading, error } = useGetPostBySlugQuery({
  *   variables: {
- *      postId: // value for 'postId'
+ *      slug: // value for 'slug'
  *   },
  * });
  */
-export function useGetPostByIdQuery(baseOptions: Apollo.QueryHookOptions<GetPostByIdQuery, GetPostByIdQueryVariables>) {
+export function useGetPostBySlugQuery(baseOptions: Apollo.QueryHookOptions<GetPostBySlugQuery, GetPostBySlugQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetPostByIdQuery, GetPostByIdQueryVariables>(GetPostByIdDocument, options);
+        return Apollo.useQuery<GetPostBySlugQuery, GetPostBySlugQueryVariables>(GetPostBySlugDocument, options);
       }
-export function useGetPostByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetPostByIdQuery, GetPostByIdQueryVariables>) {
+export function useGetPostBySlugLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetPostBySlugQuery, GetPostBySlugQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetPostByIdQuery, GetPostByIdQueryVariables>(GetPostByIdDocument, options);
+          return Apollo.useLazyQuery<GetPostBySlugQuery, GetPostBySlugQueryVariables>(GetPostBySlugDocument, options);
         }
-export type GetPostByIdQueryHookResult = ReturnType<typeof useGetPostByIdQuery>;
-export type GetPostByIdLazyQueryHookResult = ReturnType<typeof useGetPostByIdLazyQuery>;
-export type GetPostByIdQueryResult = Apollo.QueryResult<GetPostByIdQuery, GetPostByIdQueryVariables>;
+export type GetPostBySlugQueryHookResult = ReturnType<typeof useGetPostBySlugQuery>;
+export type GetPostBySlugLazyQueryHookResult = ReturnType<typeof useGetPostBySlugLazyQuery>;
+export type GetPostBySlugQueryResult = Apollo.QueryResult<GetPostBySlugQuery, GetPostBySlugQueryVariables>;
 export const GetLatestPostsDocument = gql`
     query GetLatestPosts {
   getLatestPosts {
@@ -2081,15 +2253,19 @@ export const GetLatestPostsDocument = gql`
     ... on PostArray {
       posts {
         id
+        slug
         views
         points
         title
         body
+        mediaUrl
         createdBy
         createdOn
         creator {
           id
+          userIdSlug
           username
+          profileImage
         }
         comments {
           id
@@ -2145,12 +2321,14 @@ export const GetUserBySlugIdDocument = gql`
       username
       fullName
       description
+      location
       isOnline
       profileImage
       backgroundImg
       createdOn
       posts {
         id
+        slug
         views
         points
         title
@@ -2213,6 +2391,8 @@ export const MeDocument = gql`
       email
       fullName
       description
+      location
+      isOnline
       isDisabled
       profileImage
       backgroundImg
@@ -2223,6 +2403,7 @@ export const MeDocument = gql`
       }
       posts {
         id
+        slug
         views
         points
         title

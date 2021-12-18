@@ -21,7 +21,7 @@ import {
   CommentText,
   ForumWrapper,
   ForumContainer,
-} from "./forum.styles";
+} from "../../ForumPage/forum.styles";
 import  Comment  from "../../Comments";
 import Dropdown from "../../Dropdown";
 

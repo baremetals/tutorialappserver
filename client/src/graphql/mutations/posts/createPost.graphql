@@ -3,12 +3,14 @@ mutation CreatePost(
   $categoryName: String!
   $title: String!
   $body: String!
+  $mediaUrl: String!
 ) {
   createPost(
     userId: $userId
     categoryName: $categoryName
     title: $title
     body: $body
+    mediaUrl: $mediaUrl
   ) {
     messages
   }

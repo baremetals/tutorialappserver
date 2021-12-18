@@ -1,6 +1,7 @@
 
 import { Group } from "../entities/Group";
 import { Permission } from "../entities/Permission";
+import { User } from '../entities/User';
 
 async function creatGroup(perms: any) {
 
@@ -33,4 +34,28 @@ async function creatGroup(perms: any) {
 
 }
 
+export const addUserToAGroup = async (
+  id: string,
+  userId: string
+): Promise<string> => {
+  const user = await User.findOne({
+    where: { id: userId },
+  });
+
+  if (!user) {
+    return 'User not found.';
+  }
+
+  const group = await Group.findOne({
+    where: { id },
+  });
+
+  if (!group) {
+    return 'Group not found.';
+  }
+
+  user.groups.push(group);
+
+  return `${user?.username} has been added to the ${group.codename} group.`;
+};
 export default creatGroup;

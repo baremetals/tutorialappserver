@@ -5,12 +5,15 @@ import { Comment } from '../entities/Comment';
 import { isPostBodyValid, isPostTitleValid } from "../utils/validators/PostValidators";
 import { QueryArrayResult, QueryOneResult } from "./QuerryArrayResult";
 import { getConnection, getRepository } from "typeorm";
+import { v4 } from 'uuid';
+import slugify from "slugify";
 
 export const createPost = async (
   userId: string | undefined | null,
   categoryName: string,
   title: string,
   body: string,
+  mediaUrl: string
 ): Promise<QueryArrayResult<Post>> => {
   const userRepository = getRepository(User);
   const titleMsg = isPostTitleValid(title);
@@ -28,7 +31,7 @@ export const createPost = async (
 
   if (!userId) {
     return {
-      messages: ["User not logged in."],
+      messages: ['User not logged in.'],
     };
   }
 
@@ -36,41 +39,45 @@ export const createPost = async (
     id: userId,
   });
 
-  
-
   const category = await Category.findOne({
     name: categoryName,
   });
 
   if (!category) {
     return {
-      messages: ["category not found."],
+      messages: ['category not found.'],
     };
   }
 
+  const generatedToken = v4();
+  const newTitle = slugify(title)
+  const slug = generatedToken + "-" + newTitle;
+  console.log(slug)
+
   const post = await Post.create({
+    slug,
     title,
     body,
+    mediaUrl,
     creator,
     category,
     createdBy: creator?.username,
-    lastModifiedBy: creator?.username
+    lastModifiedBy: creator?.username,
   }).save();
 
   if (!post) {
     return {
-      messages: ["Failed to create post."],
+      messages: ['Failed to create post.'],
     };
   }
 
   return {
-    messages: ["Post created successfully."],
+    messages: [`${post.slug}`],
   };
 };
 
 export const editPost = async (
   id: string,
-  userId: string,
   body: string,
   title: string,
   categoryId: string
@@ -92,10 +99,6 @@ export const editPost = async (
     id: categoryId,
   });
 
-  const creator = await User.findOne({
-    id: userId,
-  });
-
   const post = await Post.findOne({
     where: { id },
   });
@@ -110,10 +113,12 @@ export const editPost = async (
     .createQueryBuilder()
     .update(Post)
     .set({
-      body,
+      slug: post.slug,
       title,
+      body,
+      mediaUrl: post.mediaUrl,
       category,
-      lastModifiedBy: creator?.username,
+      lastModifiedBy: post.createdBy,
       lastModifiedOn: new Date(),
     })
     .where('id = :id', { id: id })
@@ -165,10 +170,10 @@ export const deletePost = async (id: string): Promise<string> => {
 };
 
 // Queries
-export const getPostById = async (id: string): Promise<QueryOneResult<Post>> => {
+export const getPostBySlug = async (slug: string): Promise<QueryOneResult<Post>> => {
   const post = await Post.findOne({
     where: {
-      id,
+      slug,
     },
     relations: [
       'creator',
@@ -180,6 +185,8 @@ export const getPostById = async (id: string): Promise<QueryOneResult<Post>> => 
       'category',
     ],
   });
+
+  // console.log(post);
   if (!post) {
     return {
       messages: ['Post not found.'],
@@ -241,8 +248,3 @@ export const getLatestPosts = async (): Promise<QueryArrayResult<Post>> => {
     entities: posts,
   };
 };
-
-// Todo
-
-// export const editPost = async (): Promise{}
-// export const deletePost = async (): Promise{}

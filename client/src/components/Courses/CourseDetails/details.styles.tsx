@@ -4,48 +4,44 @@ import styled from 'styled-components'
 export const CoursesH1 = styled.h1`
   font-size: 2.5rem;
   color: #655e5e;
-  margin-bottom: 34px;
+  margin-bottom: 1.5rem;
 
-  @media screen and (max-width: 480px) {
+  @media (max-width: 991px) {
     font-size: 2rem;
   }
 `;
+
 export const DetailsCardWrapper = styled.div`
-  padding: 5px;
+  margin-bottom: 2.5rem;
 `;
 
 export const CardTop = styled.div`
-  /* display: flex; */
-  align-items: center;
-  justify-content: space-between;
 `;
 
 export const CardLeftWrap = styled.div`
-  /* display: flex; */
-  align-items: center;
+  margin-bottom: 1rem;
 `;
 
 export const CardTitle = styled.p`
-  font-size: 20px;
-  font-weight: 500;
-  margin: 0 10px;
-  padding-top: 20px;
+  font-size: 1.25rem;
+  font-weight: 600;
 `;
 
 export const StartDateTitle = styled.p`
-  font-size: 20px;
+  font-size: 1rem;
   font-weight: 500;
-  margin: 0 10px;
-  
+  color: #b3b3b3;
+  @media (max-width: 991px) {
+    font-size: 0.875rem;
+  }
 `;
 
 export const StartDate = styled.span`
-  font-size: 20px;
-  color: #5bb3aa;
+  color: #7755e2;
 `;
 
 export const CardCenterWrap = styled.div`
-  margin: 10px 10px;
+  margin-bottom: 1rem;
 `;
 export const CardText = styled.span``;
 
@@ -66,23 +62,29 @@ export const CardBottom = styled.div`
   display: flex;
 `;
 
+export const MediaRow = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  margin: -0.75rem;
+`;
+
 export const MediaContainer = styled.div`
-  width: 100%;
-  border-radius: 10px;
-  -webkit-box-shadow: 0px 0px 16px -8px rgba(0, 0, 0, 0.68);
-  box-shadow: 0px 0px 16px -8px rgba(0, 0, 0, 0.68);
-  margin: 30px 0;
-  padding-bottom: 20px;
+  padding: 0.75rem;
+  width: 33.33%;
+  @media (max-width: 1366px) {
+    width: 50%;
+  }
+  @media (max-width: 991px) {
+    width: 100%;
+  }
 `;
 
 export const CoursesH2 = styled.h2`
   font-size: 2rem;
-  color: #655e5e;
-  margin-top: 24px;
-  margin-bottom: 24px;
-
-  @media screen and (max-width: 480px) {
-    font-size: 2rem;
+  color: #000;
+  margin-bottom: 1.5rem;
+  @media (max-width: 991px) {
+    font-size: 1.75rem;
   }
 `;
 

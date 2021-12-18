@@ -3,7 +3,6 @@ import { requireAuthentication } from "lib/requireAuthentication";
 import { GetServerSideProps } from "next";
 import BooksPage from '../components/Books'
 import { useIsAuth } from "../lib/isAuth";
-// import { withApollo } from 'utils/withApollo';
 
 
 function Books() {

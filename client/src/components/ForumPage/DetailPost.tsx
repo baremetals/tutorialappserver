@@ -14,7 +14,7 @@ import {
   // PostTopRightWrap,
   // ExpandIcon,
   PostCenterWrap,
-  PostTitle,
+  // PostTitle,
   PostMediaImage,
   PostBottomWrapper,
   BottomLeftWrap,
@@ -28,12 +28,14 @@ import {
   LikeGroup,
   // DropAndCenterWrap,
   PostMediaVideoIF,
-} from "../Dashboard/Forum/forum.styles";
+} from "./forum.styles";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 dayjs.extend(relativeTime);
 import Comment  from "../Comments";
 import { ErrorMsg } from 'components/Input';
+import Dashboard from 'components/Dashboard';
+import { PageHeading } from 'styles/common.styles';
 // import Dropdown from "../../Dropdown";
 
 interface ForumPost {
@@ -80,20 +82,20 @@ const DetailPost = (props: { props: { data: any; loading: any; }; }) => {
   // data fro props
   const { data, loading } = props.props;
   const { title, body, points, createdOn, creator, postPoints } =
-    data?.getPostById as ForumPost;
+    data?.getPostBySlug as ForumPost;
 
   const [postPointNumber, setPostPointsNumber] = useState(0);
   
-  // console.log(body);
+  console.log(data);
   // console.log(postPointNumber);
 
   // Comments Subscription data
   const newComms = useNewCommentSubscription();
   const newCommsData = newComms?.data?.newComment;
-  const comments = data?.getPostById.comments;
+  const comments = data?.getPostBySlug.comments;
   let commentsLength: number = 0;
 
-  // console.log(pointsLenth);
+  // console.log(comments);
 
   // This useEffect updates the points count
   useEffect(() => {
@@ -229,10 +231,11 @@ const DetailPost = (props: { props: { data: any; loading: any; }; }) => {
   };
 
   return (
-    <>
+    <Dashboard>
+      <PageHeading>{title}</PageHeading>
       <PostTop>
         <PostLeftWrap>
-          <Link href={`user-profile/${creator.username}`}>
+          <Link href={`user-profile/${creator.userIdSlug}`}>
             <PostProfileImge
               src={creator.profileImage}
               alt="user profile image"
@@ -240,7 +243,7 @@ const DetailPost = (props: { props: { data: any; loading: any; }; }) => {
           </Link>
 
           <UserName>
-            <Link href={`user-profile/${creator.username}`}>
+            <Link href={`user-profile/${creator.userIdSlug}`}>
               {creator.username}
             </Link>
 
@@ -255,8 +258,10 @@ const DetailPost = (props: { props: { data: any; loading: any; }; }) => {
         </PostTopRightWrap> */}
       </PostTop>
       <PostCenterWrap>
-        <PostTitle>{title}</PostTitle>
-        {isVideo ? (
+        <br />
+        {/* <PostTitle>{title}</PostTitle> */}
+        {/* <br /> */}
+        {isVideo && (
           <PostMediaVideoIF
             {...props}
             width="560"
@@ -264,9 +269,9 @@ const DetailPost = (props: { props: { data: any; loading: any; }; }) => {
             src={body}
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"
           />
-        ) : (
-          <PostMediaImage alt="Post image" src={body} />
         )}
+        {<PostMediaImage alt="Post image" src={body} />}
+        <div dangerouslySetInnerHTML={{ __html: body as string }}></div>
       </PostCenterWrap>
 
       <PostBottomWrapper>
@@ -287,7 +292,7 @@ const DetailPost = (props: { props: { data: any; loading: any; }; }) => {
         </BottomRightWrap>
       </PostBottomWrapper>
       <Comment />
-    </>
+    </Dashboard>
   );
 };
 

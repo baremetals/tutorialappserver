@@ -3,6 +3,7 @@ import Comment from "./Comment";
 import User from "./User";
 
 export default class Post {
+  slug: string;
   constructor(
     public id: string,
     public views: number,

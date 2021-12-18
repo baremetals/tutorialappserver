@@ -77,9 +77,9 @@ export const register = async (
   }
 
   const generatedToken = v4();
-  const slug = generatedToken + trimmedUsername;
+  const slug = generatedToken + '-' + trimmedUsername; 
   const hashedPassword = await argon2.hash(password);
-  const groupId: any = 2;
+  const groupId: string = "2";
 
   const group = await Group.findOne({
     id: groupId,
@@ -523,7 +523,6 @@ function userNotFound(usernameOrEmail: string) {
 // To do 
 // add notifications/email for reset password, activation and change password.
 
-// Admin only feature
-// export const deleteUser = async (): Promise{}
-// export const editUser = async (): Promise{}
+
+
 

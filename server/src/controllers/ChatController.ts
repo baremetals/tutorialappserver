@@ -215,10 +215,6 @@ export const editChatMsg = async (
     };
   }
 
-  // const sender = await User.findOne({
-  //   id: senderUserId,
-  // });
-
   console.log(chatMsgs);
 
   await getConnection()
@@ -424,7 +420,4 @@ export const searchAllChatsByUserId = async (
   };
 };
 
-// Todo
 
-// export const editmsg = async (): Promise{}
-// export const deletemsg = async (): Promise{}

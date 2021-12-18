@@ -8,6 +8,7 @@ import {
 } from "@graphql-tools/schema";
 import { SubscriptionServer } from "subscriptions-transport-ws";
 import { execute, subscribe } from "graphql";
+import { graphqlUploadExpress } from "graphql-upload"
 
 
 import typeDefs from "./graphql/typeDefs"
@@ -54,7 +55,7 @@ const main = async () => {
   
   app.use(
     cors({
-      origin: '*', //"http://localhost:3000",
+      origin: 'http://localhost:3000', //"http://localhost:3000",
       credentials: true,
     })
   );
@@ -99,8 +100,9 @@ const main = async () => {
     
   });
   
-
+  
   await apolloServer.start();
+  app.use(graphqlUploadExpress());
   apolloServer.applyMiddleware({ app, cors: false });
 
   const server = createServer(app);

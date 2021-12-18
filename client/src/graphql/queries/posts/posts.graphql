@@ -6,15 +6,19 @@ query GetLatestPosts {
     ... on PostArray {
       posts {
         id
+        slug
         views
         points
         title
         body
+        mediaUrl
         createdBy
         createdOn
         creator {
           id
+          userIdSlug
           username
+          profileImage
         }
         comments {
           id

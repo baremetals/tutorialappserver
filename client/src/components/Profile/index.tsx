@@ -2,24 +2,23 @@ import React, { useEffect, useState } from 'react'
 import { useRouter } from "next/router";
 import { useAppSelector } from "app/hooks";
 import { isUser } from "features/auth/selectors";
-import LeftSideBar from "components/Dashboard/LeftSideBar";
-import SmallFooter from "components/Dashboard/SmallFooter";
-import TopBar from "components/Dashboard/TopBar";
+
 import {
-  ProfileRightWrap,
   ProfileRightTopWrap,
   ProfileRightBottomWrap,
 } from "components/Profile/profile.styles";
-import {
-  PageContainer,
-  InnerContainer,
-  PageRightSide,
-} from "../../styles/common.styles";
-import ProfileRightBar from "components/Profile/ProfileRightBar";
+
+import ProfileRightCard from "components/Profile/ProfileRightCard";
 import UserFeed from "components/Profile/UserFeed";
 import ProfileHeader from './ProfileHeader';
 import { client } from 'lib/initApollo';
-import { GetUserBySlugIdDocument, GetUserBySlugIdQueryResult } from 'generated/graphql';
+import {
+  GetUserBySlugIdDocument,
+  GetUserBySlugIdQueryResult,
+} from "generated/graphql";
+import Dashboard from 'components/Dashboard';
+import { ProfileWrapGroup, PageWrapGroup } from "../../styles/common.styles";
+import RightSideBar from 'components/Dashboard/RightSideBar';
 
 const Profile = () => {
   const router = useRouter();
@@ -30,7 +29,8 @@ const Profile = () => {
     profileImage: "",
     backgroundImg: "",
     fullName: "",
-    description: ""
+    description: "",
+    location: "",
   });
 
 
@@ -41,8 +41,11 @@ const Profile = () => {
         userIdSlug,
       },
     });
-    if (data.getUserBySlugId) setUserInfo(data.getUserBySlugId);
-    // console.log(userInfo);
+
+    const { getUserBySlugId }: any = data;
+    
+    if (getUserBySlugId) setUserInfo(getUserBySlugId);
+    // console.log(data);
   };
 
   useEffect(() => {
@@ -61,33 +64,26 @@ const Profile = () => {
 
 
   return (
-    <>
-      <TopBar />
-      <PageContainer>
-        <LeftSideBar />
-        <InnerContainer>
-          <ProfileRightWrap>
-            <ProfileRightTopWrap>
-              <ProfileHeader {...userInfo} />
-            </ProfileRightTopWrap>
-            <ProfileRightBottomWrap>
-              <UserFeed
-                backgroundImg={userInfo.backgroundImg}
-                profileImage={userInfo.profileImage}
-                fullName={userInfo.fullName}
-                description={userInfo.description}
-              />
-            </ProfileRightBottomWrap>
-          </ProfileRightWrap>
-        </InnerContainer>
-        <PageRightSide>
-          live fast
-          <ProfileRightBar />
-        </PageRightSide>
-      </PageContainer>
-
-      <SmallFooter />
-    </>
+    <Dashboard>
+      <ProfileWrapGroup>
+        <PageWrapGroup>
+          <ProfileRightTopWrap>
+            <ProfileHeader {...userInfo} />
+          </ProfileRightTopWrap>
+          <ProfileRightBottomWrap>
+            <UserFeed
+              backgroundImg={userInfo.backgroundImg}
+              profileImage={userInfo.profileImage}
+              fullName={userInfo.fullName}
+              description={userInfo.description}
+            />
+          </ProfileRightBottomWrap>
+        </PageWrapGroup>
+        <RightSideBar>
+          <ProfileRightCard city={userInfo.location} coursesTaken={20} />
+        </RightSideBar>
+      </ProfileWrapGroup>
+    </Dashboard>
   );
 }
 

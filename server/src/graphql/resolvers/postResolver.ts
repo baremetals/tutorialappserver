@@ -4,12 +4,30 @@ import { Post } from "../../entities/Post";
 import { QueryArrayResult, QueryOneResult } from "../../controllers/QuerryArrayResult";
 import { GqlContext } from "../GqlContext";
 // import { withFilter } from "graphql-subscriptions";
-import { createPost, deletePost, editPost, getLatestPosts, getPostById, getPostsByCategoryId } from "../../controllers/PostController";
+// import { UserInputError } from 'apollo-server-express';
+// const { createWriteStream } = require('fs');
+import {
+  createPost,
+  deletePost,
+  editPost,
+  getLatestPosts,
+  getPostBySlug,
+  getPostsByCategoryId,
+} from '../../controllers/PostController';
 import { STANDARD_ERROR, EntityResult } from "../resolvers"
 import { Category } from "../../entities/Category";
 import { getAllCategories } from "../../controllers/CategoryController";
 import { PostCategory } from "../../entities/EntityCategory";
 // import { LIKED_POST } from "../../lib/constants";
+// import {bucketName } from '../../lib/files/storage';
+import { GraphQLUpload } from 'graphql-upload';
+import { FileArgs } from '../../lib/files/types';
+// import { checkFileSize, generateUniqueFilename, uploadToGoogleCloud } from '../../lib/files';
+// import { UserInputError } from 'apollo-server-express';
+import { bucketName  } from '../../lib/files/storage';
+import { getRepository } from 'typeorm';
+import { User } from '../../entities/User';
+import { upload} from "../../controllers/UploadController"
 
 const postResolver = {
   PostResult: {
@@ -56,6 +74,8 @@ const postResolver = {
     },
   },
 
+  Upload: GraphQLUpload,
+
   // Subscription: {
   //   newLike: {
   //     subscribe: () => pubsub.asyncIterator([LIKED_POST]),
@@ -67,15 +87,15 @@ const postResolver = {
   // },
 
   Query: {
-    getPostById: async (
+    getPostBySlug: async (
       _obj: any,
-      args: { id: string },
+      args: { slug: string },
       _ctx: GqlContext,
       _info: any
     ): Promise<Post | EntityResult> => {
       let post: QueryOneResult<Post>;
       try {
-        post = await getPostById(args.id);
+        post = await getPostBySlug(args.slug);
 
         if (post.entity) {
           return post.entity;
@@ -179,6 +199,7 @@ const postResolver = {
         categoryName: string;
         title: string;
         body: string;
+        mediaUrl: string;
       },
       _ctx: GqlContext,
       _info: any
@@ -189,7 +210,8 @@ const postResolver = {
           args.userId,
           args.categoryName,
           args.title,
-          args.body
+          args.body,
+          args.mediaUrl
         );
         return {
           messages: result.messages ? result.messages : [STANDARD_ERROR],
@@ -217,11 +239,9 @@ const postResolver = {
             messages: ['You must be logged in to make changes.'],
           };
         }
-        // const userId = "51"
+
         const result = await editPost(
           args.id,
-          ctx.req.session!.userId,
-          // userId,
           args.body,
           args.title,
           args.categoryId
@@ -280,6 +300,34 @@ const postResolver = {
         console.error(ex);
         throw ex;
       }
+    },
+
+    uploadFile: async (
+      _obj: any,
+      args: { parent: any; file: FileArgs, id: string},
+      _ctx: GqlContext,
+      _info: any
+    ): Promise<string> => {
+
+      const userRepository = getRepository(User);
+
+      const user = await userRepository.findOne({
+        id: args.id
+      });
+
+      if (!user) {
+        return 'User not logged in.';
+      }
+      
+      const promise = await args.file.then(
+        async ({ filename, createReadStream }: FileArgs) => {
+          return { filename, createReadStream };
+        }
+      );
+
+      const result = await upload(promise)
+      
+      return `https://storage.googleapis.com/${bucketName}/testing folder/${result}`;
     },
   },
 };

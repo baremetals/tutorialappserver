@@ -2,13 +2,17 @@ import { useMemo } from "react";
 import { ApolloClient, HttpLink, InMemoryCache, NormalizedCacheObject, split } from "@apollo/client";
 import { WebSocketLink } from '@apollo/client/link/ws';
 import { getMainDefinition } from '@apollo/client/utilities';
-// import ws from "ws";
+import { createUploadLink } from "apollo-upload-client";
 
 let apolloClient: ApolloClient<NormalizedCacheObject>;
 const GRAPHQL_URL = "http://localhost:8000/graphql";
 const WS_URL = "ws://localhost:8000/subscriptions";
 
-const httpLink = new HttpLink({
+// const httpLink = new HttpLink({
+//   uri: GRAPHQL_URL,
+//   credentials: "include",
+// });
+const httpLink = createUploadLink({
   uri: GRAPHQL_URL,
   credentials: "include",
 });

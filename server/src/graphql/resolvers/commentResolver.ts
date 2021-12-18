@@ -4,7 +4,7 @@ import {
   editComment,
   getCommentsByCourseId,
   getCommentsByNoteId,
-  getCommentsByPostId,
+  getCommentsByPostSlug,
 } from '../../controllers/CommentController';
 import { QueryArrayResult } from '../../controllers/QuerryArrayResult';
 import { GqlContext, pubsub } from '../GqlContext';
@@ -48,15 +48,26 @@ const commentResolver = {
   },
 
   Query: {
-    getCommentsByPostId: async (
+    getCommentsByPostSlug: async (
       _obj: any,
-      args: { postId: string },
+      args: { slug: string },
       _ctx: GqlContext,
       _info: any
     ): Promise<{ comments: Array<Comment> } | EntityResult> => {
       let comments: QueryArrayResult<Comment>;
+      const postRepository = getRepository(Post);
+
+      if (!args.slug) {
+        return {
+          messages: ['Please provide a slug.'],
+        };
+      }
+
+      const post = await postRepository.findOne({
+        where: {slug: args.slug}
+      });
       try {
-        comments = await getCommentsByPostId(args.postId);
+        comments = await getCommentsByPostSlug(post?.id as string);
         if (comments.entities) {
           return {
             comments: comments.entities,

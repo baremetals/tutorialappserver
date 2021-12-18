@@ -10,6 +10,8 @@ query Me {
       email
       fullName
       description
+      location
+      isOnline
       isDisabled
       profileImage
       backgroundImg
@@ -20,6 +22,7 @@ query Me {
       }
       posts {
         id
+        slug
         views
         points
         title

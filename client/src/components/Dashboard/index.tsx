@@ -1,27 +1,27 @@
 import React from 'react'
 import TopBar from './TopBar'
 import LeftSideBar from './LeftSideBar'
-import RightSideBar from './RightSideBar'
 import SmallFooter from './SmallFooter'
-import styled from "styled-components";
 
-const DashboardContainer = styled.div`
-  width: 100%;
-  display: flex;
-`;
+import {
+  PageContainer,
+  InnerContainer,
+} from "styles/common.styles";
 
-const Dashboard = ({children}: any) => {
-    return (
-      <>
-        <TopBar />
-        <DashboardContainer>
-          <LeftSideBar />
+
+const Dashboard = ({ children}: any) => {
+  return (
+    <>
+      <PageContainer>
+        <LeftSideBar />
+        <InnerContainer>
+          <TopBar />
           {children}
-          <RightSideBar />
-        </DashboardContainer>
-        <SmallFooter />
-      </>
-    );
-}
+          <SmallFooter />
+        </InnerContainer>
+      </PageContainer>
+    </>
+  );
+};
 
 export default Dashboard

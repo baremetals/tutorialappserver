@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import styled from "styled-components";
-import ImagePostCard from "../Dashboard/Forum/ImagePostCard";
+import Card from "../ForumPage/Card";
 import Share from "../Dashboard/Share";
 import { useAppSelector } from "app/hooks";
 import { isUser } from "features/auth/selectors";
@@ -38,10 +38,12 @@ export default function UserFeed(props: any) {
     }
     return 0;
   });
-
+  // console.log(props)
   // !loggedin user info
-  const { posts, profileImage, username } = props.props || []; 
+  const { posts, profileImage, username,  } = props.props || []; 
   const mappedPosts = posts?.slice();
+
+  // sortByDate(mappedPosts);
   const sortedPosts = mappedPosts?.sort(
     (a: { createdOn: number }, b: { createdOn: number }) => {
       if (a.createdOn < b.createdOn) {
@@ -54,7 +56,7 @@ export default function UserFeed(props: any) {
     }
   );
 
-  // console.log(props);
+  // console.log(posts);
 
   useEffect(() => {
     if (user?.userIdSlug === userIdSlug) {
@@ -72,7 +74,7 @@ export default function UserFeed(props: any) {
             sortedUsers?.map((post) =>
               !post ? null : (
                 <ForumColumn key={post.id}>
-                  <ImagePostCard
+                  <Card
                     username={user?.username as string}
                     image={user?.profileImage}
                     date={post.createdOn}
@@ -80,7 +82,7 @@ export default function UserFeed(props: any) {
                     body={post.title}
                     likeCount={post.points}
                     commentCount={8}
-                    postId={post.id}
+                    slug={post.slug}
                   />
                 </ForumColumn>
               )
@@ -95,11 +97,12 @@ export default function UserFeed(props: any) {
                   title: string;
                   points: number;
                   id: string;
+                  slug: string;
                 },
                 id: React.Key | null | undefined
               ) => (
                 <ForumColumn key={id}>
-                  <ImagePostCard
+                  <Card
                     username={username}
                     image={profileImage}
                     date={post.createdOn}
@@ -107,7 +110,7 @@ export default function UserFeed(props: any) {
                     body={post.title}
                     likeCount={post.points}
                     commentCount={8}
-                    postId={post.id}
+                    slug={post.slug}
                   />
                 </ForumColumn>
               )

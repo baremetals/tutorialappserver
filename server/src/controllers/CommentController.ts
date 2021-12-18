@@ -141,7 +141,7 @@ export const deleteComment = async (id: string): Promise<string> => {
 };
 
 // Queries
-export const getCommentsByPostId = async (
+export const getCommentsByPostSlug = async (
   postId: string
 ): Promise<QueryArrayResult<Comment>> => {
   const comments = await Comment.createQueryBuilder("c")

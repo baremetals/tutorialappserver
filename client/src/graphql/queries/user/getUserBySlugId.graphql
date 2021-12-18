@@ -9,12 +9,14 @@ query GetUserBySlugId($userIdSlug: String!) {
       username
       fullName
       description
+      location
       isOnline
       profileImage
       backgroundImg
       createdOn
       posts {
         id
+        slug
         views
         points
         title

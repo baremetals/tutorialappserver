@@ -2,12 +2,15 @@ import {
   ApolloClient,
   InMemoryCache,
 } from "@apollo/client";
+import {createUploadLink} from "apollo-upload-client"
 
 
 const GRAPHQL_URL = "http://localhost:8000/graphql";
 
 export const client = new ApolloClient({
-  uri: GRAPHQL_URL,
+  link: createUploadLink({
+    uri: GRAPHQL_URL,
+  }),
   cache: new InMemoryCache({
     resultCaching: false,
   }),

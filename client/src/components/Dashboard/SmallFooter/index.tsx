@@ -17,6 +17,7 @@ import {
 } from "./smallfooter.styles";
 import { Logo } from "../../../../public/assets/images/Logo";
 import { animateScroll as scroll } from "react-scroll";
+
 const SmallFooter
  = () => {
 

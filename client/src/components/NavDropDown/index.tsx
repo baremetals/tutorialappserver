@@ -1,4 +1,5 @@
 import React from 'react'
+import Link from 'next/link'
 import {
   DropDownContainer,
   Icon,
@@ -35,7 +36,7 @@ const NavDropDown = ({ toggle, isOpen, ...props }: any) => {
 
           <DropDownLinks
             {...props}
-            to="recommends"
+            to="featured"
             onClick={toggle}
             smooth={true}
             duration={500}
@@ -43,7 +44,7 @@ const NavDropDown = ({ toggle, isOpen, ...props }: any) => {
             exact="true"
             offset={-80}
           >
-            Recommendations
+            Featured
           </DropDownLinks>
 
           <DropDownLinks
@@ -71,21 +72,25 @@ const NavDropDown = ({ toggle, isOpen, ...props }: any) => {
           >
             Forum
           </DropDownLinks>
-          <DropDownLinks
-            {...props}
-            to="signup"
-            onClick={toggle}
-            smooth={true}
-            duration={500}
-            spy={true}
-            exact="true"
-            offset={-80}
-          >
-            Forum
-          </DropDownLinks>
+          <Link href="/signin">
+            <DropDownLinks
+              {...props}
+              to="/signin"
+              onClick={toggle}
+              smooth={true}
+              duration={500}
+              spy={true}
+              exact="true"
+              offset={-80}
+            >
+              Login
+            </DropDownLinks>
+          </Link>
         </DropDownMenu>
         <DropDownBtnWrapper>
-          <DropDownBtn>Sign Up</DropDownBtn>
+          <Link href="/signup">
+            <DropDownBtn>Register</DropDownBtn>
+          </Link>
         </DropDownBtnWrapper>
       </DropDownWrapper>
     </DropDownContainer>

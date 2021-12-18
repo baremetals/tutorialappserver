@@ -1,7 +1,4 @@
 import React, { useEffect, useState } from "react";
-import TopBar from "../Dashboard/TopBar";
-import LeftSideBar from "../Dashboard/LeftSideBar";
-import SmallFooter from "../Dashboard/SmallFooter";
 import Share from "../Dashboard/Share";
 import styled from "styled-components";
 import { useCategoryQuery } from "generated/graphql";
@@ -9,9 +6,6 @@ import { useCategoryQuery } from "generated/graphql";
 
 
 import {
-  PageContainer,
-  InnerContainer,
-  PageRightSide,
   PageHeading,
   ForumRow,
   ForumFilter,
@@ -20,10 +14,12 @@ import {
   CategoryOption,
   FilterSearch,
 } from "../../styles/common.styles";
-import ImagePostCard from "components/Dashboard/Forum/ImagePostCard";
+import Card from "./Card";
+import Dashboard from 'components/Dashboard';
 
 
 const ForumPage = ({ ...props }: any) => {
+  
   const { data } = useCategoryQuery();
 
   const postData = props.props;
@@ -69,60 +65,53 @@ const ForumPage = ({ ...props }: any) => {
       } else setFilteredcategories(postData);
     };
   return (
-    <>
-      <TopBar />
-      <PageContainer>
-        <LeftSideBar />
-        <InnerContainer>
-          <PageHeading>Forum</PageHeading>
-          <Share />
-          <ForumRow>
-            <ForumFilter>
-              <ForumFilterSortBy>
-                <SelectCategory onChange={handleCategorySearch("category")}>
-                  <CategoryOption value={values.category}>
-                    Category Search
-                  </CategoryOption>
-                  {categories?.map((c: { name: string; id: string }) => (
-                    <CategoryOption key={c.id} value={c.name}>
-                      {c.name}
-                    </CategoryOption>
-                  ))}
-                </SelectCategory>
-              </ForumFilterSortBy>
-              <FilterSearch
-                type="text"
-                name="search"
-                onChange={handleSearch("category")}
-                placeholder="Search"
-              ></FilterSearch>
-            </ForumFilter>
-            {!filteredcategories ? (
-              <div>loading...</div>
-            ) : (
-              filteredcategories.map((post: any, id) =>
-                !post ? null : (
-                  <ForumContainer key={id}>
-                    <ImagePostCard
-                      username={post.creator.username}
-                      image="/D.jpg"
-                      date={post.createdOn}
-                      title={post.title}
-                      body={post.category.name}
-                      likeCount={post.points}
-                      commentCount={12}
-                      postId={post.id}
-                    />
-                  </ForumContainer>
-                )
-              )
-            )}
-          </ForumRow>
-        </InnerContainer>
-        <PageRightSide>Live Forever Young</PageRightSide>
-      </PageContainer>
-      <SmallFooter />
-    </>
+    <Dashboard>
+      <PageHeading>Forum</PageHeading>
+      <Share />
+      <ForumRow>
+        <ForumFilter>
+          <ForumFilterSortBy>
+            <SelectCategory onChange={handleCategorySearch("category")}>
+              <CategoryOption value={values.category}>
+                Category Search
+              </CategoryOption>
+              {categories?.map((c: { name: string; id: string }) => (
+                <CategoryOption key={c.id} value={c.name}>
+                  {c.name}
+                </CategoryOption>
+              ))}
+            </SelectCategory>
+          </ForumFilterSortBy>
+          <FilterSearch
+            type="text"
+            name="search"
+            onChange={handleSearch("category")}
+            placeholder="Search"
+          ></FilterSearch>
+        </ForumFilter>
+        {!filteredcategories ? (
+          <div>loading...</div>
+        ) : (
+          filteredcategories.map((post: any, id) =>
+            !post ? null : (
+              <ForumContainer key={id}>
+                <Card
+                  username={post.creator.username}
+                  userIdSlug={post.creator.userIdSlug}
+                  image={post.creator.profileImage}
+                  date={post.createdOn}
+                  title={post.title}
+                  body={post.category.name}
+                  likeCount={post.points}
+                  commentCount={12}
+                  slug={post.slug}
+                />
+              </ForumContainer>
+            )
+          )
+        )}
+      </ForumRow>
+    </Dashboard>
   );
 };
 
@@ -130,11 +119,12 @@ export default ForumPage;
 
 export const ForumContainer = styled.div`
   width: 33.33%;
-  padding: 0.5rem;
+  padding: 0.75rem;
   @media (max-width: 1366px) {
     width: 50%;
   }
   @media (max-width: 575px) {
     width: 100%;
+    padding: 0.5rem;
   }
 `;

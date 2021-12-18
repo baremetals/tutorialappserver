@@ -49,7 +49,7 @@ export const markAllMessagesReadByUserId = async (id: string): Promise<string> =
     return 'User not found.';
   }
 
-  await getConnection()
+  const msgs = await getConnection()
     .createQueryBuilder()
     .update(Message)
     .set({
@@ -58,8 +58,12 @@ export const markAllMessagesReadByUserId = async (id: string): Promise<string> =
       lastModifiedOn: new Date(),
     })
     .where('userId = :userId', { userId: id })
-    .andWhere('IsRead = :isRead', {isRead: false})
+    .andWhere('IsRead = :isRead', { isRead: false })
     .execute();
+
+  if (msgs.affected === 0) {
+    return 'Nothing to change';
+  }
 
   return 'Your messages has been edited.';
 };
@@ -84,6 +88,7 @@ export const deleteMessage = async (id: string): Promise<string> => {
 export const deleteAllMessagesByUserId = async (
   id: string,
 ): Promise<string> => {
+
   const user = await User.findOne({
     where: { id },
   });
@@ -99,8 +104,8 @@ export const deleteAllMessagesByUserId = async (
     .where('userId = :userId', { userId: id })
     .execute();
 
-  if (!msgs) {
-    return 'No messages not found.';
+  if (msgs.affected === 0) {
+    return 'Nothing to delete';
   }
 
   return 'Your messages has been deleted.';

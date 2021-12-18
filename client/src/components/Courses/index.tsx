@@ -1,15 +1,8 @@
 import React from "react";
 import Link from "next/link";
-import LeftSideBar from "../Dashboard/LeftSideBar";
-import SmallFooter from "../Dashboard/SmallFooter";
-import Topbar from "../Dashboard/TopBar";
 import { useAppSelector } from "app/hooks";
+import Dashboard from 'components/Dashboard';
 import {
-  PageContainer,
-  InnerContainer,
-  PageRightSide,
-  PageHeading,
-  PageWrapper,
   PostCard,
   CardTitle,
   CardImage,
@@ -18,57 +11,47 @@ import {
   CardBottom,
   CardStartDate,
   ApplyButton,
+  CardBody,
+  PageHeading,
+  PageWrapper,
 } from "../../styles/common.styles";
 import { theCourses } from "features/courses/selectors";
 
-// type CoursesPageType = {
-//   title: string;
-//   duration: string;
-//   description: string;
-//   image: string;
-//   startDate: string;
-// };
 
 function CoursesPage() {
   const courses: any = useAppSelector(theCourses);
   // console.log(courses);
   return (
     <>
-      <Topbar />
-      <PageContainer>
-        <LeftSideBar />
-        <InnerContainer>
-          <PageHeading>Courses</PageHeading>
-          <PageWrapper>
-            {!courses ? (
-              <div>loading...</div>
-            ) : (
-              courses.map((course: any, id: string) =>
-                !course ? null : (
-                  <PostCard key={id}>
-                    <Link href={`/courses/${course.id}`}>
-                      <CardImage alt="course image" src={course.image} />
-                    </Link>
+      <Dashboard>
+        <PageHeading>Courses</PageHeading>
+        <PageWrapper>
+          {!courses ? (
+            <div>loading...</div>
+          ) : (
+            courses.map((course: any, id: string) =>
+              !course ? null : (
+                <PostCard key={id}>
+                  <Link href={`/courses/${course.id}`}>
+                    <CardImage alt="course image" src={course.image} />
+                  </Link>
+                  <CardBody>
+                    <CardDuration> - {course.duration}</CardDuration>
                     <CardTitle>
-                      <Link href={`/courses/${course.id}`}>
-                        {course.title}
-                      </Link>
-                      <CardDuration> - {course.duration}</CardDuration>
+                      <Link href={`/courses/${course.id}`}>{course.title}</Link>
                     </CardTitle>
                     <CardDescription>{course.description}</CardDescription>
                     <CardBottom>
                       <CardStartDate>{course.startDate}</CardStartDate>
                       <ApplyButton>apply</ApplyButton>
                     </CardBottom>
-                  </PostCard>
-                )
+                  </CardBody>
+                </PostCard>
               )
-            )}
-          </PageWrapper>
-        </InnerContainer>
-        <PageRightSide>blow my wig</PageRightSide>
-      </PageContainer>
-      <SmallFooter />
+            )
+          )}
+        </PageWrapper>
+      </Dashboard>
     </>
   );
 }

@@ -1,43 +1,24 @@
 import styled from "styled-components";
 
 export const LeftSideContainer = styled.div`
-  max-width: 20rem;
-  min-width: 20rem;
-  min-height: calc(100vh - 100px);
-  // overflow-y: auto;
+  max-width: 17.5rem;
+  min-width: 17.5rem;
+  min-height: 100vh;
   position: sticky;
-  background-color: rgb(0 0 0 / 5%);
-  border-right: 1px solid rgb(0 0 0 / 10%);
   top: 0;
-  padding-top: 2rem;
-  padding-bottom: 2rem;
-  padding-right: 2rem;
-  padding-left: 2rem;
   transition: transform 0.2s ease-in-out;
   z-index: 9999;
-  &:before {
-    content: "";
-    background-color: rgb(0 0 0 / 5%);
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    right: 100%;
-    left: -50vw;
-  }
-
-  @media (max-width: 1366px) {
-    max-width: 18rem;
-    min-width: 18rem;
-  }
+  background-color: #fff;
+  overflow-y: auto;
+  max-height: 100vh;
 
   @media (max-width: 991px) {
     transform: translateX(-100%);
     background-color: #ededed;
     position: fixed;
     left: 0;
-    top: 70px;
+    top: 0;
     bottom: 0;
-    padding: 2rem 1rem;
   }
   &.open {
     transform: none;
@@ -77,20 +58,22 @@ export const SearchButton = styled.button`
 `;
 
 export const ToggleButton = styled.button`
-  width: 1.5rem;
+  width: 2.25rem;
   background-color: transparent;
   border: none;
   vertical-align: top;
-  margin-top: 1rem;
-  margin-left: 1.5rem;
-  z-index: 100;
+  position: absolute;
+  padding: 0.25rem;
+  top: 1.5rem;
+  left: 1.5rem;
+  z-index: 0;
   @media (min-width: 992px) {
     display: none;
   }
   span {
-    height: 2px;
+    height: 4px;
     display: block;
-    background-color: #000;
+    background-color: #7755e2;
     margin: 0.375rem 0;
   }
 `;
@@ -100,51 +83,74 @@ export const LeftSideBarList = styled.ul`
   margin: 0;
   list-style: none;
 `;
-export const LeftSideBarListItem = styled.li`
+
+export const LeftSideBarListItem = styled.a`
   display: flex;
   align-items: center;
   font-size: 1rem;
   cursor: pointer;
-  padding: 1rem 1.75rem;
-  transition: all 0.2s ease-in-out;
-  border-radius: 10rem;
-  margin-bottom: 0.5rem;
-  font-weight: bold;
+  padding: 1.125rem 1.75rem;
+  font-weight: 500;
+  color: #a2a2c2;
+  border-left: 5px solid transparent;
+  text-decoration: none;
+  margin-top: 0.75rem;
   svg {
-    transition: transform 0.2s ease-in-out;
+    width: 1.5rem;
+    height: 1.5rem;
+    fill: #a2a2c2;
+    &.stroke {
+      fill: none;
+      stroke: #a2a2c2;
+    }
   }
   &.active {
-    color: #ad00bb;
-    background-color: rgb(173 0 187 / 10%);
+    color: #7755e2;
+    background-color: rgba(119, 85, 226, 0.1);
+    border-left-color: #7755e2;
+    svg {
+      fill: #7755e2;
+      &.stroke {
+        fill: none;
+        stroke: #7755e2;
+      }
+    }
   }
   &:hover {
-    color: #ad00bb;
-    background-color: rgb(173 0 187 / 10%);
+    color: #7755e2;
+    border-left-color: #7755e2;
     svg {
-      transform: scale(1.375);
+      fill: #7755e2;
+      &.stroke {
+        fill: none;
+        stroke: #7755e2;
+      }
     }
   }
 `;
+
 export const LeftSideBarIcon = styled.div`
-  margin-right: 1rem;
+  margin-right: 1.25rem;
   display: flex;
   position: relative;
 `;
+
+
 export const LeftSideBarListItemText = styled.span``;
 
 export const IconBadge = styled.span`
-  width: 0.625rem;
-  height: 0.625rem;
-  background-color: #4cbaed;
-  border-radius: 50%;
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 10rem;
+  background-color: #7755e2;
   color: white;
   position: absolute;
-  top: -0.25rem;
-  right: -0.25rem;
+  top: -0.5rem;
+  right: -0.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.625rem;
+  font-size: 0.75rem;
   z-index: 1;
 `;
 
@@ -153,8 +159,10 @@ export const Icons = styled.div`
 `;
 
 export const IconItem = styled.div`
-  margin-right: 15px;
+  margin-right: 1rem;
   cursor: pointer;
   position: relative;
-  font-size: 20px;
+  font-size: 1.25rem;
+  svg {
+  }
 `;

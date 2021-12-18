@@ -1,11 +1,13 @@
-query GetPostById($postId: ID!) {
-  getPostById(id: $postId) {
+query GetPostBySlug($slug: String!) {
+  getPostBySlug(slug: $slug) {
     ... on Post {
       id
+      slug
       views
       points
       title
       body
+      mediaUrl
       createdOn
       createdBy
       creator {

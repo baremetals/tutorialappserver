@@ -13,7 +13,7 @@ import {
   NavBarContainer,
   NavItem,
 } from "./NavBar.styles";
-import { Logo } from "../../../public/assets/images/Logo"
+import { LogoShape } from "../../../public/assets/icons/LogoShape";
 
 
 
@@ -38,7 +38,7 @@ export default function NavBar({ toggle, ...props }: any) {
       <NavBarContainer>
         <Link href="/">
           <NavLogo onClick={toggleHome}>
-            <Logo color="white" width="50" height="50" />
+            <LogoShape color="#5634bf" width="50" height="50" />
           </NavLogo>
         </Link>
         <MobileIcon onClick={toggle}>
@@ -61,14 +61,14 @@ export default function NavBar({ toggle, ...props }: any) {
           <NavItem>
             <NavLink
               {...props}
-              to="recommend"
+              to="featured"
               smooth={true}
               duration={500}
               spy={true}
               offset={-80}
               exact="true"
             >
-              Recommendations
+              Featured
             </NavLink>
           </NavItem>
           <NavItem>
@@ -98,22 +98,24 @@ export default function NavBar({ toggle, ...props }: any) {
             </NavLink>
           </NavItem>
           <NavItem>
-            <NavLink
-              {...props}
-              to="signup"
-              smooth={true}
-              duration={500}
-              spy={true}
-              offset={-80}
-              exact="true"
-            >
-              Sign Up
-            </NavLink>
+            <Link href="/signin">
+              <NavLink
+                {...props}
+                to="/signin"
+                smooth={true}
+                duration={500}
+                spy={true}
+                offset={-80}
+                exact="true"
+              >
+                Login
+              </NavLink>
+            </Link>
           </NavItem>
         </NavMenu>
         <NavBtn>
           <Link href="/signup">
-            <NavBtnLink>Sign Up</NavBtnLink>
+            <NavBtnLink>Register</NavBtnLink>
           </Link>
         </NavBtn>
       </NavBarContainer>

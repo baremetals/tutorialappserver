@@ -20,7 +20,7 @@ export class Post extends SharedEntity {
   @Column('varchar', {
     name: 'Slug',
     length: 500,
-    // unique: true,
+    unique: true,
     nullable: true,
   })
   slug: string;
@@ -41,6 +41,9 @@ export class Post extends SharedEntity {
   @Column('varchar', { name: 'Body', length: 2500, nullable: true })
   @Length(10, 2500)
   body: string;
+
+  @Column('varchar', { name: 'MediaUrl', length: 2500, nullable: true })
+  mediaUrl: string;
 
   @ManyToOne(() => User, (user: User) => user.posts)
   creator: User;

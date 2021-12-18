@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react'
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/router";
 import Link from "next/link";
-// import ReactiveButton from "reactive-button";
+
 import {
   NewCommentDocument,
-  GetCommentsByPostIdDocument,
+  GetCommentsByPostSlugDocument,
   useCreateCommentMutation,
   User,
 } from "generated/graphql";
@@ -16,7 +16,7 @@ import {PostEditor} from "../Editor"
 import {
   PostDropdown,
   UserName,
-} from "components/Dashboard/Forum/forum.styles";
+} from "components/ForumPage/forum.styles";
 import { SubmitButton } from "components/ShareForm/modal.styles";
 
 import {
@@ -29,11 +29,6 @@ import {
   CommentDate,
   CommentTopRightWrap,
   ExpandIcon,
-  // CommentInput,
-  // CommentInputWrap,
-  // ImageAndUserNameWrap,
-  // CommentInputButton,
-  // CommentInputButton,
 } from "./comment.styles";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
@@ -96,13 +91,13 @@ const Comment = () => {
     // };
   }, []);
   
-  const { subscribeToMore, ...result } = useQuery(GetCommentsByPostIdDocument, {
+  const { subscribeToMore, ...result } = useQuery(GetCommentsByPostSlugDocument, {
     variables: {
-      postId: slug,
+      slug,
     },
   });
 
-  const comments = result.data?.getCommentsByPostId.comments;
+  const comments = result.data?.getCommentsByPostSlug.comments;
   
   // console.log(comArray);
   // console.log(result.data);
@@ -112,17 +107,6 @@ const Comment = () => {
   if (!result.data || result.loading) {
     return <div>loading...</div>;
   }
-
-  
-
-  
-
-  // const onClickHandler = () => {
-  //   setState("loading");
-  //   setTimeout(() => {
-  //     setState("success");
-  //   }, 2000);
-  // };
 
 
   const onSubmit = async ({body}: any) => {

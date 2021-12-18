@@ -33,8 +33,8 @@ const HeroSection = ({ ...props }: any ) => {
           />
         </HeroBg>
         <HeroContent>
-          <HeroH1>testing somethings</HeroH1>
-          <HeroP>something else will go here</HeroP>
+          <HeroH1>Bare Metals Academy</HeroH1>
+          <HeroP>online training courses</HeroP>
           <HeroBtnWrapper>
             <Button
               {...props}

@@ -1,26 +1,28 @@
 import React, { useState } from "react";
 import Link from "next/link";
-import { MdSchool } from "react-icons/md";
-import { BsFillChatSquareFill } from "react-icons/bs";
-import { MdPermMedia } from "react-icons/md";
+import { useRouter } from "next/router";
+import { MdHome, MdForum, MdSchool } from "react-icons/md";
 import { FaRegQuestionCircle } from "react-icons/fa";
-import { MdLibraryBooks } from "react-icons/md";
-import { RiAdminFill } from "react-icons/ri";
-import { MdForum } from "react-icons/md";
 import { RiNotification2Fill } from "react-icons/ri";
-
+import { TopBarLogo } from "../TopBar/topbar.styles";
 import {
   LeftSideContainer,
   LeftSideBarWrapper,
   LeftSideBarListItem,
   LeftSideBarIcon,
   LeftSideBarListItemText,
-  // IconBadge,
   ToggleButton,
   BackOverlay,
 } from "./leftside.styles";
 
+import { LogoShape } from "../../../../public/assets/icons/LogoShape"
+import { BooksIcon } from "../../../../public/assets/icons/BooksIcon";
+import { ChatIcon } from "../../../../public/assets/icons/ChatIcon";
+import { AdminIcon } from "../../../../public/assets/icons/AdminIcon";
+
+
 const LeftSideBar = () => {
+  const router = useRouter();
   const [menuState, setMenuState] = useState(false);
   {
     menuState && (
@@ -37,9 +39,32 @@ const LeftSideBar = () => {
       {menuState && (
         <BackOverlay onClick={() => setMenuState(false)} className="" />
       )}
-      <LeftSideContainer className={menuState ? "open" : ""}>
+      <LeftSideContainer>
         <LeftSideBarWrapper>
-          <LeftSideBarListItem>
+          <TopBarLogo>
+            <a href={`/user-profile/`}>
+              <LogoShape color="#5634bf" width="100" height="100" />
+            </a>
+          </TopBarLogo>
+
+          <LeftSideBarListItem
+            className={router.pathname == "/home" ? "active" : ""}
+          >
+            <LeftSideBarIcon>
+              <Link href="/home">
+                <div>
+                  <MdHome />
+                </div>
+              </Link>
+            </LeftSideBarIcon>
+            <Link href="/home">
+              <LeftSideBarListItemText>Dashboard</LeftSideBarListItemText>
+            </Link>
+          </LeftSideBarListItem>
+
+          <LeftSideBarListItem
+            className={router.pathname == "/courses" ? "active" : ""}
+          >
             <LeftSideBarIcon>
               <Link href="/courses">
                 <div>
@@ -51,11 +76,13 @@ const LeftSideBar = () => {
               <LeftSideBarListItemText>Courses</LeftSideBarListItemText>
             </Link>
           </LeftSideBarListItem>
-          <LeftSideBarListItem>
+          <LeftSideBarListItem
+            className={router.pathname == "/books" ? "active" : ""}
+          >
             <LeftSideBarIcon>
               <Link href="/books">
                 <div>
-                  <MdLibraryBooks />
+                  <BooksIcon />
                 </div>
               </Link>
             </LeftSideBarIcon>
@@ -63,24 +90,15 @@ const LeftSideBar = () => {
               <LeftSideBarListItemText>Books</LeftSideBarListItemText>
             </Link>
           </LeftSideBarListItem>
-          <LeftSideBarListItem>
-            <LeftSideBarIcon>
-              <Link href="/recommendation">
-                <div>
-                  <MdPermMedia />
-                </div>
-              </Link>
-            </LeftSideBarIcon>
-            <Link href="/recommendation">
-              <LeftSideBarListItemText>Recommendations</LeftSideBarListItemText>
-            </Link>
-          </LeftSideBarListItem>
-          <LeftSideBarListItem>
+
+          <LeftSideBarListItem
+            className={router.pathname == "/messages" ? "active" : ""}
+          >
             <LeftSideBarIcon>
               {/* <IconBadge></IconBadge> */}
               <Link href="/messages">
                 <div>
-                  <BsFillChatSquareFill />
+                  <ChatIcon />
                 </div>
               </Link>
             </LeftSideBarIcon>
@@ -88,7 +106,9 @@ const LeftSideBar = () => {
               <LeftSideBarListItemText>Chat</LeftSideBarListItemText>
             </Link>
           </LeftSideBarListItem>
-          <LeftSideBarListItem>
+          <LeftSideBarListItem
+            className={router.pathname == "/forum" ? "active" : ""}
+          >
             <LeftSideBarIcon>
               <Link href="/forum">
                 <div>
@@ -100,7 +120,9 @@ const LeftSideBar = () => {
               <LeftSideBarListItemText>Forum</LeftSideBarListItemText>
             </Link>
           </LeftSideBarListItem>
-          <LeftSideBarListItem>
+          <LeftSideBarListItem
+            className={router.pathname == "/notifications" ? "active" : ""}
+          >
             <LeftSideBarIcon>
               {/* <IconBadge>2</IconBadge> */}
               <Link href="/notifications">
@@ -113,7 +135,9 @@ const LeftSideBar = () => {
               <LeftSideBarListItemText>Notifications</LeftSideBarListItemText>
             </Link>
           </LeftSideBarListItem>
-          <LeftSideBarListItem>
+          <LeftSideBarListItem
+            className={router.pathname == "/support" ? "active" : ""}
+          >
             <LeftSideBarIcon>
               <Link href="/support">
                 <div>
@@ -125,11 +149,14 @@ const LeftSideBar = () => {
               <LeftSideBarListItemText>Support</LeftSideBarListItemText>
             </Link>
           </LeftSideBarListItem>
-          <LeftSideBarListItem>
+
+          <LeftSideBarListItem
+            className={router.pathname == "/admin" ? "active" : ""}
+          >
             <LeftSideBarIcon>
               <Link href="/admin">
                 <div>
-                  <RiAdminFill />
+                  <AdminIcon />
                 </div>
               </Link>
             </LeftSideBarIcon>

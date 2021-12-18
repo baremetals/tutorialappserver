@@ -55,10 +55,18 @@ export class User extends SharedEntity {
     name: 'description',
     length: 120,
     unique: false,
-    default: "",
+    default: '',
     nullable: false,
   })
   description: string;
+
+  @Column('varchar', {
+    name: 'Location',
+    length: 120,
+    default: 'London',
+    nullable: false,
+  })
+  location: string;
 
   @Column('varchar', { name: 'Password', length: 100, nullable: false })
   @Length(8, 100)

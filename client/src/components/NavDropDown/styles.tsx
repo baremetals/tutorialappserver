@@ -13,8 +13,8 @@ export const DropDownContainer = styled.aside`
   top: 0;
   left: 0;
   transition: 0.3s ease-in-out;
-  top: ${({ isOpen }) => (isOpen ? "0" : "-100%")};
-  opacity: ${({ isOpen }) => (isOpen ? "100%" : "0")};
+  top: ${({ isOpen }: any) => (isOpen ? "0" : "-100%")};
+  opacity: ${({ isOpen }: any) => (isOpen ? "100%" : "0")};
 `;
 
 export const Icon = styled.div`
@@ -61,7 +61,7 @@ export const DropDownLinks = styled(Link)`
   cursor: pointer;
 
   &:hover {
-    color: #15cdfc;
+    color: #7755e2;
     transition: 0.2s ease-in-out;
   }
 `;
@@ -72,7 +72,7 @@ export const DropDownBtnWrapper = styled.div`
 `;
 export const DropDownBtn = styled.button`
   border-radius: 50px;
-  background-color: #256ce1;
+  background-color: #7755e2;
   white-space: nowrap;
   padding: 16px 64px;
   color: #010606;

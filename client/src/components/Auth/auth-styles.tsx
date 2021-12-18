@@ -2,7 +2,7 @@ import { Form } from "formik";
 import styled from "styled-components";
 
 export const PageContainer = styled.div`
-  background-color: #000;
+  background-color: #fffafa;
   position: fixed;
   top: 0;
   left: 0;
@@ -11,7 +11,7 @@ export const PageContainer = styled.div`
   overflow: auto;
   &:before {
     content: "";
-    background-image: url(https://images.unsplash.com/photo-1469981283837-561b3779462f?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80);
+    background-image: url(https://images.unsplash.com/photo-1639504316764-d867bcc7efff?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1974&q=80);
     background-size: cover;
     background-position: center center;
     position: fixed;
@@ -19,8 +19,8 @@ export const PageContainer = styled.div`
     left: 0;
     bottom: 0;
     right: 0;
-    filter: blur(5px);
-    opacity: 0.5;
+    /* filter: blur(5px); */
+    /* opacity: 0.5; */
   }
 `;
 

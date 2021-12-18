@@ -47,7 +47,7 @@ export const createCourse = async (
     };
   }
   const generatedToken = v4();
-  const slug = generatedToken + title;
+  const slug = generatedToken + '-' + title;
 
   const course = await Course.create({
     slug,

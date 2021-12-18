@@ -52,5 +52,8 @@ amplify-build-config.json
 amplify-gradle-config.json
 amplifytools.xcconfig
 .secret-*
-
+package-lock.json
+yarn-lock.
+yarn-error.log
 database.ts
+storagedb.json

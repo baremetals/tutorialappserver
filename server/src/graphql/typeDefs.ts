@@ -2,6 +2,7 @@ import { gql } from 'apollo-server-express';
 
 const typeDefs = gql`
   scalar Date
+  scalar Upload
 
   type EntityResult {
     messages: [String!]
@@ -17,6 +18,7 @@ const typeDefs = gql`
     confirmed: Boolean!
     # isAdmin: Boolean!
     description: String!
+    location: String!
     isDisabled: Boolean!
     isOnline: Boolean!
     profileImage: String!
@@ -62,11 +64,13 @@ const typeDefs = gql`
 
   type Post {
     id: ID!
+    slug: String!
     views: Int!
     points: Int!
     isDisabled: Boolean!
     title: String!
     body: String!
+    mediaUrl: String!
     creator: User!
     comments: [Comment!]
     postPoints: [PostPoint!]
@@ -278,6 +282,12 @@ const typeDefs = gql`
   }
   union ChatArrayResult = ChatArray | EntityResult
 
+  type File {
+    filename: String!
+    mimetype: String!
+    encoding: String!
+  }
+
   # Query types
   type Query {
     # Users Query
@@ -285,15 +295,17 @@ const typeDefs = gql`
     getUserBySlugId(userIdSlug: String!): UserResult
     searchUsers(searchItem: String!): UserArrayResult!
 
+    uploads: [File]
+
     # Post Query
-    getPostById(id: ID!): PostResult
+    getPostBySlug(slug: String!): PostResult
     getPostsByCategoryId(categoryId: ID!): PostArrayResult!
     getAllCategories: [Category!]
     getLatestPosts: PostArrayResult!
     getTopCategoryPost: [CategoryPost!]
 
     # Comment Query
-    getCommentsByPostId(postId: ID!): CommentArrayResult!
+    getCommentsByPostSlug(slug: String!): CommentArrayResult!
     getCommentsByCourseId(courseId: ID!): CommentArrayResult!
     getCommentsByNoteId(noteId: ID!): CommentArrayResult!
 
@@ -344,12 +356,16 @@ const typeDefs = gql`
 
     deleteMe: String!
 
+    ## Uploads
+    uploadFile(file: Upload! id: ID!): String!
+
     # Post Mutation
     createPost(
       userId: ID!
       categoryName: String!
       title: String!
       body: String!
+      mediaUrl: String!
     ): EntityResult!
 
     editPost(

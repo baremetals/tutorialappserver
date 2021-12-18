@@ -10,12 +10,12 @@ import { useRouter } from "next/router";
 import {
   TopbarContainer,
   TopLeftWrap,
-  TopBarLogo,
+  TopBarLogoGroup,
   TopCenterWrap,
   SearchBar,
-  SearchIcon,
   SearchInput,
   TopRightWrap,
+  TopSearchButton,
   Icons,
   IconItem,
   IconBadge,
@@ -25,9 +25,11 @@ import {
   ProfileItem,
 } from "./topbar.styles";
 
-import { BsFillChatSquareFill } from "react-icons/bs";
-import { RiNotification2Fill, RiHome4Fill } from "react-icons/ri";
+import { CommentIcon } from "../../../../public/assets/icons/CommentIcon";
+import { WellIcon } from "../../../../public/assets/icons/WellIcon";
 import { Logo } from "../../../../public/assets/images/Logo";
+import { TopSearchIcon } from "../../../../public/assets/icons/TopSearchIcon";
+
 // import { ErrorMsg } from 'components/Input';
 import { useAppSelector } from "app/hooks";
 import { isUser } from "features/auth/selectors";
@@ -40,6 +42,7 @@ import {
   User,
 } from "generated/graphql";
 import { useQuery } from '@apollo/client';
+import { BackOverlay } from '../LeftSideBar/leftside.styles';
 
 type NotificationsPageType = {
   image: string;
@@ -62,6 +65,8 @@ const Topbar = () => {
   const router = useRouter();
   const [logout] = useLogoutMutation();
   const [dropdown, setDropdown] = useState(false);
+  const [toggle, setToggle] = useState(false);
+  const [search, setSearch] = useState(false);
   const { user: user } = useAppSelector(isUser);
 
   // Notifications Call
@@ -118,12 +123,12 @@ const Topbar = () => {
   // dispatch(setUser(me));
   const handleLogOut = async () => {
     try {
-      const { data } = await logout({
+      const res = await logout({
         variables: {
           username: me?.username as string,
         },
       });
-      if (data?.logout.includes("User logged off.")) {
+      if (res.data?.logout.includes("User logged off.")) {
         router.push("/signin");
       }
     } catch (error) {
@@ -132,40 +137,61 @@ const Topbar = () => {
     }
   };
 
+  const onSearch = (event: any) => {
+    setSearch(event.target.value);
+    if (event.keyCode === 13) {
+      setToggle(false);
+      router.push(`/search-result?=${event.target.value}`);
+    }
+  };
+  const onSetToggle = () => {
+    if (window.screen.width <= 991 && !toggle) return setToggle(true);
+    setToggle(false);
+    router.push(`/search-result?=${search}`);
+  };
+  {
+    toggle && <BackOverlay onClick={() => setToggle(false)} className="" />;
+  }
+
   return (
     <TopbarContainer>
       <TopLeftWrap>
-        <TopBarLogo>
-          <Link href={`/courses`}>
-            <TopBarLogo>
+        <TopBarLogoGroup>
+          <Link href={`/user-profile/`}>
+            <div>
               <Logo color="white" width="50" height="50" />
-            </TopBarLogo>
+            </div>
           </Link>
-        </TopBarLogo>
+        </TopBarLogoGroup>
       </TopLeftWrap>
+
       <TopCenterWrap>
-        <SearchBar>
-          <SearchIcon></SearchIcon>
-          <SearchInput placeholder="Search for friend, post or video" />
+        <SearchBar className={toggle ? "opened" : ""}>
+          <TopSearchButton onClick={() => onSetToggle()}>
+            <TopSearchIcon />
+          </TopSearchButton>
+          <SearchInput
+            placeholder="Search for courses, posts or users"
+            onKeyUp={(event) => onSearch(event)}
+          />
         </SearchBar>
+        {toggle && (
+          <BackOverlay
+            onClick={() => setToggle(false)}
+            className="searchOverlay"
+          />
+        )}
       </TopCenterWrap>
       <TopRightWrap>
         <Icons>
           <IconItem>
-            <Link href={`/user-profile/${me?.userIdSlug}`}>
-              <div>
-                <RiHome4Fill />
-              </div>
-            </Link>
-          </IconItem>
-          <IconItem>
-            <BsFillChatSquareFill />
+            <CommentIcon />
             {chatMsgLength !== 0 && <IconBadge>{chatMsgLength}</IconBadge>}
           </IconItem>
           <IconItem>
             <Link href="/notifications">
               <div>
-                <RiNotification2Fill />
+                <WellIcon />
               </div>
             </Link>
             {noticeLength !== 0 && <IconBadge>{noticeLength}</IconBadge>}
@@ -189,7 +215,7 @@ const Topbar = () => {
             </ProfileItem>
             <ProfileItem>
               <Link href={`/user-profile/${me?.userIdSlug}/edit-profile`}>
-                Edit
+                Edit Profile
               </Link>
             </ProfileItem>
             <ProfileItem>

@@ -54,6 +54,7 @@ const Login = () => {
           ...values,
         },
       });
+      console.log(response);
       if (!response.data?.login) {
         err = response.data?.login;
         initialValues.error = err;

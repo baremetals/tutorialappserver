@@ -1,32 +1,20 @@
 import React from 'react'
 import { useGetBooksQuery, Book } from "generated/graphql";
 import styled from "styled-components";
-import LeftSideBar from '../Dashboard/LeftSideBar'
-import SmallFooter from '../Dashboard/SmallFooter'
-import TopBar from '../Dashboard/TopBar'
+import Dashboard from "components/Dashboard";
 import {
-  PageContainer,
-  InnerContainer,
-  PageRightSide,
-  PageHeading,
-  PageWrapper,
   PostCard,
   CardTitle,
+  CardBody,
   CardImage,
   CardDescription,
   CardBottom,
   ApplyButton,
+  PageHeading,
+  PageWrapper,
 } from "../../styles/common.styles";
 import { ErrorMsg } from 'components/Input';
 
-
-// type BookPageType = {
-//   title: string;
-//   image: string;
-//   description: string;
-//   author: string;
-//   link: string;
-// };
 
 function BooksPage() {
   const { data, loading, error } = useGetBooksQuery();
@@ -40,36 +28,32 @@ function BooksPage() {
 
   return (
     <>
-      <TopBar />
-      <PageContainer>
-        <LeftSideBar />
-        <InnerContainer>
-          <PageHeading>Recommended Books</PageHeading>
-          <PageWrapper>
-            {!books ? (
-              <div>loading...</div>
-            ) : (
-              books.map((book: Book, id: string) =>
-                !book ? null : (
-                  <PostCard key={id}>
-                    <a href={book.link}>
-                      <CardImage alt="course image" src={book.image} />
-                    </a>
+      <Dashboard>
+        <PageHeading>Recommended Books</PageHeading>
+        <PageWrapper>
+          {!books ? (
+            <div>loading...</div>
+          ) : (
+            books.map((book: Book, id: string) =>
+              !book ? null : (
+                <PostCard key={id}>
+                  <a href={book.link}>
+                    <CardImage alt="course image" src={book.image} />
+                  </a>
+                  <CardBody>
                     <CardTitle>{book.title}</CardTitle>
                     <CardDescription>{book.description}</CardDescription>
                     <CardBottom>
                       <BookAuthor>{book.author}</BookAuthor>
                       <ApplyButton>Buy</ApplyButton>
                     </CardBottom>
-                  </PostCard>
-                )
+                  </CardBody>
+                </PostCard>
               )
-            )}
-          </PageWrapper>
-        </InnerContainer>
-        <PageRightSide>Live Forever Young</PageRightSide>
-      </PageContainer>
-      <SmallFooter />
+            )
+          )}
+        </PageWrapper>
+      </Dashboard>
     </>
   );
 }
@@ -77,9 +61,10 @@ function BooksPage() {
 export default BooksPage
 
 export const BookAuthor = styled.span`
-  font-size: 0.875rem;
-  font-weight: bold;
-  color: #125c55;
-  display: block;
-  margin-bottom: 1rem;
+  font-size: 1rem;
+  color: #a2a2c2;
+  font-weight: 600;
+  @media (max-width: 991px) {
+    font-size: 0.75rem;
+  }
 `;

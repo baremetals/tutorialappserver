@@ -3,36 +3,63 @@ import { MdDeleteForever } from "react-icons/md";
 
 
 export const NoticesWrapper = styled.div`
+  background-color: #fff;
+  box-shadow: 0px 2px 80px rgba(66, 66, 66, 0.08);
+  border-radius: 0.625rem;
+  padding: 1rem;
+  width: 100%;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-top: 34px;
+  margin-bottom: 0.5rem;
 `;
 
 export const NoticeLeftWrap = styled.div`
   display: flex;
-  align-items: center;
 `;
 
 export const SenderProfileImge = styled.img`
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
+  min-width: 3.75rem;
+  width: 3.75rem;
+  height: 3.75rem;
+  border-radius: 0.75rem;
   object-fit: cover;
+  margin-right: 1rem;
+  @media (max-width: 991px) {
+    min-width: 2.5rem;
+    width: 2.5rem;
+    height: 2.5rem;
+  }
 `;
 
 export const NoticeMessage = styled.span`
-  font-size: 14px;
+  font-size: 0.875rem;
   font-weight: 500;
-  margin: 0 10px;
-`;
-export const NoticeDate = styled.span`
-  font-size: 10px;
-  color: #253ad8;
+  align-self: center;
+  @media (max-width: 991px) {
+    font-size: 0.75rem;
+  }
 `;
 
-export const NoticeTopRightWrap = styled.div``;
+export const NoticeDate = styled.span`
+  font-size: 0.75rem;
+  display: block;
+  color: #bfbfbf;
+  @media (max-width: 991px) {
+    font-size: 0.625rem;
+  }
+`;
+
+export const NoticeTopRightWrap = styled.div`
+  margin-left: auto;
+  padding-left: 1rem;
+  align-self: center;
+`;
 
 export const DeleteIcon = styled(MdDeleteForever)`
-  font-size: 20px;
+  font-size: 2rem;
+  cursor: pointer;
+  display: block;
+  background-color: #ff6262;
+  fill: #fff;
+  padding: 0.25rem;
+  border-radius: 10rem;
 `;

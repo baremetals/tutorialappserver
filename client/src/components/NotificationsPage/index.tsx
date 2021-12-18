@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
-import LeftSideBar from "../Dashboard/LeftSideBar";
-import SmallFooter from "../Dashboard/SmallFooter";
-import TopBar from "../Dashboard/TopBar";
+
 import {
   NoticesWrapper,
   NoticeLeftWrap,
@@ -13,9 +11,6 @@ import {
   DeleteIcon,
 } from "./notice.styles";
 import {
-  PageContainer,
-  InnerContainer,
-  PageRightSide,
   PageHeading,
 } from "../../styles/common.styles";
 import {
@@ -25,6 +20,7 @@ import {
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { useQuery } from "@apollo/client";
+import Dashboard from 'components/Dashboard';
 dayjs.extend(relativeTime);
 
 type NotificationsPageType = {
@@ -69,11 +65,7 @@ function NotificationsPage() {
   // console.log(noticeArray);
 
   return (
-    <>
-      <TopBar />
-      <PageContainer>
-        <LeftSideBar />
-        <InnerContainer>
+    <Dashboard>
           <PageHeading>Notifications</PageHeading>
           {errrorMessage ? (
             <div> You do not have any notifications</div>
@@ -106,11 +98,7 @@ function NotificationsPage() {
                 )}
             </>
           )}
-        </InnerContainer>
-        <PageRightSide>Live forever young!</PageRightSide>
-      </PageContainer>
-      <SmallFooter />
-    </>
+    </Dashboard>
   );
 }
 

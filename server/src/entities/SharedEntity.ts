@@ -31,3 +31,9 @@ export class SharedEntity extends BaseEntity {
   })
   lastModifiedOn: Date;
 }
+
+export enum UserRole {
+  ADMIN = 'admin',
+  TEACHER = 'editor',
+  STUDENT = 'ghost',
+}

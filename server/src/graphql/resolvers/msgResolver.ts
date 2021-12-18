@@ -170,13 +170,13 @@ const messageResolver = {
     deleteAllMessagesByUserId: async (
       _obj: any,
       args: { id: string },
-      _ctx: GqlContext,
+      ctx: GqlContext,
       _info: any
     ): Promise<string> => {
       try {
-        // if (!ctx.req.session || !ctx.req.session!.userId) {
-        //   return 'You must be logged in to make this change.';
-        // }
+        if (!ctx.req.session || !ctx.req.session!.userId) {
+          return 'You must be logged in to make this change.';
+        }
 
         return await deleteAllMessagesByUserId(args.id);
 

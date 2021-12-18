@@ -2,46 +2,51 @@ import styled from "styled-components"
 
 export const ChatContainer = styled.div`
   &:nth-child(0) ~ div {
-    margin-left: -0.5rem;
+    @media (max-width: 991px) {
+      margin-left: -0.5rem;
+    }
   }
 `;
 
 export const OnlineUsersWrap = styled.div`
   display: flex;
   align-items: center;
-  font-weight: 500;
+  padding: 0.75rem;
+  border-radius: 0.75rem;
   cursor: pointer;
-  margin-top: 10px;
   @media (max-width: 991px) {
-    margin-top: 0;
+    padding: 0;
+  }
+  &:hover {
+    background-color: rgba(97, 94, 240, 0.06);
   }
 `;
 
 export const OnlineUsersImageWrap = styled.div`
-  position: relative;
-  margin-right: 10px;
-  @media (max-width: 991px) {
-    margin-right: 0;
+  width: 3rem;
+  height: 3rem;
+  @media (min-width: 992px) {
+    margin-right: 1rem;
   }
+  position: relative;
 `;
 
 export const OnlineUsersImage = styled.img`
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
+  width: 100%;
+  height: 100%;
+  border-radius: 0.75rem;
   object-fit: cover;
-  border: 1px solid white;
-  display: block;
 `;
 
 export const OnlineUsersImageBadge = styled.div`
-  width: 10px;
-  height: 10px;
+  width: 0.75rem;
+  height: 0.75rem;
   border-radius: 50%;
+  border: 1px solid #fff;
   background-color: limegreen;
   position: absolute;
-  top: 2px;
-  right: 2px;
+  top: -0.25rem;
+  right: -0.25rem;
 `; 
 
 export const OnlineUsersName = styled.span`
