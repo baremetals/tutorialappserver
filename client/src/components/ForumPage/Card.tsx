@@ -1,5 +1,21 @@
 import React, { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/router"
+
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+dayjs.extend(relativeTime);
+import Dropdown, {
+  DeleteIcon,
+  EditIcon,
+  ItemText,
+  ItemWrapper,
+} from "../Dropdown";
+import { useDeletePostMutation } from "generated/graphql";
+import { ToastContainer, toast } from "react-toastify";
+
+import "react-toastify/dist/ReactToastify.css";
+
 
 import {
   PostTop,
@@ -24,11 +40,8 @@ import {
   ViewIcon,
   ViewCounter,
 } from "./forum.styles";
-import dayjs from "dayjs";
-import relativeTime from "dayjs/plugin/relativeTime";
-dayjs.extend(relativeTime);
-import Dropdown from "../Dropdown"
-import { DropDownIcon } from "../../../public/assets/icons/DropDownIcon";
+
+
 
 interface ForumPost {
   slug: string;
@@ -40,6 +53,8 @@ interface ForumPost {
   body?: string;
   likeCount: number;
   commentCount: number;
+  children?: any;
+  id: string;
 }
 
 
@@ -52,9 +67,26 @@ const ImagePostCard = ({
   body,
   likeCount = 0,
   commentCount = 0,
-  slug
+  slug,
+  children,
+  id
 }: ForumPost) => {
+  const router = useRouter();
   const [showDropdown, setShowDropdown] = useState(false);
+  const [deletePost] = useDeletePostMutation();
+  
+  const handleDelete = async (id: string) => {
+    const res = await deletePost({
+      variables: { id },
+    });
+    if (res.data?.deletePost.includes("deleted")) {
+      // console.log(res);
+      // result.refetch(DeletePostDocument);
+    } else {
+      toast.error(res.data?.deletePost);
+    }
+  };
+  
 
   return (
     <>
@@ -78,9 +110,24 @@ const ImagePostCard = ({
                 className="DropDownIcon"
                 onClick={() => setShowDropdown(!showDropdown)}
               >
-                <DropDownIcon />
+                {children}
               </span>
-              <Dropdown showDropdown={showDropdown} />
+              <Dropdown showDropdown={showDropdown} slug={slug} id={id}>
+                <ItemWrapper>
+                  <div onClick={() => router.push(`/forum/${slug}`)}>
+                    <EditIcon />
+                    <ItemText onClick={() => router.push(`/forum/${slug}`)}>
+                      Edit
+                    </ItemText>
+                  </div>
+                </ItemWrapper>
+                <ItemWrapper>
+                  <div onClick={() => handleDelete(id)}>
+                    <DeleteIcon />
+                    <ItemText onClick={() => handleDelete(id)}>Delete</ItemText>
+                  </div>
+                </ItemWrapper>
+              </Dropdown>
             </PostDropdown>
           </PostTopRightWrap>
         </PostTop>
@@ -104,6 +151,7 @@ const ImagePostCard = ({
           </BottomRightWrap>
         </PostBottomWrapper>
       </ForumWrapper>
+      <ToastContainer />
     </>
   );
 };

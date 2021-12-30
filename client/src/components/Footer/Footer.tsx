@@ -16,7 +16,8 @@ import {
   SocialIcons,
   SocialIconLink,
 } from "./styles";
-import { FaFacebook, FaInstagram, FaLinkedin, FaTwitter, FaYoutube } from 'react-icons/fa';
+import { FaFacebook, FaLinkedin, FaTwitter, FaYoutube } from 'react-icons/fa';
+import { SiTiktok } from "react-icons/si";
 import { LogoShape } from "../../../public/assets/icons/LogoShape";
 // interface Props {
     
@@ -46,7 +47,7 @@ function Footer(): ReactElement {
                 <Link href="/books">
                   <FooterLink>Books</FooterLink>
                 </Link>
-                <Link href="/sigin">
+                <Link href="/signin">
                   <FooterLink>Login</FooterLink>
                 </Link>
               </FooterLinkItem>
@@ -56,7 +57,7 @@ function Footer(): ReactElement {
                 <Link href="/terms">
                   <FooterLink>Terms of Service</FooterLink>
                 </Link>
-                <Link href="/contact">
+                <Link href="/contact-us">
                   <FooterLink>Get in Touch</FooterLink>
                 </Link>
                 <Link href="/messages">
@@ -83,8 +84,8 @@ function Footer(): ReactElement {
                 <SocialIconLink href="" target="_blank" aria-label="FaceBook">
                   <FaFacebook />
                 </SocialIconLink>
-                <SocialIconLink href="" target="_blank" aria-label="Instagram">
-                  <FaInstagram />
+                <SocialIconLink href="" target="_blank" aria-label="Tiktok">
+                  <SiTiktok />
                 </SocialIconLink>
                 <SocialIconLink href="" target="_blank" aria-label="Youtube">
                   <FaYoutube />

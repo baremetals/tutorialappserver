@@ -131,18 +131,18 @@ const commentResolver = {
   Mutation: {
     createComment: async (
       _obj: any,
-      args: { userId: string; postId: string; body: string },
+      args: { userId: string; slug: string; body: string },
       _ctx: GqlContext,
       _info: any
     ): Promise<Comment | EntityResult> => {
       const userRepository = getRepository(User);
       const post = await Post.findOne({
-        where: { id: args.postId },
+        where: { slug: args.slug },
         relations: ['creator'],
       });
 
       try {
-        const result = await createComment(args.userId, args.postId, args.body);
+        const result = await createComment(args.userId, args.slug, args.body);
         if (result && result.comment) {
           const postOwner = await userRepository.findOne({
             where: { id: post!.creator!.id },

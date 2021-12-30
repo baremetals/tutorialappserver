@@ -33,6 +33,8 @@ export const SenderProfileImge = styled.img`
 export const NoticeMessage = styled.span`
   font-size: 0.875rem;
   font-weight: 500;
+  /* color: #747070; */
+  color: ${({ isRead }: any) => (isRead ? "#747070" : "#0f1111")};
   align-self: center;
   @media (max-width: 991px) {
     font-size: 0.75rem;
@@ -42,7 +44,7 @@ export const NoticeMessage = styled.span`
 export const NoticeDate = styled.span`
   font-size: 0.75rem;
   display: block;
-  color: #bfbfbf;
+  color: #16addd;
   @media (max-width: 991px) {
     font-size: 0.625rem;
   }
@@ -58,7 +60,7 @@ export const DeleteIcon = styled(MdDeleteForever)`
   font-size: 2rem;
   cursor: pointer;
   display: block;
-  background-color: #ff6262;
+  background-color: #f511a9;
   fill: #fff;
   padding: 0.25rem;
   border-radius: 10rem;

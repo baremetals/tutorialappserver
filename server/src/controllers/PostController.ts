@@ -13,7 +13,6 @@ export const createPost = async (
   categoryName: string,
   title: string,
   body: string,
-  mediaUrl: string
 ): Promise<QueryArrayResult<Post>> => {
   const userRepository = getRepository(User);
   const titleMsg = isPostTitleValid(title);
@@ -58,7 +57,6 @@ export const createPost = async (
     slug,
     title,
     body,
-    mediaUrl,
     creator,
     category,
     createdBy: creator?.username,
@@ -72,7 +70,7 @@ export const createPost = async (
   }
 
   return {
-    messages: [`${post.slug}`],
+    messages: [`success-${post.slug}`],
   };
 };
 
@@ -80,7 +78,7 @@ export const editPost = async (
   id: string,
   body: string,
   title: string,
-  categoryId: string
+  categoryName: string
 ): Promise<QueryArrayResult<Post>> => {
   const titleMsg = isPostTitleValid(title);
   if (titleMsg) {
@@ -96,7 +94,7 @@ export const editPost = async (
   }
 
   const category = await Category.findOne({
-    id: categoryId,
+    name: categoryName,
   });
 
   const post = await Post.findOne({
@@ -116,7 +114,6 @@ export const editPost = async (
       slug: post.slug,
       title,
       body,
-      mediaUrl: post.mediaUrl,
       category,
       lastModifiedBy: post.createdBy,
       lastModifiedOn: new Date(),

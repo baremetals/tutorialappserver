@@ -28,9 +28,29 @@ import {
   PageHeading,
   CardBottom,
   ApplyButton,
+  SocialDropDown,
+  SocialDropDownList,
+  SocialDropDownItem,
 } from "../../../styles/common.styles";
+
+import { SocialDropDownIcon } from "../../../../public/assets/icons/SocialDropDownIcon";
+import { FaceBook } from "../../../../public/assets/icons/FaceBook";
+import { Twitter } from "../../../../public/assets/icons/Twitter";
+import { LinkedIn } from "../../../../public/assets/icons/LinkedIn";
+import { WhatsApp } from "../../../../public/assets/icons/WhatsApp";
+import { Email } from "../../../../public/assets/icons/Email";
+
 import { ErrorMsg } from 'components/Input';
 import Dashboard from 'components/Dashboard';
+
+
+import {
+  FacebookShareButton,
+  TwitterShareButton,
+  LinkedinShareButton,
+  WhatsappShareButton,
+  EmailShareButton,
+} from "react-share";
 
 interface Details {
   description: string;
@@ -52,7 +72,9 @@ interface Student {
 function CourseDetails(props: { props: { data: any; loading: any; }; }, userId: any) {
   const router = useRouter();
   const { id } = router.query;
+  // console.log(router)
 
+  const [socialDropdown, setSocialDropdown] = useState(false);
   const [join] = useJoinOrLeaveCourseMutation();
   const [errorMsg, setErrorMsg] = useState(false);
   const [message, setMessage] = useState<string | undefined>("");
@@ -106,9 +128,53 @@ function CourseDetails(props: { props: { data: any; loading: any; }; }, userId: 
     }
   };
 
+  const url: string = `http://localhost:3000${router.asPath}`
   return (
     <Dashboard>
-      <PageHeading>{title}</PageHeading>
+      <PageHeading>
+        <SocialDropDown>
+          <span onClick={() => setSocialDropdown(!socialDropdown)}>
+            <SocialDropDownIcon />
+            Share
+          </span>
+          <SocialDropDownList
+            className={`${socialDropdown ? "opened" : ""}`}
+            onClick={() => setSocialDropdown(!socialDropdown)}
+          >
+            <SocialDropDownItem>
+              <FacebookShareButton url={url}>
+                <FaceBook />
+                Facebook
+              </FacebookShareButton>
+            </SocialDropDownItem>
+            <SocialDropDownItem>
+              <TwitterShareButton url={url}>
+                <Twitter />
+                Twitter
+              </TwitterShareButton>
+            </SocialDropDownItem>
+            <SocialDropDownItem>
+              <LinkedinShareButton url={url}>
+                <LinkedIn />
+                LinkedIn
+              </LinkedinShareButton>
+            </SocialDropDownItem>
+            <SocialDropDownItem>
+              <WhatsappShareButton url={url}>
+                <WhatsApp />
+                Whatsapp
+              </WhatsappShareButton>
+            </SocialDropDownItem>
+            <SocialDropDownItem>
+              <EmailShareButton url={url}>
+                <Email />
+                Email
+              </EmailShareButton>
+            </SocialDropDownItem>
+          </SocialDropDownList>
+        </SocialDropDown>
+        {title}
+      </PageHeading>
       <DetailsCardWrapper>
         <CardTop>
           <CardLeftWrap>

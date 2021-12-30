@@ -12,12 +12,14 @@ import Redis from "ioredis";
 import { Message } from "../entities/Message";
 import {
   ACCOUNT_ACTIVATED,
+  PASSWORD_RESET,
   profileImage,
   backgroundImg,
-} from "../lib/constants";
+  IMAGE_CHANGE,
+  PROFILE_INFO_CHANGE,
+} from '../lib/constants';
 
 
-import { MsgResult } from "./MsgController";
 import { getConnection } from 'typeorm';
 import { QueryArrayResult } from './QuerryArrayResult';
 export class UserResult {
@@ -126,21 +128,17 @@ export const register = async (
   };
 };
 
-export const activateUser = async (id: string): Promise<MsgResult> => {
+export const activateUser = async (id: string): Promise<string> => {
   const user = await User.findOne({
     where: { id },
   });
 
   if (!user) {
-    return {
-      messages: ["User not found."],
-    };
+    return 'User not found.';
   }
 
   if (user.confirmed) {
-    return {
-      messages: ["Your account is already confirmed."],
-    };
+    return 'Your account is already confirmed.';
   }
 
   user.confirmed = true;
@@ -150,19 +148,21 @@ export const activateUser = async (id: string): Promise<MsgResult> => {
   const msg = await Message.create({
     user,
     title: `Welcome ${user.username}`,
-    body: "Thanks for joining the Baremetals tutorial community. Your account is now activated and you may register for courses.",
+    body: "Thanks for joining Baremetals Academy. Your account is now activated and you may register for courses.",
     type: ACCOUNT_ACTIVATED,
   }).save();
 
   if (!msg) {
-    return {
-      messages: ["Message was not created."],
-    };
+    return 'Message was not created.';
   }
 
-  return {
-    msg: msg
-  };
+  await sendEmail(
+    user.email,
+    `Hi ${user.username}, \Thanks for joining Baremetals Academy. Your account is now activated and you may register for courses.`,
+    'Account Activated.'
+  );
+
+  return 'Your account is now confirmed.';
 };
 
 
@@ -306,6 +306,23 @@ export const resetPassword = async (
   user.password = hashedPassword;
   user.save();
 
+  const msg = await Message.create({
+    user,
+    title: `Password Reset`,
+    body: 'Your password has been changed successfully',
+    type: PASSWORD_RESET,
+  }).save();
+
+  if (!msg) {
+    return 'Message was not created.';
+  }
+
+  await sendEmail(
+    user.email,
+    `Hi ${user.username}, \Your password has been changed successfully`,
+    'Password Reset.'
+  );
+
   // notification code goes here
   return "Password changed successfully.";
 };
@@ -349,7 +366,9 @@ export const editMe = async (
   id: string,
   email: string,
   username: string,
-  fullName: string
+  fullName: string,
+  description: string,
+  location: string,
 ): Promise<string> => {
 
   const user = await User.findOne({
@@ -383,7 +402,9 @@ export const editMe = async (
     .set({
       email: trimmedEmail,
       username: trimmedUsername,
-      fullName: fullName,
+      fullName,
+      description,
+      location,
       lastModifiedBy: trimmedUsername,
       lastModifiedOn: new Date(),
     })
@@ -396,12 +417,28 @@ export const editMe = async (
   // user.save();
 
   // notification code goes here
+  const msg = await Message.create({
+    user,
+    title: `Profile Info Change`,
+    body: 'Your profile details has been changed successfully',
+    type: PROFILE_INFO_CHANGE,
+  }).save();
+
+  if (!msg) {
+    return 'Message was not created.';
+  }
+
+  await sendEmail(
+    user.email,
+    `Hi ${user.username}, \nYour profile details has been changed successfully`,
+    'Profile Info Change.'
+  );
   return 'Details changed successfully.';
 };
 
 export const editProfileImage = async (
   id: string,
-  profileImage: string,
+  profileImg: string,
 
 ): Promise<string> => {
   const user = await User.findOne({
@@ -420,7 +457,7 @@ export const editProfileImage = async (
     .createQueryBuilder()
     .update(User)
     .set({
-      profileImage: profileImage,
+      profileImage: profileImg,
       lastModifiedBy: user.username,
       lastModifiedOn: new Date(),
     })
@@ -428,12 +465,29 @@ export const editProfileImage = async (
     .execute();
 
   // notification code goes here
-  return 'Profile image changed successfully.';
+
+  const msg = await Message.create({
+    user,
+    title: `Profile Image Change`,
+    body: 'Your profile image has been changed successfully',
+    type: IMAGE_CHANGE,
+  }).save();
+
+  if (!msg) {
+    return 'Message was not created.';
+  }
+
+  await sendEmail(
+    user.email,
+    `Hi ${user.username}, \nYour profile image has been changed successfully`,
+    'Profile Image Change.'
+  );
+  return `Success-${profileImg}`;
 };
 
 export const editBackGroundImage = async (
   id: string,
-  backgroundImg: string
+  backgroundImage: string
 ): Promise<string> => {
   const user = await User.findOne({
     where: { id },
@@ -451,15 +505,31 @@ export const editBackGroundImage = async (
     .createQueryBuilder()
     .update(User)
     .set({
-      backgroundImg: backgroundImg,
+      backgroundImg: backgroundImage,
       lastModifiedBy: user.username,
-      lastModifiedOn: new Date()
+      lastModifiedOn: new Date(),
     })
     .where('id = :id', { id: id })
     .execute();
 
   // notification code goes here
-  return 'Profile image changed successfully.';
+  const msg = await Message.create({
+    user,
+    title: `Background Image Change`,
+    body: 'Your background image has been changed successfully',
+    type: IMAGE_CHANGE,
+  }).save();
+
+  if (!msg) {
+    return 'Message was not created.';
+  }
+
+  await sendEmail(
+    user.email,
+    `Hi ${user.username}, \Your background image has been changed successfully`,
+    'Background Image Change.'
+  );
+  return `Success-${backgroundImage}`;
 };
 
 export const deleteMe = async (
@@ -477,6 +547,11 @@ export const deleteMe = async (
   user.lastModifiedOn = new Date();
   user.save();
   // notification code goes here
+  // await sendEmail(
+  //   user.email,
+  //   `Hi ${user.username}, \Your account has been successfully deleted.`,
+  //   'Account Deleted.'
+  // );
   return 'Your account has been deleted.';
 };
 
@@ -521,7 +596,7 @@ function userNotFound(usernameOrEmail: string) {
 
 
 // To do 
-// add notifications/email for reset password, activation and change password.
+// change password.
 
 
 

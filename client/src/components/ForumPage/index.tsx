@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import Share from "../Dashboard/Share";
 import styled from "styled-components";
 import { useCategoryQuery } from "generated/graphql";
-
+// import { useAppSelector } from "app/hooks";
+// import { isUser } from "features/auth/selectors";
 
 
 import {
@@ -16,11 +17,13 @@ import {
 } from "../../styles/common.styles";
 import Card from "./Card";
 import Dashboard from 'components/Dashboard';
+// import { DropDownIcon } from './forum.styles';
 
 
 const ForumPage = ({ ...props }: any) => {
   
   const { data } = useCategoryQuery();
+  // const { user: user } = useAppSelector(isUser);
 
   const postData = props.props;
   const categories = data?.getAllCategories;
@@ -105,7 +108,12 @@ const ForumPage = ({ ...props }: any) => {
                   likeCount={post.points}
                   commentCount={12}
                   slug={post.slug}
-                />
+                  id={post.id}
+                >
+                  {/* {user?.userIdSlug === post.creator.userIdSlug && (
+                    <DropDownIcon />
+                  )} */}
+                </Card>
               </ForumContainer>
             )
           )

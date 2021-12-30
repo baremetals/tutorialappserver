@@ -10,7 +10,7 @@ export class Message extends SharedEntity {
 
   @Column("varchar", {
     name: "From",
-    default: "Baremetals",
+    default: "Baremetals Academy",
     length: 150,
     nullable: false,
   })

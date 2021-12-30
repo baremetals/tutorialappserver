@@ -155,7 +155,7 @@ const ChatSideBar = ({ children }: any) => {
                 <>
                   <br />
                   <br />
-                  <div> You Currently have no messages</div>
+                  <p style={{paddingLeft: 40}}>You have no messages</p>
                 </>
               )}
               {filteredMessages !== undefined &&

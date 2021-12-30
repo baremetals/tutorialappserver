@@ -1,20 +1,23 @@
 import React, { useEffect, useState } from 'react'
 import { useRouter } from "next/router";
-import { ProfileCover, ProfileCoverImage, ProfileInfo, UserDescription, UserName, UserProfileImage } from './profile.styles';
+import { MessageButtonWrap, ProfileCover, ProfileCoverImage, ProfileInfo, UserDescription, UserName, UserProfileImage } from './profile.styles';
 import { useAppSelector } from "app/hooks";
 import { isUser } from "features/auth/selectors";
+import Link from 'next/link';
 
 type profilePageProps = {
   backgroundImg: string | undefined;
   profileImage: string | undefined;
   fullName: string | undefined;
   description: string | undefined;
+  username: string | undefined;
 };
 const ProfileHeader = ({
   backgroundImg,
   profileImage,
   fullName,
   description,
+  username
 }: profilePageProps) => {
   const router = useRouter();
   const { user: user } = useAppSelector(isUser);
@@ -59,6 +62,15 @@ const ProfileHeader = ({
           <ProfileInfo>
             <UserName>{fullName}</UserName>
             <UserDescription>{description}!</UserDescription>
+            <Link href={`/messages/${username}`}>
+              <MessageButtonWrap>
+                <button
+                  type="button"
+                >
+                  contact {username}
+                </button>
+              </MessageButtonWrap>
+            </Link>
           </ProfileInfo>
         </>
       )}

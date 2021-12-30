@@ -1,29 +1,45 @@
 import React, { useEffect, useState } from 'react'
 import { useForm, SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-
 import { useAppSelector } from "app/hooks";
 import { isUser } from "features/auth/selectors";
+
 import {
   PageHeading,
   ProfileWrapGroup,
   PageWrapGroup,
 } from "../../../styles/common.styles";
-import styled from 'styled-components';
+
+import {
+  Button,
+  HorizontalRule,
+  Input,
+  ProfileImage,
+  StyledInput,
+  BackGroundImage,
+  PageContentWrap,
+  ProfileFormGroup,
+  EditProfileTitle,
+  EditProfileLabel,
+  FileUploadedGroup,
+  InputSubmitGroup,
+} from "./edit.styles";
+
+
 import { ErrorMsg, Error, SuccessMsg } from "../../Input";
 import {
   getChangePasswordValidationSchema,
   getProfileDetailsValidationSchema,
 } from "utils/formValidation";
-import { UploadFileDocument, UploadFileMutation } from 'generated/graphql';
-import { client } from 'lib/initApollo';
-import { useMutation } from "@apollo/client";
+import { useChangePasswordMutation, useEditBackGroundImageMutation, useEditMeMutation, useEditProfileImageMutation } from 'generated/graphql';
+
+
 import Dashboard from 'components/Dashboard';
 import RightSideBar from 'components/Dashboard/RightSideBar';
 import AdCardThree from 'components/AdCards/AdCardThree';
 import AdCardTwo from 'components/AdCards/AdCardTwo';
 import AdCardOne from 'components/AdCards/AdCardOne';
-import { BackGroundImage, PageContentWrap } from './edit.styles';
+
 
 
 type PasswordInput = {
@@ -38,10 +54,12 @@ type ProfileDetails = {
   fullName: string;
   username: string;
   email: string;
+  description: string;
+  location: string;
 };
 
 type Image = {
-  profileImage: string;
+  profileImage: File;
   success: string;
 };
 
@@ -61,15 +79,42 @@ const EditProfile = () => {
     isError: false,
     isProfError: false,
     isImgError: false,
+    isBkgImgError: false,
   });
   const [msg, setMsg] = useState("");
   const [success, setSuccess] = useState({
     isSuccess: false,
     isProfSuccess: false,
     isImgSuccess: false,
+    isBkgImgSuccess: false,
   });
+  const [imgSizeErr, setImgSizeErr] = useState(false)
+  const [bkgImage, setBkgImage] = useState(user?.profileImage);
   const schema = getChangePasswordValidationSchema();
   const profSchema = getProfileDetailsValidationSchema();
+
+  const removeErrorMsg = (): void => {
+    setTimeout(() => {
+      setError({
+        isError: false,
+        isProfError: false,
+        isImgError: false,
+        isBkgImgError: false,
+      });
+    }, 3000);
+  };
+  const removeSuccessMsg = (): void => {
+    setTimeout(() => {
+      setSuccess({
+        isSuccess: false,
+        isProfSuccess: false,
+        isImgSuccess: false,
+        isBkgImgSuccess: false,
+      });
+    }, 3000);
+  };
+
+  // For changing password.
   const {
     register,
     handleSubmit,
@@ -79,10 +124,12 @@ const EditProfile = () => {
     resolver: yupResolver(schema),
   });
 
-  const [uploadFile] = useMutation(UploadFileDocument);
+  const [changeDetails] = useEditMeMutation();
+  const [changePassword] = useChangePasswordMutation();
+  const [editProfileImage] = useEditProfileImageMutation();
+  const [editBackGroundImage] = useEditBackGroundImageMutation();
 
-  
-
+  // For submitting profile details
   const {
     register: registerProfile,
     formState: { errors: profileErrors },
@@ -91,6 +138,7 @@ const EditProfile = () => {
     resolver: yupResolver(profSchema),
   });
 
+  // For submitting profile details
   const {
     setValue,
     formState: { errors: imgErrors },
@@ -98,6 +146,7 @@ const EditProfile = () => {
   } = useForm<Image>({
     resolver: yupResolver(profSchema),
   });
+
   let [upload] = useState<FileType>({
     lastModified: 0,
     lastModifiedDate: {},
@@ -115,221 +164,314 @@ const EditProfile = () => {
     }
   }, [isSubmitSuccessful, reset]);
 
+  // Submit button function for changingin user password,
   const handlePasswordSubmit: SubmitHandler<PasswordInput> = async (
     data: PasswordInput
   ) => {
-    console.log(data);
-    //   setMsg("yankee doodle");
-    //   setSuccess({
-    //     isSuccess: true,
-    //     isProfSuccess: false,
-    //   });
+    // console.log(data);
+    const res = await changePassword({
+      variables: {
+        currentPassword: data.currentPassword,
+        newPassword: data.newPassword,
+      },
+    });
+    // console.log(res);
+    if (!res.data?.changePassword.includes("successfully")) {
+      const errMsg = res?.data?.changePassword as string;
+      setMsg(errMsg);
+      error.isError = true;
+      removeErrorMsg();
+    } else {
+      // console.log(res.data);
+      setMsg(res.data?.changePassword);
+      success.isSuccess = true;
+      removeSuccessMsg();
+    }
   };
 
+  // Submit button function for changingin user details,
   const handleProfileSubmit: SubmitHandler<ProfileDetails> = async (
     data: ProfileDetails
   ) => {
     const fullName = data.fullName == "" ? user?.fullName : data.fullName;
     const username = data.username == "" ? user?.username : data.username;
     const email = data.email == "" ? user?.email : data.email;
-    console.log(email, fullName, username, data);
-    //   setMsg("yankee doodle");
-    //   setError({
-    //     isError: false,
-    //     isProfError: true,
-    //   });
+    const description =
+      data.description == "" ? user?.description : data.description;
+    const location = data.location == "" ? user?.location : data.location;
+
+    // console.log(email, fullName, username, description, location, data);
+
+    const res = await changeDetails({
+      variables: {
+        email: email as string,
+        username: username as string,
+        fullName: fullName as string,
+        description: description as string,
+        location: location as string,
+      },
+    });
+
+    if (res?.data?.editMe.includes("successfully")) {
+      setMsg(res.data.editMe);
+      success.isProfSuccess = true;
+      removeSuccessMsg();
+      // setTimeout(() => {
+      //   setSuccess({
+      //     isSuccess: false,
+      //     isProfSuccess: false,
+      //     isImgSuccess: false,
+      //   });
+      // }, 3000);
+    } else {
+      const errMsg = res?.data?.editMe as string;
+      setMsg(errMsg);
+      error.isProfError = true;
+      removeErrorMsg();
+      // setTimeout(() => {
+      //   setError({
+      //     isError: false,
+      //     isProfError: false,
+      //     isImgError: false,
+      //   });
+      // }, 3000);
+    }
   };
 
   const handleImageChange =
     (_name: string) => (event: { target: { files: {}[] } } | File | any) => {
       upload = event.target.files[0];
+      setImgSizeErr(false);
       // console.log(event.target.files);
-      if (upload.size > 10240) {
-        setMsg("File size cannot exceed more than 1MB");
-        error.isImgError = true;
+      if (upload.size > 102400) {
+        setMsg("File size cannot exceed more than 10MB");
+        setImgSizeErr(true);
         setTimeout(() => {
-          setError({
-            isError: false,
-            isProfError: false,
-            isImgError: false,
-          });
-        }, 3000);
+          setImgSizeErr(false);
+        }, 8000);
       }
-
       setValue("profileImage", upload as any);
     };
 
-
-  const handleImageSubmit: SubmitHandler<Image> = async (dta: Image) => {
-    const profileImage =
-      dta.profileImage == "" ? user?.profileImage : dta.profileImage;
-    console.log(dta);
-    const { data } = await client.mutate<UploadFileMutation>({
-      mutation: UploadFileDocument,
+  // Submit button function for changingin user profile image,
+  const handleImageSubmit: SubmitHandler<any> = async (dta) => {
+    const file = dta.profileImage;
+    // console.log(file);
+    const { data } = await editProfileImage({
       variables: {
-        file: profileImage
+        file,
       },
     });
-    console.log(data)
-    //   setMsg("yankee doodle");
-    //   setError({
-    //     isError: false,
-    //     isProfError: true,
-    //   });
+    console.log(data);
+
+    if (data?.editProfileImage.includes("Success-")) {
+      setMsg("Profile image changed successfully.");
+      success.isImgSuccess = true;
+      removeSuccessMsg();
+    } else {
+      const errMsg = data?.editProfileImage as string;
+      setMsg(errMsg);
+      error.isImgError = true;
+      removeErrorMsg();
+    }
   };
+
+  // Submit button function for changing user background image,
+  const handleBkgImageSubmit: SubmitHandler<any> = async (dta) => {
+    const file = dta.profileImage;
+    // console.log(file);
+    const { data } = await editBackGroundImage({
+      variables: {
+        file
+      },
+    });
+    console.log(data);
+
+    if (data?.editBackGroundImage.includes("Success-")) {
+      const url = data?.editBackGroundImage.slice(8);
+      setBkgImage(url);
+      setMsg("Background image changed successfully.");
+      success.isBkgImgSuccess = true;
+      removeSuccessMsg();
+    } else {
+      const errMsg = data?.editBackGroundImage as string;
+      setMsg(errMsg);
+      error.isBkgImgError = true;
+      removeErrorMsg();
+      // setTimeout(() => {
+      //   setError({
+      //     isError: false,
+      //     isProfError: false,
+      //     isImgError: false,
+      //   });
+      // }, 3000);
+    }
+  };
+
   return (
     <Dashboard>
       <PageHeading>Edit Profile Settings</PageHeading>
       <ProfileWrapGroup>
         <PageWrapGroup>
-          <PageContentWrap>
-            <h4>Change Password</h4>
-            <br />
-            <form
-              style={{ display: "grid" }}
-              onSubmit={handleSubmit(handlePasswordSubmit)}
-            >
-              {error.isError && <ErrorMsg>{msg}</ErrorMsg>}
-              {success.isSuccess && <SuccessMsg>{msg}</SuccessMsg>}
-              <label htmlFor="full name">Current Password</label>
-              <Input
-                type="password"
-                placeholder="Enter current password"
-                {...register("currentPassword", { required: true })}
-                name="currentPassword"
-              />
-              {errors.currentPassword && (
-                <Error>{errors.currentPassword?.message}</Error>
-              )}
-              <br></br>
-              <label htmlFor="full name">New Password</label>
-              <Input
-                type="password"
-                placeholder="Enter new password"
-                {...register("newPassword")}
-                name="newPassword"
-              />
-              {errors.newPassword && (
-                <Error>{errors.newPassword?.message}</Error>
-              )}
-              <Input
-                type="password"
-                placeholder="Confirm new password"
-                {...register("confirmPassword")}
-                name="confirmPassword"
-              />
-              {errors.confirmPassword && (
-                <Error>{errors.confirmPassword?.message}</Error>
-              )}
+          <ProfileFormGroup>
+            <PageContentWrap>
+              <EditProfileTitle>Change Password</EditProfileTitle>
+              <form onSubmit={handleSubmit(handlePasswordSubmit)}>
+                {error.isError && <ErrorMsg>{msg}</ErrorMsg>}
+                {success.isSuccess && <SuccessMsg>{msg}</SuccessMsg>}
+                <EditProfileLabel htmlFor="current password">
+                  Current Password
+                </EditProfileLabel>
+                <Input
+                  placeholder="Enter Current Password"
+                  {...register("currentPassword", { required: true })}
+                  name="currentPassword"
+                  type="password"
+                />
+                {errors.currentPassword && (
+                  <Error>{errors.currentPassword?.message}</Error>
+                )}
 
-              <br></br>
-              <Button type="submit">submit</Button>
-            </form>
-          </PageContentWrap>
-          <HorizontalRule />
-          <br />
-          {/* Image Form */}
-          <div style={{ display: "flex" }}>
-            <br />
-            <div>
-              <h4>Change Profile Image</h4>
-              <br />
-              <form onSubmit={handleImgSubmit(handleImageSubmit)}>
+                <EditProfileLabel htmlFor="new password">
+                  New Password
+                </EditProfileLabel>
+                <Input
+                  type="password"
+                  placeholder="Enter New Password"
+                  {...register("newPassword", { required: true })}
+                  name="newPassword"
+                />
+                {errors.newPassword && (
+                  <Error>{errors.newPassword?.message}</Error>
+                )}
+
+                <Input
+                  type="password"
+                  placeholder="Confirm New Password"
+                  {...register("confirmPassword", { required: true })}
+                  name="confirmPassword"
+                />
+                {errors.confirmPassword && (
+                  <Error>{errors.confirmPassword?.message}</Error>
+                )}
+                <Button type="submit">submit</Button>
+              </form>
+            </PageContentWrap>
+
+            <HorizontalRule />
+
+            {/* Image Form */}
+
+            <div style={{ display: "flex", flexWrap: "wrap", margin: "-1rem" }}>
+              <FileUploadedGroup>
+                {imgSizeErr && <ErrorMsg>{msg}</ErrorMsg>}
+                <EditProfileTitle>Change Profile Image</EditProfileTitle>
                 {success.isImgSuccess && <SuccessMsg>{msg}</SuccessMsg>}
                 {error.isImgError && <ErrorMsg>{msg}</ErrorMsg>}
-                <ProfileImage src={user?.profileImage} alt="Profile Image" />
-                <br />
-                <input
-                  type="file"
-                  onChange={handleImageChange("profileImage")}
-                  name="profileImage"
-                  required
-                />
-                {imgErrors.profileImage && <Error>Image required</Error>}
-                <br />
-                <br />
-                <Button type="submit">submit</Button>
-              </form>
+                <form onSubmit={handleImgSubmit(handleImageSubmit)}>
+                  <ProfileImage src={user?.profileImage} alt="Profile Image" />
+                  <InputSubmitGroup>
+                    <input
+                      type="file"
+                      onChange={handleImageChange("profileImage")}
+                      name="profileImage"
+                      required
+                    />
+                    {imgErrors.profileImage && <Error>Image required</Error>}
+                    <Button type="submit">submit</Button>
+                  </InputSubmitGroup>
+                </form>
+              </FileUploadedGroup>
+              <FileUploadedGroup>
+                <EditProfileTitle>Change Background Image</EditProfileTitle>
+                {success.isBkgImgSuccess && <SuccessMsg>{msg}</SuccessMsg>}
+                {error.isBkgImgError && <ErrorMsg>{msg}</ErrorMsg>}
+                <form onSubmit={handleImgSubmit(handleBkgImageSubmit)}>
+                  <BackGroundImage
+                    src={bkgImage ? bkgImage : user?.backgroundImg}
+                    alt="Background Image"
+                  />
+                  <InputSubmitGroup>
+                    <input
+                      type="file"
+                      name="profileImage"
+                      required
+                      onChange={handleImageChange("profileImage")}
+                    />
+                    <Button type="submit">submit</Button>
+                  </InputSubmitGroup>
+                </form>
+              </FileUploadedGroup>
             </div>
-            <div>
-              <h4>Change Background Image</h4>
-              <br />
-              <form>
-                <BackGroundImage
-                  src="https://images.unsplash.com/photo-1469981283837-561b3779462f?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2070&q=80"
-                  alt="Background Image"
-                />
-                <br />
-                <input type="file" name="profileImage" required />
-                <br />
-                <br />
-                <Button type="submit">submit</Button>
-              </form>
-            </div>
-          </div>
-          <br />
-          <HorizontalRule />
-          {/* Profile Form */}
-          <h4>Profile Details</h4>
-          <br />
-          <form
-            style={{ display: "grid" }}
-            onSubmit={handleProfSubmit(handleProfileSubmit)}
-          >
-            {success.isProfSuccess && <SuccessMsg>{msg}</SuccessMsg>}
-            {error.isProfError && <ErrorMsg>{msg}</ErrorMsg>}
-            <label htmlFor="full name">Full Name</label>
-            <StyledInput
-              type="text"
-              defaultValue={user?.fullName}
-              {...registerProfile("fullName", { minLength: 3 })}
-              name="fullName"
-            />
-            {profileErrors.fullName && (
-              <Error>Minimum of 3 characters required</Error>
-            )}
-            {profileErrors.fullName && (
-              <Error>{profileErrors.fullName?.message}</Error>
-            )}
-            <br></br>
-            <label htmlFor="username">Username</label>
 
-            <StyledInput
-              type="text"
-              defaultValue={user?.username}
-              {...registerProfile("username", { minLength: 3 })}
-              name="username"
-            />
-            {profileErrors.username && (
-              <Error>{profileErrors.username?.message}</Error>
-            )}
-            <br></br>
-            <label htmlFor="email">Email</label>
-            <StyledInput
-              type="text"
-              defaultValue={user?.email}
-              {...registerProfile("email")}
-              name="email"
-            />
-            {profileErrors.email && (
-              <Error>{profileErrors.email?.message}</Error>
-            )}
-            <br></br>
+            <HorizontalRule />
 
-            <label htmlFor="description">Description</label>
-            <StyledInput
-              type="text"
-              defaultValue="Badboy for life"
-              name="description"
-            />
-            <br></br>
+            {/* Profile Form */}
 
-            <label htmlFor="location">Location</label>
-            <StyledInput type="text" defaultValue="London" name="location" />
-            <br></br>
-            <Button type="submit">submit</Button>
-          </form>
+            <EditProfileTitle>Profile Details</EditProfileTitle>
+            <form onSubmit={handleProfSubmit(handleProfileSubmit)}>
+              {success.isProfSuccess && <SuccessMsg>{msg}</SuccessMsg>}
+              {error.isProfError && <ErrorMsg>{msg}</ErrorMsg>}
+
+              <EditProfileLabel htmlFor="full name">Full Name</EditProfileLabel>
+
+              <StyledInput
+                type="text"
+                defaultValue={user?.fullName}
+                {...registerProfile("fullName", { minLength: 3 })}
+                name="fullName"
+              />
+              {profileErrors.fullName && (
+                <Error>Minimum of 3 characters required</Error>
+              )}
+              {profileErrors.fullName && (
+                <Error>{profileErrors.fullName?.message}</Error>
+              )}
+
+              <EditProfileLabel htmlFor="username">Username</EditProfileLabel>
+              <StyledInput
+                type="text"
+                defaultValue={user?.username}
+                {...registerProfile("username", { minLength: 3 })}
+                name="username"
+              />
+              {profileErrors.username && (
+                <Error>{profileErrors.username?.message}</Error>
+              )}
+
+              <EditProfileLabel htmlFor="email">Email</EditProfileLabel>
+              <StyledInput
+                type="text"
+                defaultValue={user?.email}
+                {...registerProfile("email")}
+                name="email"
+              />
+              {profileErrors.email && (
+                <Error>{profileErrors.email?.message}</Error>
+              )}
+
+              <EditProfileLabel htmlFor="description">
+                Description
+              </EditProfileLabel>
+              <StyledInput
+                type="text"
+                defaultValue={user?.description}
+                {...registerProfile("description", { required: true })}
+                name="description"
+              />
+
+              <EditProfileLabel htmlFor="location">Location</EditProfileLabel>
+              <StyledInput
+                type="text"
+                defaultValue={user?.location}
+                {...registerProfile("location", { required: true })}
+                name="location"
+              />
+              <Button type="submit">submit</Button>
+            </form>
+          </ProfileFormGroup>
         </PageWrapGroup>
+
         <RightSideBar>
           <AdCardThree />
           <AdCardTwo />
@@ -342,88 +484,3 @@ const EditProfile = () => {
 
 export default EditProfile
 
-export const Button = styled.button`
-  background: linear-gradient(to right, #14163c 0%, #03217b 79%);
-  cursor: pointer;
-  padding: 0.5rem 1rem;
-  font-size: 1rem;
-  color: #fff;
-  text-transform: capitalize;
-  border: none;
-  width: 30%;
-  border-radius: 0.5rem;
-  box-shadow: 0 0 1rem rgb(0 0 0 / 50%);
-`;
-
-export const Input = styled.input`
-  /* width: 15rem; */
-  background-color: #e9e9e9;
-  display: flex;
-  align-items: center;
-  border-radius: 0.5rem;
-  height: 2rem;
-  border: none;
-  padding: 0.5rem 1rem;
-  font-size: 0.875rem;
-  font-weight: 500;
-  margin: 0.25rem 0;
-  outline: none !important;
-  &:focus {
-    display: inline-block;
-    box-shadow: 0 0 0 0.2rem #b9abe0;
-    backdrop-filter: blur(12rem);
-    border-radius: 0.5rem;
-    margin-top: 0.2rem;
-  }
-  @media (max-width: 767px) {
-    width: 100%;
-  }
-  width: 70%;
-`;
-
-export const StyledInput = styled.input`
-  background: #e9e9e9fd;
-  box-shadow: 0 2px 8px 0 rgba(31, 38, 135, 0.37);
-  border-radius: 0.5rem;
-  width: 70%;
-  height: 2rem;
-  padding: 0.5rem 1rem;
-  border: none;
-  outline: none;
-  font-size: 1rem;
-  font-weight: 500;
-  margin-top: 0.2rem;
-  &:focus {
-    display: inline-block;
-    box-shadow: 0 0 0 0.2rem #b9abe0;
-    backdrop-filter: blur(12rem);
-    border-radius: 0.5rem;
-    margin-top: 0.2rem;
-  }
-  &::placeholder {
-    color: #a8a4b199;
-    font-weight: 100;
-    font-size: 1rem;
-  }
-  @media (max-width: 767px) {
-    width: 100%;
-  }
-`;
-
-export const ProfileImage = styled.img`
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  object-fit: cover;
-  margin-right: 10px;
-  margin-bottom: 10px;
-`;
-
-export const HorizontalRule = styled.hr`
-  width: 100%;
-  height: 3px;
-  border-radius: 1rem;
-  border: none;
-  background-color: rgb(31, 38, 135, 0.37);
-  margin: 1.5rem auto;
-`;

@@ -1,17 +1,3 @@
 mutation ActivateAccount($token: String!) {
-  activateAccount(token: $token) {
-    ... on EntityResult {
-      messages
-    }
-    ... on Message {
-      id
-      from
-      image
-      isRead
-      title
-      body
-      type
-      createdOn
-    }
-  }
+  activateAccount(token: $token)
 }

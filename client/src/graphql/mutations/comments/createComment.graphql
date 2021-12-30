@@ -1,5 +1,5 @@
-mutation CreateComment($userId: ID!, $postId: ID!, $body: String) {
-  createComment(userId: $userId, postId: $postId, body: $body) {
+mutation CreateComment($userId: ID!, $slug: String!, $body: String) {
+  createComment(userId: $userId, slug: $slug, body: $body) {
     ... on Comment {
       id
       body

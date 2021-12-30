@@ -1,10 +1,6 @@
 import React from "react";
-import LeftSideBar from "../Dashboard/LeftSideBar";
-import SmallFooter from "../Dashboard/SmallFooter";
-import TopBar from "../Dashboard/TopBar";
+
 import {
-  PageContainer,
-  InnerContainer,
   PageHeading,
   PageSubHeading,
   PageWrapper,
@@ -18,15 +14,11 @@ import {
   ApplyButton,
   CardDuration,
 } from "../../styles/common.styles";
+import Dashboard from "../Dashboard";
 
 function SearchResult() {
   return (
-    <>
-      <PageContainer>
-        <LeftSideBar />
-
-        <InnerContainer>
-          <TopBar />
+    <Dashboard>
           <PageHeading>Here Book Results </PageHeading>
 
           <PageSubHeading>Books</PageSubHeading>
@@ -126,12 +118,7 @@ function SearchResult() {
               </CardBody>
             </PostCard>
           </PageWrapper>
-
-          <SmallFooter />
-        </InnerContainer>
-        {/* <PageRightSide>Live Forever Young</PageRightSide> */}
-      </PageContainer>
-    </>
+    </Dashboard>
   );
 }
 

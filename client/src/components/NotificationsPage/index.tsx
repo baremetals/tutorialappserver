@@ -16,12 +16,17 @@ import {
 import {
   GetMessagesByUserIdDocument,
   useNewMessageSubscription,
+  useDeleteMessageMutation,
 } from "../../generated/graphql";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { useQuery } from "@apollo/client";
 import Dashboard from 'components/Dashboard';
+import ErrorPage from 'components/ErrorPage';
 dayjs.extend(relativeTime);
+
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 type NotificationsPageType = {
   image: string;
@@ -29,16 +34,18 @@ type NotificationsPageType = {
   createdOn: string;
   id: string;
   from: string;
+  isRead: boolean;
 };
-function NotificationsPage() {
+function NotificationsPage({...props}:any) {
   const { ...result } = useQuery(GetMessagesByUserIdDocument);
   const notices = result.data?.getMessagesByUserId.msgs;
   const { data } = useNewMessageSubscription();
   const newNotice = data?.newMessage;
   const [noticeArray, setNoticeArray] = useState([]);
+  const [deleteNotice] = useDeleteMessageMutation();
 
-  const errrorMessage = result.data?.getMessagesByUserId.messages || ""
-
+  const errorMessage = result.data?.getMessagesByUserId.messages || ""
+  // console.log(result)
   useEffect(() => {
     if (newNotice) {
       const newMessageItem: NotificationsPageType = newNotice;
@@ -49,7 +56,18 @@ function NotificationsPage() {
     }
   }, [newNotice]);
 
-  // console.log(result.data);
+  const handleDelete = async (id: string) => {
+    const res = await deleteNotice({
+      variables: {id}
+    })
+    if (res.data?.deleteMessage.includes("deleted")) {
+      // console.log(res);
+      result.refetch(GetMessagesByUserIdDocument);
+    } else {
+      toast.error(res.data?.deleteMessage);
+    }
+  }
+  
   // console.log(data?.newMessage);
   // console.log(data?.newMessage);
   // console.log(data?.newMessage);
@@ -59,47 +77,56 @@ function NotificationsPage() {
   }
 
   if (result.error) {
-    return <div>oh mate this is embarrasing.....</div>;
+    return <ErrorPage statusCode={500} />;
   }
 
   // console.log(noticeArray);
 
   return (
     <Dashboard>
-          <PageHeading>Notifications</PageHeading>
-          {errrorMessage ? (
-            <div> You do not have any notifications</div>
-          ) : (
-            <>
-              {noticeArray
-                .concat(notices)
-                .map(
-                  (
-                    { body, image, createdOn, from }: NotificationsPageType,
-                    id
-                  ) => (
-                    <NoticesWrapper key={id}>
-                      <NoticeLeftWrap>
-                        <Link href={`user-profile/${from}`}>
-                          <SenderProfileImge
-                            alt="sender profile image"
-                            src={image}
-                          />
-                        </Link>
+      <PageHeading>Notifications</PageHeading>
+      {errorMessage ? (
+        <div> You do not have any notifications</div>
+      ) : (
+        <>
+          {noticeArray
+            .concat(notices)
+            .map(
+              ({
+                body,
+                image,
+                createdOn,
+                from,
+                isRead,
+                id,
+              }: NotificationsPageType) => (
+                <NoticesWrapper key={id}>
+                  <NoticeLeftWrap>
+                    <Link href={`user-profile/${from}`}>
+                      <SenderProfileImge
+                        alt="sender profile image"
+                        src={image == "BM" ? "/colorlogo.svg" : image}
+                      />
+                    </Link>
 
-                        <NoticeMessage>{body}</NoticeMessage>
-                        <NoticeDate>{dayjs(createdOn).fromNow()}</NoticeDate>
-                      </NoticeLeftWrap>
-                      <NoticeTopRightWrap>
-                        <DeleteIcon />
-                      </NoticeTopRightWrap>
-                    </NoticesWrapper>
-                  )
-                )}
-            </>
-          )}
+                    <NoticeMessage isRead={isRead} {...props}>
+                      <NoticeDate>{dayjs(createdOn).fromNow()}</NoticeDate>
+                      {body}
+                    </NoticeMessage>
+                  </NoticeLeftWrap>
+                  <NoticeTopRightWrap>
+                    <DeleteIcon {...props} onClick={() => handleDelete(id)} />
+                  </NoticeTopRightWrap>
+                </NoticesWrapper>
+              )
+            )}
+        </>
+      )}
+      <ToastContainer />
     </Dashboard>
   );
 }
 
 export default NotificationsPage;
+
+

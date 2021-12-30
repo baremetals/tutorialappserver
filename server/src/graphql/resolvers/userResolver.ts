@@ -16,15 +16,15 @@ import {
   getUserBySlugId
 } from "../../controllers/UserController";
 import { User } from "../../entities/User";
-import { GqlContext, pubsub } from "../GqlContext";
+import { GqlContext } from "../GqlContext";
 import { STANDARD_ERROR, EntityResult } from "../resolvers";
 import { ACCOUNT_ACTIVATED } from "../../lib/constants"
-// import { PubSub } from "graphql-subscriptions";
 import Redis from "ioredis";
-import { Message } from "../../entities/Message";
 import { QueryArrayResult } from '../../controllers/QuerryArrayResult';
+import { upload } from '../../controllers/UploadController';
+import { FileArgs } from '../../lib/files/types';
+import { bucketName } from '../../lib/files/storage';
 
-// const pubsub = new PubSub();
 
 const userResolver = {
   UserResult: {
@@ -54,11 +54,7 @@ const userResolver = {
     },
   },
 
-  Subscription: {
-    accountActivated: {
-      subscribe: () => pubsub.asyncIterator(ACCOUNT_ACTIVATED),
-    },
-  },
+  Subscription: {},
 
   Query: {
     me: async (
@@ -194,13 +190,11 @@ const userResolver = {
 
         return user && user.messages ? user.messages[0] : STANDARD_ERROR;
       } catch (ex) {
-        // console.log(ex)
-        // if (ex.code === "23505" && ex.detail.includes("Email")) {
-        //   return "This email is already registered";
-        // } else {
-        //   return "this username is already taken";
-        // }
-        throw ex;
+        if (ex.code === '23505' && ex.detail.includes(args.email)) {
+          return 'This email is already registered';
+        } else if (ex.code === '23505' && ex.detail.includes(args.username)) {
+          return 'this username is already taken';
+        } else throw ex;
       }
     },
 
@@ -209,31 +203,23 @@ const userResolver = {
       args: { token: string },
       _ctx: GqlContext,
       _info: any
-    ): Promise<Message | EntityResult> => {
+    ): Promise<string> => {
       const redis = new Redis();
       try {
         const key = ACCOUNT_ACTIVATED + args.token;
         const userId = await redis.get(key);
         if (!userId) {
-          return {
-            messages: ['this token has expired'],
-          };
+          return 'this token has expired';
         }
 
         let msg = await activateUser(userId);
-        // pubsub.publish(ACCOUNT_ACTIVATED, { msg });
 
-        if (msg && msg.msg) {
-          // console.log(msg.msg);
-          // pubsub.publish(ACCOUNT_ACTIVATED, { msg });
-          return msg.msg;
+        if (msg) {
+          return msg;
         }
-        pubsub.publish(ACCOUNT_ACTIVATED, { msg });
         await redis.del(key);
 
-        return {
-          messages: msg.messages ? msg.messages : [STANDARD_ERROR],
-        };
+        return msg;
       } catch (ex) {
         console.log(ex.message);
         throw ex;
@@ -253,7 +239,7 @@ const userResolver = {
           ctx.req.session!.userId = user.user.id;
           //console.log(ctx.req.session);
 
-          return `${user.user.userIdSlug}`;
+          return `success-${user.user.userIdSlug}`;
         }
 
         return user && user.messages ? user.messages[0] : STANDARD_ERROR;
@@ -353,7 +339,13 @@ const userResolver = {
 
     editMe: async (
       _obj: any,
-      args: { email: string; username: string; fullName: string },
+      args: {
+        email: string;
+        username: string;
+        fullName: string;
+        description: string;
+        location: string;
+      },
       ctx: GqlContext,
       _info: any
     ): Promise<string> => {
@@ -368,7 +360,9 @@ const userResolver = {
           // userId,
           args.email,
           args.username,
-          args.fullName
+          args.fullName,
+          args.description,
+          args.location
         );
 
         return result;
@@ -380,7 +374,7 @@ const userResolver = {
 
     editProfileImage: async (
       _obj: any,
-      args: { profileImage: string },
+      args: { parent: any; file: FileArgs },
       ctx: GqlContext,
       _info: any
     ): Promise<string> => {
@@ -389,14 +383,22 @@ const userResolver = {
           return 'You must be logged in to make this change.';
         }
 
-        // const userId = '46';
-        const result = await editProfileImage(
-          ctx.req.session!.userId,
-          // userId,
-          args.profileImage
+        const promise = await args.file.then(
+          async ({ filename, createReadStream }: FileArgs) => {
+            return { filename, createReadStream };
+          }
         );
 
-        return result;
+        const imageFilename = await upload(promise);
+
+        const imageUrl = `https://storage.googleapis.com/${bucketName}/testing folder/${imageFilename}`;
+
+        // const userId = '46';
+        return await editProfileImage(
+          ctx.req.session!.userId,
+          // userId,
+          imageUrl
+        );
       } catch (ex) {
         console.log(ex);
         throw ex;
@@ -405,7 +407,7 @@ const userResolver = {
 
     editBackGroundImage: async (
       _obj: any,
-      args: { backgroundImg: string },
+      args: { parent: any; file: FileArgs },
       ctx: GqlContext,
       _info: any
     ): Promise<string> => {
@@ -414,14 +416,23 @@ const userResolver = {
           return 'You must be logged in to make changes.';
         }
 
-        // const userId = '46';
-        const result = await editBackGroundImage(
-          ctx.req.session!.userId,
-          // userId,
-          args.backgroundImg
+        const promise = await args.file.then(
+          async ({ filename, createReadStream }: FileArgs) => {
+            return { filename, createReadStream };
+          }
         );
 
-        return result;
+        const imageFilename = await upload(promise);
+
+        const imageUrl = `https://storage.googleapis.com/${bucketName}/testing folder/${imageFilename}`;
+
+        // const userId = '46';
+        return await editBackGroundImage(
+          ctx.req.session!.userId,
+          // userId,
+          imageUrl
+        );
+
       } catch (ex) {
         console.log(ex);
         throw ex;

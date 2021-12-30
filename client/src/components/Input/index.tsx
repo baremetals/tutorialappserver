@@ -44,18 +44,18 @@ export const ErrorMsg = styled.span`
   justify-content: center;
   margin-top: 5px;
   background: red400;
-  color: red;
+  color: #f511a9;
   font-size: 0.9rem;
   text-transform: lowercase;
-  font-weight: bold;
+  font-weight: 500;
 `;
 
-export const SuccessMsg = styled.span`
+export const SuccessMsg = styled.div`
   display: flex;
   justify-content: center;
   margin-top: 5px;
-  background: red400;
-  color: #00ff55;
+  /* background: red400; */
+  color: #16addd;
   font-size: 0.9rem;
   text-transform: lowercase;
   font-weight: bold;

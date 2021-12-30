@@ -8,7 +8,7 @@ const Editor =
 
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 
-export const PostEditor = ({ editorState, onEditorStateChange, ...props }: any) => {
+const PostEditor = ({ editorState, onEditorStateChange, ...props }: any) => {
 
   return (
     <Editor
@@ -43,3 +43,4 @@ export const PostEditor = ({ editorState, onEditorStateChange, ...props }: any) 
   );
 };
 
+export default PostEditor

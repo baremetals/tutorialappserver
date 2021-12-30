@@ -5,6 +5,7 @@ import { Category } from "./Category";
 import { User } from "./User";
 // import {Comment } from "./Comment";
 import { Note } from "./Note";
+import { Search } from './Search';
 
 @Entity({ name: 'Courses' })
 export class Course extends SharedEntity {
@@ -83,4 +84,7 @@ export class Course extends SharedEntity {
 
   @OneToMany(() => Note, (notes) => notes.course)
   notes: Note[];
+
+  @ManyToOne(() => Search, (search) => search.courses)
+  search: Search;
 }

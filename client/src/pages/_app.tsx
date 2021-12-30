@@ -5,21 +5,44 @@ import React, { useEffect } from "react";
 import { ThemeProvider } from "styled-components";
 import store from "../app/store";
 import Head from "next/head";
+import nprogress from "nprogress";
+import Router from "next/router";
 import { darkTheme } from "../styles/theme";
-import "../styles/globals.css";
 import { useApollo } from "../lib/apolloClient";
 
 
-function MyApp({ Component, pageProps }: AppProps) {
+import "../styles/globals.css";
+import "nprogress/nprogress.css";
 
+
+
+function MyApp({ Component, pageProps }: AppProps) {
+  const startLoading = () => {
+    if (typeof window !== "undefined") {
+      nprogress.start();
+    }
+  };
+  const stopLoading = () => {
+    if (typeof window !== "undefined") {
+      nprogress.done();
+    }
+  };
   const apolloClient = useApollo(pageProps.initialApolloState);
 
   useEffect(() => {
+    nprogress.configure({ showSpinner: false });
+    Router.events.on("routeChangeStart", startLoading);
+    Router.events.on("routeChangeComplete", stopLoading);
     // Remove the server-side injected CSS.
     const jssStyles = document.querySelector("#jss-server-side");
     if (jssStyles) {
       jssStyles?.parentElement?.removeChild(jssStyles);
     }
+
+    return () => {
+      Router.events.on("routeChangeStart", startLoading);
+      Router.events.on("routeChangeComplete", stopLoading);
+    };
   }, []);
 
   return (

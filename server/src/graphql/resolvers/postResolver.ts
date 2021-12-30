@@ -199,7 +199,6 @@ const postResolver = {
         categoryName: string;
         title: string;
         body: string;
-        mediaUrl: string;
       },
       _ctx: GqlContext,
       _info: any
@@ -210,8 +209,7 @@ const postResolver = {
           args.userId,
           args.categoryName,
           args.title,
-          args.body,
-          args.mediaUrl
+          args.body
         );
         return {
           messages: result.messages ? result.messages : [STANDARD_ERROR],
@@ -228,7 +226,7 @@ const postResolver = {
         id: string;
         body: string;
         title: string;
-        categoryId: string;
+        categoryName: string;
       },
       ctx: GqlContext,
       _info: any
@@ -244,7 +242,7 @@ const postResolver = {
           args.id,
           args.body,
           args.title,
-          args.categoryId
+          args.categoryName
         );
 
         return {
@@ -304,29 +302,28 @@ const postResolver = {
 
     uploadFile: async (
       _obj: any,
-      args: { parent: any; file: FileArgs, id: string},
+      args: { parent: any; file: FileArgs; id: string },
       _ctx: GqlContext,
       _info: any
     ): Promise<string> => {
-
       const userRepository = getRepository(User);
 
       const user = await userRepository.findOne({
-        id: args.id
+        id: args.id,
       });
 
       if (!user) {
         return 'User not logged in.';
       }
-      
+
       const promise = await args.file.then(
         async ({ filename, createReadStream }: FileArgs) => {
           return { filename, createReadStream };
         }
       );
 
-      const result = await upload(promise)
-      
+      const result = await upload(promise);
+
       return `https://storage.googleapis.com/${bucketName}/testing folder/${result}`;
     },
   },

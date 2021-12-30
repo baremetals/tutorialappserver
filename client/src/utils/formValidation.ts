@@ -44,7 +44,7 @@ export const getChangePasswordValidationSchema = () => {
 
     newPassword: Yup.string()
       .required("Password is Required!")
-      .test("passwords-not-matching", "Passwords must not be the same as existing password", function (value) {
+      .test("passwords-not-matching", "Your new passwords must not be the same as existing password", function (value) {
         // eslint-disable-next-line no-invalid-this
         return this.parent.currentPassword !== value;
       })

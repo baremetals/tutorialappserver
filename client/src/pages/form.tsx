@@ -1,7 +1,16 @@
-import Converse from 'components/Conversation/Converse';
-import Topbar from 'components/Dashboard/TopBar';
+
 import { useIsAuth } from 'lib/isAuth';
 import React, { useEffect, useState } from "react";
+
+import {
+  FacebookShareCount,
+  HatenaShareCount,
+  OKShareCount,
+  PinterestShareCount,
+  RedditShareCount,
+  TumblrShareCount,
+  VKShareCount,
+} from "react-share";
 
 
 const form = () => {
@@ -9,7 +18,7 @@ const form = () => {
 
   return (
     <>
-      <Topbar />
+      {/* <ErrorPage statusCode={500} /> */}
       {/* <Converse /> */}
     </>
   );

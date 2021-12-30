@@ -6,6 +6,7 @@ import Share from "../Dashboard/Share";
 import { useAppSelector } from "app/hooks";
 import { isUser } from "features/auth/selectors";
 import { ForumRow, ForumColumn } from "styles/common.styles";
+import { DropDownIcon } from '../../../public/assets/icons/DropDownIcon';
 
 const FeedContainer = styled.div`
   flex: 5.5;
@@ -27,7 +28,7 @@ export default function UserFeed(props: any) {
   
   // logged in user info
   const { user: user } = useAppSelector(isUser); // logged in user
-  const [loggedIUser, setLoggedIUser] = useState(false);
+  const [loggedInUser, setLoggedInUser] = useState(false);
   const mappedUsers = user?.posts?.slice(); // logged in user
   const sortedUsers = mappedUsers?.sort((a, b) => {
     if (a.createdOn < b.createdOn) {
@@ -60,13 +61,13 @@ export default function UserFeed(props: any) {
 
   useEffect(() => {
     if (user?.userIdSlug === userIdSlug) {
-      setLoggedIUser(true);
+      setLoggedInUser(true);
     }
   }, [user, userIdSlug]);
   return (
     <FeedContainer>
       <FeedWrapper>
-        {loggedIUser && <Share />}
+        {loggedInUser && <Share />}
         <ForumRow>
           {user?.posts?.length === 0 ? (
             <div>No Posts</div>
@@ -83,7 +84,11 @@ export default function UserFeed(props: any) {
                     likeCount={post.points}
                     commentCount={8}
                     slug={post.slug}
-                  />
+                    id={post.id}
+                    {...props}
+                  >
+                    <DropDownIcon />
+                  </Card>
                 </ForumColumn>
               )
             )
@@ -111,6 +116,7 @@ export default function UserFeed(props: any) {
                     likeCount={post.points}
                     commentCount={8}
                     slug={post.slug}
+                    {...props}
                   />
                 </ForumColumn>
               )

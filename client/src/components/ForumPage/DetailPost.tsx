@@ -5,6 +5,7 @@ import { useUpdatePostPointMutation, User, PostPoint, Category, useNewCommentSub
 import { useAppSelector } from "app/hooks";
 import { isUser } from "features/auth/selectors";
 
+
 import {
   PostTop,
   PostLeftWrap,
@@ -35,10 +36,14 @@ dayjs.extend(relativeTime);
 import Comment  from "../Comments";
 import { ErrorMsg } from 'components/Input';
 import Dashboard from 'components/Dashboard';
-import { PageHeading } from 'styles/common.styles';
+import { PageHeading, SocialDropDown } from 'styles/common.styles';
 // import Dropdown from "../../Dropdown";
+import { MdEdit } from "react-icons/md";
+import styled from 'styled-components';
+import EditPostForm from './EditPostForm';
 
 interface ForumPost {
+  id: string;
   createdOn: any;
   title: string;
   body?: string;
@@ -66,6 +71,8 @@ const DetailPost = (props: { props: { data: any; loading: any; }; }) => {
   const router = useRouter();
   const { slug } = router.query;
 
+  const [showModal, setShowModal] = useState(false);
+
   const [likePost] = useUpdatePostPointMutation(); // like and unlike post function call
 
   const [hasLikedPost, setHasLikedPost] = useState(false);
@@ -81,12 +88,15 @@ const DetailPost = (props: { props: { data: any; loading: any; }; }) => {
 
   // data fro props
   const { data, loading } = props.props;
-  const { title, body, points, createdOn, creator, postPoints } =
+  const { id, title, body, category, points, createdOn, creator, postPoints } =
     data?.getPostBySlug as ForumPost;
 
   const [postPointNumber, setPostPointsNumber] = useState(0);
+
+
   
-  console.log(data);
+  
+  // console.log(props);
   // console.log(postPointNumber);
 
   // Comments Subscription data
@@ -232,7 +242,16 @@ const DetailPost = (props: { props: { data: any; loading: any; }; }) => {
 
   return (
     <Dashboard>
-      <PageHeading>{title}</PageHeading>
+      <PageHeading>
+        <SocialDropDown>
+          <span onClick={() => setShowModal(true)}>
+            <MdEdit />
+            Edit
+          </span>
+        </SocialDropDown>
+        {title}
+      </PageHeading>
+
       <PostTop>
         <PostLeftWrap>
           <Link href={`user-profile/${creator.userIdSlug}`}>
@@ -292,8 +311,23 @@ const DetailPost = (props: { props: { data: any; loading: any; }; }) => {
         </BottomRightWrap>
       </PostBottomWrapper>
       <Comment />
+      <EditPostForm
+        showModal={showModal}
+        closeM={() => setShowModal(false)}
+        setShowModal={setShowModal}
+        title={title}
+        category={category.name}
+        body={body as string}
+        id={id}
+      />
     </Dashboard>
   );
 };
 
 export default DetailPost;
+
+
+export const SocialDropDownIcon = styled(MdEdit)`
+  cursor: pointer;
+  display: block;
+`;

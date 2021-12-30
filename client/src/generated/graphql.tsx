@@ -205,13 +205,14 @@ export type MsgResult = EntityResult | Message;
 
 export type Mutation = {
   __typename?: 'Mutation';
-  activateAccount: MsgResult;
+  activateAccount: Scalars['String'];
   addABook: EntityResult;
   changePassword: Scalars['String'];
   createChatMessage?: Maybe<ChatMsgResult>;
   createComment: CommentResult;
   createCourse: EntityResult;
   createPost: EntityResult;
+  createSupportMessage: EntityResult;
   deleteAllMessagesByUserId: Scalars['String'];
   deleteChat: Scalars['String'];
   deleteChatMsg: Scalars['String'];
@@ -278,7 +279,7 @@ export type MutationCreateChatMessageArgs = {
 
 export type MutationCreateCommentArgs = {
   body?: Maybe<Scalars['String']>;
-  postId: Scalars['ID'];
+  slug: Scalars['String'];
   userId: Scalars['ID'];
 };
 
@@ -299,9 +300,17 @@ export type MutationCreateCourseArgs = {
 export type MutationCreatePostArgs = {
   body: Scalars['String'];
   categoryName: Scalars['String'];
-  mediaUrl: Scalars['String'];
   title: Scalars['String'];
   userId: Scalars['ID'];
+};
+
+
+export type MutationCreateSupportMessageArgs = {
+  body: Scalars['String'];
+  email: Scalars['String'];
+  fullName: Scalars['String'];
+  subject: Scalars['String'];
+  username?: Maybe<Scalars['String']>;
 };
 
 
@@ -346,7 +355,7 @@ export type MutationDeletePostArgs = {
 
 
 export type MutationEditBackGroundImageArgs = {
-  backgroundImg: Scalars['String'];
+  file: Scalars['Upload'];
 };
 
 
@@ -375,8 +384,10 @@ export type MutationEditCourseArgs = {
 
 
 export type MutationEditMeArgs = {
+  description: Scalars['String'];
   email: Scalars['String'];
   fullName: Scalars['String'];
+  location: Scalars['String'];
   username: Scalars['String'];
 };
 
@@ -390,14 +401,14 @@ export type MutationEditNoteArgs = {
 
 export type MutationEditPostArgs = {
   body: Scalars['String'];
-  categoryId: Scalars['ID'];
+  categoryName: Scalars['String'];
   id: Scalars['ID'];
   title: Scalars['String'];
 };
 
 
 export type MutationEditProfileImageArgs = {
-  profileImage: Scalars['String'];
+  file: Scalars['Upload'];
 };
 
 
@@ -536,7 +547,6 @@ export type Post = {
   isDisabled: Scalars['Boolean'];
   lastModifiedBy: Scalars['String'];
   lastModifiedOn: Scalars['Date'];
-  mediaUrl: Scalars['String'];
   points: Scalars['Int'];
   postPoints?: Maybe<Array<PostPoint>>;
   slug: Scalars['String'];
@@ -696,12 +706,34 @@ export type StudentArrayResult = EntityResult | StudentArray;
 
 export type Subscription = {
   __typename?: 'Subscription';
-  accountActivated: Message;
   newChat: Chat;
   newChatMessage: ChatMsg;
   newComment: Comment;
   newMessage: Message;
 };
+
+export type Support = {
+  __typename?: 'Support';
+  body: Scalars['String'];
+  createdBy: Scalars['String'];
+  createdOn: Scalars['Date'];
+  email: Scalars['String'];
+  fullName: Scalars['String'];
+  id: Scalars['ID'];
+  lastModifiedBy: Scalars['String'];
+  lastModifiedOn: Scalars['Date'];
+  subject: Scalars['String'];
+  username: Scalars['String'];
+};
+
+export type SupportArray = {
+  __typename?: 'SupportArray';
+  supports?: Maybe<Array<Support>>;
+};
+
+export type SupportArrayResult = EntityResult | SupportArray;
+
+export type SupportResult = EntityResult | Support;
 
 export type User = {
   __typename?: 'User';
@@ -744,7 +776,7 @@ export type ActivateAccountMutationVariables = Exact<{
 }>;
 
 
-export type ActivateAccountMutation = { __typename?: 'Mutation', activateAccount: { __typename?: 'EntityResult', messages?: Array<string> | null | undefined } | { __typename?: 'Message', id: string, from: string, image: string, isRead: boolean, title: string, body: string, type: string, createdOn: any } };
+export type ActivateAccountMutation = { __typename?: 'Mutation', activateAccount: string };
 
 export type ChangePasswordMutationVariables = Exact<{
   currentPassword: Scalars['String'];
@@ -758,6 +790,8 @@ export type EditMeMutationVariables = Exact<{
   email: Scalars['String'];
   username: Scalars['String'];
   fullName: Scalars['String'];
+  description: Scalars['String'];
+  location: Scalars['String'];
 }>;
 
 
@@ -823,12 +857,19 @@ export type RespondToChatMessageMutation = { __typename?: 'Mutation', respondToC
 
 export type CreateCommentMutationVariables = Exact<{
   userId: Scalars['ID'];
-  postId: Scalars['ID'];
+  slug: Scalars['String'];
   body?: Maybe<Scalars['String']>;
 }>;
 
 
 export type CreateCommentMutation = { __typename?: 'Mutation', createComment: { __typename?: 'Comment', id: string, body: string, createdBy: string, createdOn: any, user: { __typename?: 'User', id: string, username: string, userIdSlug?: string | null | undefined } } | { __typename?: 'EntityResult', messages?: Array<string> | null | undefined } };
+
+export type DeleteCommentMutationVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type DeleteCommentMutation = { __typename?: 'Mutation', deleteComment: string };
 
 export type JoinOrLeaveCourseMutationVariables = Exact<{
   courseId: Scalars['ID'];
@@ -838,16 +879,57 @@ export type JoinOrLeaveCourseMutationVariables = Exact<{
 
 export type JoinOrLeaveCourseMutation = { __typename?: 'Mutation', joinOrLeaveCourse: string };
 
+export type DeleteMessageMutationVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type DeleteMessageMutation = { __typename?: 'Mutation', deleteMessage: string };
+
+export type MarkAllMessagesReadByUserIdMutationVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type MarkAllMessagesReadByUserIdMutation = { __typename?: 'Mutation', markAllMessagesReadByUserId: string };
+
+export type CreateSupportMessageMutationVariables = Exact<{
+  fullName: Scalars['String'];
+  email: Scalars['String'];
+  body: Scalars['String'];
+  subject: Scalars['String'];
+  username?: Maybe<Scalars['String']>;
+}>;
+
+
+export type CreateSupportMessageMutation = { __typename?: 'Mutation', createSupportMessage: { __typename?: 'EntityResult', messages?: Array<string> | null | undefined } };
+
 export type CreatePostMutationVariables = Exact<{
   userId: Scalars['ID'];
   categoryName: Scalars['String'];
   title: Scalars['String'];
   body: Scalars['String'];
-  mediaUrl: Scalars['String'];
 }>;
 
 
 export type CreatePostMutation = { __typename?: 'Mutation', createPost: { __typename?: 'EntityResult', messages?: Array<string> | null | undefined } };
+
+export type DeletePostMutationVariables = Exact<{
+  id: Scalars['ID'];
+}>;
+
+
+export type DeletePostMutation = { __typename?: 'Mutation', deletePost: string };
+
+export type EditPostMutationVariables = Exact<{
+  id: Scalars['ID'];
+  title: Scalars['String'];
+  body: Scalars['String'];
+  categoryName: Scalars['String'];
+}>;
+
+
+export type EditPostMutation = { __typename?: 'Mutation', editPost: { __typename?: 'EntityResult', messages?: Array<string> | null | undefined } };
 
 export type UploadFileMutationVariables = Exact<{
   file: Scalars['Upload'];
@@ -871,14 +953,14 @@ export type DeleteMeMutationVariables = Exact<{ [key: string]: never; }>;
 export type DeleteMeMutation = { __typename?: 'Mutation', deleteMe: string };
 
 export type EditBackGroundImageMutationVariables = Exact<{
-  backgroundImg: Scalars['String'];
+  file: Scalars['Upload'];
 }>;
 
 
 export type EditBackGroundImageMutation = { __typename?: 'Mutation', editBackGroundImage: string };
 
 export type EditProfileImageMutationVariables = Exact<{
-  profileImage: Scalars['String'];
+  file: Scalars['Upload'];
 }>;
 
 
@@ -952,12 +1034,12 @@ export type GetPostBySlugQueryVariables = Exact<{
 }>;
 
 
-export type GetPostBySlugQuery = { __typename?: 'Query', getPostBySlug?: { __typename?: 'EntityResult' } | { __typename?: 'Post', id: string, slug: string, views: number, points: number, title: string, body: string, mediaUrl: string, createdOn: any, createdBy: string, creator: { __typename?: 'User', id: string, username: string, profileImage: string }, comments?: Array<{ __typename?: 'Comment', id: string }> | null | undefined, postPoints?: Array<{ __typename?: 'PostPoint', id: string, user: { __typename?: 'User', id: string } }> | null | undefined, category: { __typename?: 'Category', id: string, name: string } } | null | undefined };
+export type GetPostBySlugQuery = { __typename?: 'Query', getPostBySlug?: { __typename?: 'EntityResult' } | { __typename?: 'Post', id: string, slug: string, views: number, points: number, title: string, body: string, createdOn: any, createdBy: string, creator: { __typename?: 'User', id: string, username: string, profileImage: string }, comments?: Array<{ __typename?: 'Comment', id: string }> | null | undefined, postPoints?: Array<{ __typename?: 'PostPoint', id: string, user: { __typename?: 'User', id: string } }> | null | undefined, category: { __typename?: 'Category', id: string, name: string } } | null | undefined };
 
 export type GetLatestPostsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetLatestPostsQuery = { __typename?: 'Query', getLatestPosts: { __typename?: 'EntityResult', messages?: Array<string> | null | undefined } | { __typename?: 'PostArray', posts?: Array<{ __typename?: 'Post', id: string, slug: string, views: number, points: number, title: string, body: string, mediaUrl: string, createdBy: string, createdOn: any, creator: { __typename?: 'User', id: string, userIdSlug?: string | null | undefined, username: string, profileImage: string }, comments?: Array<{ __typename?: 'Comment', id: string, body: string, createdBy: string, createdOn: any }> | null | undefined, category: { __typename?: 'Category', id: string, name: string } }> | null | undefined } };
+export type GetLatestPostsQuery = { __typename?: 'Query', getLatestPosts: { __typename?: 'EntityResult', messages?: Array<string> | null | undefined } | { __typename?: 'PostArray', posts?: Array<{ __typename?: 'Post', id: string, slug: string, views: number, points: number, title: string, body: string, createdBy: string, createdOn: any, creator: { __typename?: 'User', id: string, userIdSlug?: string | null | undefined, username: string, profileImage: string }, comments?: Array<{ __typename?: 'Comment', id: string, body: string, createdBy: string, createdOn: any }> | null | undefined, category: { __typename?: 'Category', id: string, name: string } }> | null | undefined } };
 
 export type GetUserBySlugIdQueryVariables = Exact<{
   userIdSlug: Scalars['String'];
@@ -1001,21 +1083,7 @@ export type NewMessageSubscription = { __typename?: 'Subscription', newMessage: 
 
 export const ActivateAccountDocument = gql`
     mutation ActivateAccount($token: String!) {
-  activateAccount(token: $token) {
-    ... on EntityResult {
-      messages
-    }
-    ... on Message {
-      id
-      from
-      image
-      isRead
-      title
-      body
-      type
-      createdOn
-    }
-  }
+  activateAccount(token: $token)
 }
     `;
 export type ActivateAccountMutationFn = Apollo.MutationFunction<ActivateAccountMutation, ActivateAccountMutationVariables>;
@@ -1077,8 +1145,14 @@ export type ChangePasswordMutationHookResult = ReturnType<typeof useChangePasswo
 export type ChangePasswordMutationResult = Apollo.MutationResult<ChangePasswordMutation>;
 export type ChangePasswordMutationOptions = Apollo.BaseMutationOptions<ChangePasswordMutation, ChangePasswordMutationVariables>;
 export const EditMeDocument = gql`
-    mutation EditMe($email: String!, $username: String!, $fullName: String!) {
-  editMe(email: $email, username: $username, fullName: $fullName)
+    mutation EditMe($email: String!, $username: String!, $fullName: String!, $description: String!, $location: String!) {
+  editMe(
+    email: $email
+    username: $username
+    fullName: $fullName
+    description: $description
+    location: $location
+  )
 }
     `;
 export type EditMeMutationFn = Apollo.MutationFunction<EditMeMutation, EditMeMutationVariables>;
@@ -1099,6 +1173,8 @@ export type EditMeMutationFn = Apollo.MutationFunction<EditMeMutation, EditMeMut
  *      email: // value for 'email'
  *      username: // value for 'username'
  *      fullName: // value for 'fullName'
+ *      description: // value for 'description'
+ *      location: // value for 'location'
  *   },
  * });
  */
@@ -1349,8 +1425,8 @@ export type RespondToChatMessageMutationHookResult = ReturnType<typeof useRespon
 export type RespondToChatMessageMutationResult = Apollo.MutationResult<RespondToChatMessageMutation>;
 export type RespondToChatMessageMutationOptions = Apollo.BaseMutationOptions<RespondToChatMessageMutation, RespondToChatMessageMutationVariables>;
 export const CreateCommentDocument = gql`
-    mutation CreateComment($userId: ID!, $postId: ID!, $body: String) {
-  createComment(userId: $userId, postId: $postId, body: $body) {
+    mutation CreateComment($userId: ID!, $slug: String!, $body: String) {
+  createComment(userId: $userId, slug: $slug, body: $body) {
     ... on Comment {
       id
       body
@@ -1384,7 +1460,7 @@ export type CreateCommentMutationFn = Apollo.MutationFunction<CreateCommentMutat
  * const [createCommentMutation, { data, loading, error }] = useCreateCommentMutation({
  *   variables: {
  *      userId: // value for 'userId'
- *      postId: // value for 'postId'
+ *      slug: // value for 'slug'
  *      body: // value for 'body'
  *   },
  * });
@@ -1396,6 +1472,37 @@ export function useCreateCommentMutation(baseOptions?: Apollo.MutationHookOption
 export type CreateCommentMutationHookResult = ReturnType<typeof useCreateCommentMutation>;
 export type CreateCommentMutationResult = Apollo.MutationResult<CreateCommentMutation>;
 export type CreateCommentMutationOptions = Apollo.BaseMutationOptions<CreateCommentMutation, CreateCommentMutationVariables>;
+export const DeleteCommentDocument = gql`
+    mutation DeleteComment($id: ID!) {
+  deleteComment(id: $id)
+}
+    `;
+export type DeleteCommentMutationFn = Apollo.MutationFunction<DeleteCommentMutation, DeleteCommentMutationVariables>;
+
+/**
+ * __useDeleteCommentMutation__
+ *
+ * To run a mutation, you first call `useDeleteCommentMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteCommentMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteCommentMutation, { data, loading, error }] = useDeleteCommentMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useDeleteCommentMutation(baseOptions?: Apollo.MutationHookOptions<DeleteCommentMutation, DeleteCommentMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteCommentMutation, DeleteCommentMutationVariables>(DeleteCommentDocument, options);
+      }
+export type DeleteCommentMutationHookResult = ReturnType<typeof useDeleteCommentMutation>;
+export type DeleteCommentMutationResult = Apollo.MutationResult<DeleteCommentMutation>;
+export type DeleteCommentMutationOptions = Apollo.BaseMutationOptions<DeleteCommentMutation, DeleteCommentMutationVariables>;
 export const JoinOrLeaveCourseDocument = gql`
     mutation JoinOrLeaveCourse($courseId: ID!, $join: Boolean!) {
   joinOrLeaveCourse(courseId: $courseId, join: $join)
@@ -1428,14 +1535,118 @@ export function useJoinOrLeaveCourseMutation(baseOptions?: Apollo.MutationHookOp
 export type JoinOrLeaveCourseMutationHookResult = ReturnType<typeof useJoinOrLeaveCourseMutation>;
 export type JoinOrLeaveCourseMutationResult = Apollo.MutationResult<JoinOrLeaveCourseMutation>;
 export type JoinOrLeaveCourseMutationOptions = Apollo.BaseMutationOptions<JoinOrLeaveCourseMutation, JoinOrLeaveCourseMutationVariables>;
+export const DeleteMessageDocument = gql`
+    mutation DeleteMessage($id: ID!) {
+  deleteMessage(id: $id)
+}
+    `;
+export type DeleteMessageMutationFn = Apollo.MutationFunction<DeleteMessageMutation, DeleteMessageMutationVariables>;
+
+/**
+ * __useDeleteMessageMutation__
+ *
+ * To run a mutation, you first call `useDeleteMessageMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteMessageMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteMessageMutation, { data, loading, error }] = useDeleteMessageMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useDeleteMessageMutation(baseOptions?: Apollo.MutationHookOptions<DeleteMessageMutation, DeleteMessageMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteMessageMutation, DeleteMessageMutationVariables>(DeleteMessageDocument, options);
+      }
+export type DeleteMessageMutationHookResult = ReturnType<typeof useDeleteMessageMutation>;
+export type DeleteMessageMutationResult = Apollo.MutationResult<DeleteMessageMutation>;
+export type DeleteMessageMutationOptions = Apollo.BaseMutationOptions<DeleteMessageMutation, DeleteMessageMutationVariables>;
+export const MarkAllMessagesReadByUserIdDocument = gql`
+    mutation MarkAllMessagesReadByUserId($id: ID!) {
+  markAllMessagesReadByUserId(id: $id)
+}
+    `;
+export type MarkAllMessagesReadByUserIdMutationFn = Apollo.MutationFunction<MarkAllMessagesReadByUserIdMutation, MarkAllMessagesReadByUserIdMutationVariables>;
+
+/**
+ * __useMarkAllMessagesReadByUserIdMutation__
+ *
+ * To run a mutation, you first call `useMarkAllMessagesReadByUserIdMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useMarkAllMessagesReadByUserIdMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [markAllMessagesReadByUserIdMutation, { data, loading, error }] = useMarkAllMessagesReadByUserIdMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useMarkAllMessagesReadByUserIdMutation(baseOptions?: Apollo.MutationHookOptions<MarkAllMessagesReadByUserIdMutation, MarkAllMessagesReadByUserIdMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<MarkAllMessagesReadByUserIdMutation, MarkAllMessagesReadByUserIdMutationVariables>(MarkAllMessagesReadByUserIdDocument, options);
+      }
+export type MarkAllMessagesReadByUserIdMutationHookResult = ReturnType<typeof useMarkAllMessagesReadByUserIdMutation>;
+export type MarkAllMessagesReadByUserIdMutationResult = Apollo.MutationResult<MarkAllMessagesReadByUserIdMutation>;
+export type MarkAllMessagesReadByUserIdMutationOptions = Apollo.BaseMutationOptions<MarkAllMessagesReadByUserIdMutation, MarkAllMessagesReadByUserIdMutationVariables>;
+export const CreateSupportMessageDocument = gql`
+    mutation CreateSupportMessage($fullName: String!, $email: String!, $body: String!, $subject: String!, $username: String) {
+  createSupportMessage(
+    fullName: $fullName
+    email: $email
+    body: $body
+    subject: $subject
+    username: $username
+  ) {
+    messages
+  }
+}
+    `;
+export type CreateSupportMessageMutationFn = Apollo.MutationFunction<CreateSupportMessageMutation, CreateSupportMessageMutationVariables>;
+
+/**
+ * __useCreateSupportMessageMutation__
+ *
+ * To run a mutation, you first call `useCreateSupportMessageMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateSupportMessageMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createSupportMessageMutation, { data, loading, error }] = useCreateSupportMessageMutation({
+ *   variables: {
+ *      fullName: // value for 'fullName'
+ *      email: // value for 'email'
+ *      body: // value for 'body'
+ *      subject: // value for 'subject'
+ *      username: // value for 'username'
+ *   },
+ * });
+ */
+export function useCreateSupportMessageMutation(baseOptions?: Apollo.MutationHookOptions<CreateSupportMessageMutation, CreateSupportMessageMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateSupportMessageMutation, CreateSupportMessageMutationVariables>(CreateSupportMessageDocument, options);
+      }
+export type CreateSupportMessageMutationHookResult = ReturnType<typeof useCreateSupportMessageMutation>;
+export type CreateSupportMessageMutationResult = Apollo.MutationResult<CreateSupportMessageMutation>;
+export type CreateSupportMessageMutationOptions = Apollo.BaseMutationOptions<CreateSupportMessageMutation, CreateSupportMessageMutationVariables>;
 export const CreatePostDocument = gql`
-    mutation CreatePost($userId: ID!, $categoryName: String!, $title: String!, $body: String!, $mediaUrl: String!) {
+    mutation CreatePost($userId: ID!, $categoryName: String!, $title: String!, $body: String!) {
   createPost(
     userId: $userId
     categoryName: $categoryName
     title: $title
     body: $body
-    mediaUrl: $mediaUrl
   ) {
     messages
   }
@@ -1460,7 +1671,6 @@ export type CreatePostMutationFn = Apollo.MutationFunction<CreatePostMutation, C
  *      categoryName: // value for 'categoryName'
  *      title: // value for 'title'
  *      body: // value for 'body'
- *      mediaUrl: // value for 'mediaUrl'
  *   },
  * });
  */
@@ -1471,6 +1681,73 @@ export function useCreatePostMutation(baseOptions?: Apollo.MutationHookOptions<C
 export type CreatePostMutationHookResult = ReturnType<typeof useCreatePostMutation>;
 export type CreatePostMutationResult = Apollo.MutationResult<CreatePostMutation>;
 export type CreatePostMutationOptions = Apollo.BaseMutationOptions<CreatePostMutation, CreatePostMutationVariables>;
+export const DeletePostDocument = gql`
+    mutation DeletePost($id: ID!) {
+  deletePost(id: $id)
+}
+    `;
+export type DeletePostMutationFn = Apollo.MutationFunction<DeletePostMutation, DeletePostMutationVariables>;
+
+/**
+ * __useDeletePostMutation__
+ *
+ * To run a mutation, you first call `useDeletePostMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeletePostMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deletePostMutation, { data, loading, error }] = useDeletePostMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useDeletePostMutation(baseOptions?: Apollo.MutationHookOptions<DeletePostMutation, DeletePostMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeletePostMutation, DeletePostMutationVariables>(DeletePostDocument, options);
+      }
+export type DeletePostMutationHookResult = ReturnType<typeof useDeletePostMutation>;
+export type DeletePostMutationResult = Apollo.MutationResult<DeletePostMutation>;
+export type DeletePostMutationOptions = Apollo.BaseMutationOptions<DeletePostMutation, DeletePostMutationVariables>;
+export const EditPostDocument = gql`
+    mutation EditPost($id: ID!, $title: String!, $body: String!, $categoryName: String!) {
+  editPost(id: $id, title: $title, body: $body, categoryName: $categoryName) {
+    messages
+  }
+}
+    `;
+export type EditPostMutationFn = Apollo.MutationFunction<EditPostMutation, EditPostMutationVariables>;
+
+/**
+ * __useEditPostMutation__
+ *
+ * To run a mutation, you first call `useEditPostMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useEditPostMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [editPostMutation, { data, loading, error }] = useEditPostMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *      title: // value for 'title'
+ *      body: // value for 'body'
+ *      categoryName: // value for 'categoryName'
+ *   },
+ * });
+ */
+export function useEditPostMutation(baseOptions?: Apollo.MutationHookOptions<EditPostMutation, EditPostMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<EditPostMutation, EditPostMutationVariables>(EditPostDocument, options);
+      }
+export type EditPostMutationHookResult = ReturnType<typeof useEditPostMutation>;
+export type EditPostMutationResult = Apollo.MutationResult<EditPostMutation>;
+export type EditPostMutationOptions = Apollo.BaseMutationOptions<EditPostMutation, EditPostMutationVariables>;
 export const UploadFileDocument = gql`
     mutation UploadFile($file: Upload!, $id: ID!) {
   uploadFile(file: $file, id: $id)
@@ -1566,8 +1843,8 @@ export type DeleteMeMutationHookResult = ReturnType<typeof useDeleteMeMutation>;
 export type DeleteMeMutationResult = Apollo.MutationResult<DeleteMeMutation>;
 export type DeleteMeMutationOptions = Apollo.BaseMutationOptions<DeleteMeMutation, DeleteMeMutationVariables>;
 export const EditBackGroundImageDocument = gql`
-    mutation EditBackGroundImage($backgroundImg: String!) {
-  editBackGroundImage(backgroundImg: $backgroundImg)
+    mutation EditBackGroundImage($file: Upload!) {
+  editBackGroundImage(file: $file)
 }
     `;
 export type EditBackGroundImageMutationFn = Apollo.MutationFunction<EditBackGroundImageMutation, EditBackGroundImageMutationVariables>;
@@ -1585,7 +1862,7 @@ export type EditBackGroundImageMutationFn = Apollo.MutationFunction<EditBackGrou
  * @example
  * const [editBackGroundImageMutation, { data, loading, error }] = useEditBackGroundImageMutation({
  *   variables: {
- *      backgroundImg: // value for 'backgroundImg'
+ *      file: // value for 'file'
  *   },
  * });
  */
@@ -1597,8 +1874,8 @@ export type EditBackGroundImageMutationHookResult = ReturnType<typeof useEditBac
 export type EditBackGroundImageMutationResult = Apollo.MutationResult<EditBackGroundImageMutation>;
 export type EditBackGroundImageMutationOptions = Apollo.BaseMutationOptions<EditBackGroundImageMutation, EditBackGroundImageMutationVariables>;
 export const EditProfileImageDocument = gql`
-    mutation EditProfileImage($profileImage: String!) {
-  editProfileImage(profileImage: $profileImage)
+    mutation EditProfileImage($file: Upload!) {
+  editProfileImage(file: $file)
 }
     `;
 export type EditProfileImageMutationFn = Apollo.MutationFunction<EditProfileImageMutation, EditProfileImageMutationVariables>;
@@ -1616,7 +1893,7 @@ export type EditProfileImageMutationFn = Apollo.MutationFunction<EditProfileImag
  * @example
  * const [editProfileImageMutation, { data, loading, error }] = useEditProfileImageMutation({
  *   variables: {
- *      profileImage: // value for 'profileImage'
+ *      file: // value for 'file'
  *   },
  * });
  */
@@ -2191,7 +2468,6 @@ export const GetPostBySlugDocument = gql`
       points
       title
       body
-      mediaUrl
       createdOn
       createdBy
       creator {
@@ -2258,7 +2534,6 @@ export const GetLatestPostsDocument = gql`
         points
         title
         body
-        mediaUrl
         createdBy
         createdOn
         creator {

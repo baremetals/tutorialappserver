@@ -2,23 +2,18 @@ import React from "react";
 import styled from "styled-components";
 import { MdDeleteForever, MdEdit } from "react-icons/md";
 
-const Dropdown = ({ showDropdown, ...props }: any) => {
+
+
+const Dropdown = ({ showDropdown, slug, id, children, ...props }: any) => {
   return (
     <>
-      {showDropdown ? (
+      {showDropdown && (
         <CardContainer showDropdown={showDropdown} {...props}>
           <DropdownCard>
-            <ItemWrapper>
-              <EditIcon />
-              <ItemText>Edit</ItemText>
-            </ItemWrapper>
-            <ItemWrapper>
-              <DeleteIcon />
-              <ItemText>Delete</ItemText>
-            </ItemWrapper>
+            {children}
           </DropdownCard>
         </CardContainer>
-      ) : null}
+      )}
     </>
   );
 };

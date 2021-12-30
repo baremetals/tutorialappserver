@@ -14,9 +14,9 @@ import {
   ShareButton,
 } from "./share.styles";
 import { MdPermMedia, MdOndemandVideo, MdTextsms } from "react-icons/md";
-import Modal from "components/ShareForm/Modal";
 import { useAppSelector } from "app/hooks";
 import { isUser } from "features/auth/selectors";
+import PostForm from 'components/ForumPage/PostForm';
 
 const Share = () => {
   const { user: user } = useAppSelector(isUser);
@@ -60,7 +60,7 @@ const Share = () => {
           </ShareBottomWrap>
         </ShareWrapper>
       </ShareContainer>
-      <Modal
+      <PostForm
         showModal={showModal}
         closeM={() => setShowModal(false)}
         setShowModal={setShowModal}

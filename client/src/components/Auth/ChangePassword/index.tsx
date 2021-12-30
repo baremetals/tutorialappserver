@@ -4,6 +4,7 @@ import { Formik } from "formik";
 import { getForgotPasswordValidationSchema } from "utils/formValidation";
 import { useForgotPasswordMutation } from "generated/graphql";
 import { ErrorMsg, Input, Error, SuccessMsg } from "../../Input";
+import NextImage from "next/image";
 import Button from "../Button";
 import {
   MainContainer,
@@ -14,6 +15,9 @@ import {
   PageContainer,
   FormWrap,
   HorizontalRule,
+  FormWrapRow,
+  FormWrapThumb,
+  BackToHome,
 } from "../auth-styles";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -38,7 +42,7 @@ const ChangePassword = () => {
           ...values,
         },
       })
-      console.log(response.data)
+      // console.log(response.data)
       if (response.data?.forgotPassword.includes("reset link")) {
         const msg: any = response.data?.forgotPassword;
         setSuccessMsg(true);
@@ -66,39 +70,54 @@ const ChangePassword = () => {
             validationSchema={getForgotPasswordValidationSchema}
           >
             {({ isSubmitting, errors, touched }) => (
-              <FormWrap>
-                <MainContainer>
-                  <WelcomeText>forgot password</WelcomeText>
-                  {errorMsg && <ErrorMsg>{initialValues.error}</ErrorMsg>}
-                  {successMsg && (
-                    <SuccessMsg>{initialValues.success}</SuccessMsg>
-                  )}
-                  <InputContainer>
-                    <div className="form-group">
-                      <Input
-                        type="text"
-                        placeholder="Email or Username"
-                        name="usernameOrEmail"
-                        values="usernameOrEmail"
+              <FormWrapRow>
+                <Link href="/">
+                  <BackToHome>Home</BackToHome>
+                </Link>
+                <FormWrap>
+                  <MainContainer>
+                    <WelcomeText>Forgot Password</WelcomeText>
+
+                    <InputContainer>
+                      <div className="form-group">
+                        <Input
+                          type="text"
+                          placeholder="Email or Username"
+                          name="usernameOrEmail"
+                          values="usernameOrEmail"
+                        />
+                        {errors.usernameOrEmail && touched.usernameOrEmail && (
+                          <Error>{errors.usernameOrEmail}</Error>
+                        )}
+                      </div>
+                    </InputContainer>
+                    <ButtonContainer>
+                      <Button
+                        type="submit"
+                        content="send"
+                        disabled={isSubmitting}
                       />
-                      {errors.usernameOrEmail && touched.usernameOrEmail && (
-                        <Error>{errors.usernameOrEmail}</Error>
-                      )}
-                    </div>
-                  </InputContainer>
-                  <ButtonContainer>
-                    <Button
-                      type="submit"
-                      content="send"
-                      disabled={isSubmitting}
-                    />
-                  </ButtonContainer>
-                  <HorizontalRule />
-                  <Link href="/signin">
-                    <BackToLogin>back to login?</BackToLogin>
-                  </Link>
-                </MainContainer>
-              </FormWrap>
+                      <Link href="/signin">
+                        <BackToLogin>back to login?</BackToLogin>
+                      </Link>
+                    </ButtonContainer>
+                    {errorMsg && <ErrorMsg>{initialValues.error}</ErrorMsg>}
+                    {successMsg && (
+                      <SuccessMsg>{initialValues.success}</SuccessMsg>
+                    )}
+                    <HorizontalRule />
+                  </MainContainer>
+                </FormWrap>
+                <FormWrapThumb>
+                  <NextImage
+                    src="/assets/images/forgotpassword.svg"
+                    alt="forgot password image"
+                    width={450}
+                    height={300}
+                    layout="responsive"
+                  />
+                </FormWrapThumb>
+              </FormWrapRow>
             )}
           </Formik>
         </PageContainer>

@@ -23,6 +23,7 @@ import bookResolver from "./graphql/resolvers/bookResolver";
 import noteResolver from "./graphql/resolvers/noteResolver";
 import messageResolver from './graphql/resolvers/msgResolver';
 import chatResolver from './graphql/resolvers/chatResolver';
+import adminResolver from './graphql/resolvers/adminResolvers';
 
 // import creatGroup from "./controllers/GroupController"
 
@@ -91,6 +92,7 @@ const main = async () => {
       noteResolver,
       messageResolver,
       chatResolver,
+      adminResolver,
     ],
   });
 

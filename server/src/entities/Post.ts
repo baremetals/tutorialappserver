@@ -11,6 +11,7 @@ import { Comment } from "./Comment";
 import { PostPoint } from "./PostPoint";
 import { Category } from "./Category";
 import { SharedEntity } from "./SharedEntity";
+import { Search } from './Search';
 
 @Entity({ name: 'Posts' })
 export class Post extends SharedEntity {
@@ -42,9 +43,6 @@ export class Post extends SharedEntity {
   @Length(10, 2500)
   body: string;
 
-  @Column('varchar', { name: 'MediaUrl', length: 2500, nullable: true })
-  mediaUrl: string;
-
   @ManyToOne(() => User, (user: User) => user.posts)
   creator: User;
 
@@ -56,4 +54,7 @@ export class Post extends SharedEntity {
 
   @ManyToOne(() => Category, (category) => category.posts)
   category: Category;
+
+  @ManyToOne(() => Search, (search) => search.posts)
+  search: Search;
 }

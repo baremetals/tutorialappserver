@@ -3,12 +3,13 @@ import {
   GetServerSideProps,
   GetServerSidePropsContext,
 } from "next";
-import styled from "styled-components";
+
 import { useRouter } from "next/router";
-import Link from "next/link";
 import { ToastContainer, toast } from "react-toastify";
+
+import ConfirmAccount from "../../components/Auth/ConfirmAccount"
 import "react-toastify/dist/ReactToastify.css";
-import {client} from "../_app";
+import { client } from "../../lib/initApollo";
 
 // for data fetching
 import { ErrorMsg } from "components/Input";
@@ -28,30 +29,36 @@ const ActivateAccount = (props: any) => {
 
   useEffect(() => {
     if (res == "Your account is now confirmed.") {
-      console.log(response.data);
       toast.success(response.data?.activateAccount);
       setTimeout(() => {
         router.push("/signin");
-      }, 5000);
+      }, 3000);
     } else {
+      toast.error(response.data?.activateAccount);
       setTimeout(() => {
-        toast.error(response.data?.activateAccount);
-      }, 5000);
+        router.push("/");
+      }, 3000);
     }
   }, []);
 
   return (
-    <Container>
+    <>
       {res !== "Your account is now confirmed." ? (
-        <ErrorMsg>{res}</ErrorMsg>
+        <ConfirmAccount image="/assets/images/error.svg">
+          <ErrorMsg>{res}</ErrorMsg>
+          <br />
+          <br />
+        </ConfirmAccount>
       ) : (
-        <div>
-          Thanks for registering an account please{" "}
-          <Link href="/signin">login</Link> to access your account
-        </div>
+        <ConfirmAccount image="/assets/images/activate.svg">
+          Thanks for registering an account please login to access your account
+          <br />
+          <br />
+        </ConfirmAccount>
       )}
+
       <ToastContainer />
-    </Container>
+    </>
   );
 };
 export const getServerSideProps: GetServerSideProps = async({ query: { token } }: GetServerSidePropsContext) =>{
@@ -63,13 +70,9 @@ export const getServerSideProps: GetServerSideProps = async({ query: { token } }
   });
   return {
     props:  { data }, // will be passed to the page component as props
-    // redirect: {
-    //   permanent: false,
-    //   destination: "/signin"
-    // }
   };
 }
-const Container = styled.div``;
+
 
 export default withApollo({ ssr: false })(ActivateAccount);
 

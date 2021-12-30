@@ -59,3 +59,17 @@ export const ProfileRightBottomWrap = styled.div`
     padding: 1rem;
   }
 `;
+
+export const MessageButtonWrap = styled.div`
+  button {
+    background-color: #7755e2;
+    color: #fff;
+    border-radius: 0.4rem;
+    height: 2.25rem;
+    width: 100%;
+    padding: 4px;
+    cursor: pointer;
+  }
+`;
+
+export const MessageButton = styled.button;

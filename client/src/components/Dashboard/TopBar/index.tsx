@@ -1,10 +1,6 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import Link from "next/link";
 import { useRouter } from "next/router";
-// for data fetching
-// import { useMeQuery } from "generated/graphql";
-// import { useAppDispatch} from "app/hooks";
-// import { setUser } from "features/auth/reducers";
 
 // styled components
 import {
@@ -17,49 +13,24 @@ import {
   TopRightWrap,
   TopSearchButton,
   Icons,
-  IconItem,
-  IconBadge,
   ProfileImg,
   ProfileSetting,
   ProfileDropdown,
   ProfileItem,
 } from "./topbar.styles";
 
-import { CommentIcon } from "../../../../public/assets/icons/CommentIcon";
-import { WellIcon } from "../../../../public/assets/icons/WellIcon";
 import { Logo } from "../../../../public/assets/images/Logo";
 import { TopSearchIcon } from "../../../../public/assets/icons/TopSearchIcon";
 
-// import { ErrorMsg } from 'components/Input';
 import { useAppSelector } from "app/hooks";
 import { isUser } from "features/auth/selectors";
 import {
-  GetUnReadMessagesByUserIdDocument,
   useLogoutMutation,
-  useNewMessageSubscription,
-  GetAllUnReadChatMsgsByUserIdDocument,
-  useNewChatMessageSubscription,
-  User,
 } from "generated/graphql";
-import { useQuery } from '@apollo/client';
+
 import { BackOverlay } from '../LeftSideBar/leftside.styles';
-
-type NotificationsPageType = {
-  image: string;
-  body: string;
-  createdOn: string;
-  id: string;
-};
-
-type MessagePageType = {
-  body: string;
-  createdBy: string;
-  id: string;
-  createdOn: string;
-  isRead: boolean;
-  receiver: User;
-  sender: User;
-};
+import AlarmBell from './AlarmBell';
+import ChatIcon from './ChatIcon';
 
 const Topbar = () => {
   const router = useRouter();
@@ -69,58 +40,9 @@ const Topbar = () => {
   const [search, setSearch] = useState(false);
   const { user: user } = useAppSelector(isUser);
 
-  // Notifications Call
-  const { ...result } = useQuery(GetUnReadMessagesByUserIdDocument);
-  const notices = result.data?.getUnReadMessagesByUserId.msgs;
-  const { data } = useNewMessageSubscription();
-  const newNotice = data?.newMessage;
-  const [noticeArray, setNoticeArray] = useState([]);
 
-  // Chat Messages Call
-  const rs = useQuery(GetAllUnReadChatMsgsByUserIdDocument);
-  const dta = useNewChatMessageSubscription();
-  const newChatMessage = dta?.data?.newChatMessage;
-  const messages = rs.data?.getAllUnReadChatMsgsByUserId.chatMsgs;
-
-  const [msgArray, setMsgArray] = useState([]);
-
-  // console.log(dta);
-
-  // Notifications Call
-  useEffect(() => {
-    if (newNotice) {
-      const newMessageItem: NotificationsPageType = newNotice;
-      const newArrayItem: any = (prevArray: NotificationsPageType[]) => {
-        return [newMessageItem, ...prevArray];
-      };
-      setNoticeArray(newArrayItem);
-    }
-  }, [newNotice]);
-
-  // Chat Messages Call
-
-  useEffect(() => {
-    if (newChatMessage) {
-      const newChatMessageItem = newChatMessage;
-      const newArrayItem: any = (prevArray: MessagePageType[]) => {
-        return [...prevArray, newChatMessageItem];
-      };
-      setMsgArray(newArrayItem);
-    }
-  }, [newChatMessage]);
-
-  const noticeLength: number = noticeArray.concat(notices).length;
-  const chatMsgLength: number = msgArray.concat(messages).length;
-
-  // console.log(notices.length)
-  // const dispatch = useAppDispatch();
-  // const { data, loading, error } = useMeQuery();
-  // if (!data || loading) {
-  //   return <div>loading...</div>;
-  // }
-  // if (error) return <ErrorMsg>{error}</ErrorMsg>;
   const me = user;
-  // dispatch(setUser(me));
+
   const handleLogOut = async () => {
     try {
       const res = await logout({
@@ -171,7 +93,7 @@ const Topbar = () => {
             <TopSearchIcon />
           </TopSearchButton>
           <SearchInput
-            placeholder="Search for courses, posts or users"
+            placeholder="Search for courses, posts or users then hit enter"
             onKeyUp={(event) => onSearch(event)}
           />
         </SearchBar>
@@ -184,18 +106,8 @@ const Topbar = () => {
       </TopCenterWrap>
       <TopRightWrap>
         <Icons>
-          <IconItem>
-            <CommentIcon />
-            {chatMsgLength !== 0 && <IconBadge>{chatMsgLength}</IconBadge>}
-          </IconItem>
-          <IconItem>
-            <Link href="/notifications">
-              <div>
-                <WellIcon />
-              </div>
-            </Link>
-            {noticeLength !== 0 && <IconBadge>{noticeLength}</IconBadge>}
-          </IconItem>
+          <ChatIcon />
+          <AlarmBell id={me?.id as string} />
         </Icons>
         <ProfileSetting>
           <ProfileImg
@@ -207,15 +119,25 @@ const Topbar = () => {
             className={`${dropdown ? "opened" : ""}`}
             onClick={() => setDropdown(!dropdown)}
           >
-            <ProfileItem>
+            {/* <ProfileItem>
               <Link href={`/user-profile/${me?.userIdSlug}`}>Setting</Link>
-            </ProfileItem>
+            </ProfileItem> */}
             <ProfileItem>
               <Link href={`/user-profile/${me?.userIdSlug}`}>Profile</Link>
             </ProfileItem>
             <ProfileItem>
               <Link href={`/user-profile/${me?.userIdSlug}/edit-profile`}>
                 Edit Profile
+              </Link>
+            </ProfileItem>
+            <ProfileItem>
+              <Link href={`/user-profile/${me?.userIdSlug}/edit-profile`}>
+                Privacy settings
+              </Link>
+            </ProfileItem>
+            <ProfileItem>
+              <Link href={`/user-profile/${me?.userIdSlug}/edit-profile`}>
+                Terms
               </Link>
             </ProfileItem>
             <ProfileItem>

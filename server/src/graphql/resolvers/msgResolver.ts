@@ -89,6 +89,8 @@ const messageResolver = {
           };
         }
 
+        // console.log(ctx.req.session)
+
         // const userId = '51';
         // msgs = await getUnReadMessagesByUserId(userId);
         msgs = await getUnReadMessagesByUserId(ctx.req.session!.userId);
@@ -113,13 +115,13 @@ const messageResolver = {
       args: {
         id: string;
       },
-      _ctx: GqlContext,
+      ctx: GqlContext,
       _info: any
     ): Promise<string> => {
       try {
-        // if (!ctx.req.session || !ctx.req.session!.userId) {
-        //   return 'You must be logged in to make changes.';
-        // }
+        if (!ctx.req.session || !ctx.req.session!.userId) {
+          return 'You must be logged in to make changes.';
+        }
 
         const userId = '46';
         return await markMessageRead(args.id, userId);
@@ -134,13 +136,13 @@ const messageResolver = {
       args: {
         id: string;
       },
-      _ctx: GqlContext,
+      ctx: GqlContext,
       _info: any
     ): Promise<string> => {
       try {
-        // if (!ctx.req.session || !ctx.req.session!.userId) {
-        //   return 'You must be logged in to make changes.';
-        // }
+        if (!ctx.req.session || !ctx.req.session!.userId) {
+          return 'You must be logged in to make changes.';
+        }
 
         return await markAllMessagesReadByUserId(args.id);
       } catch (ex) {
@@ -152,13 +154,13 @@ const messageResolver = {
     deleteMessage: async (
       _obj: any,
       args: { id: string },
-      _ctx: GqlContext,
+      ctx: GqlContext,
       _info: any
     ): Promise<string> => {
       try {
-        // if (!ctx.req.session || !ctx.req.session!.userId) {
-        //   return 'You must be logged in to make this change.';
-        // }
+        if (!ctx.req.session || !ctx.req.session!.userId) {
+          return 'You must be logged in to make this change.';
+        }
 
         return await deleteMessage(args.id);
       } catch (ex) {

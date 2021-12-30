@@ -109,8 +109,38 @@ export const TitleInput = styled.input`
   }
 `;
 
+export const UploadWrapper = styled.div`
+  width: 100%;
+  margin-bottom: 1rem;
+`;
+export const UploadLabel = styled.label``;
+
 export const UploadIcon = styled(BsUpload)``;
 
+export const UploadInput = styled.input`
+  background-color: #fff;
+  border: 1px solid rgb(0 0 0 / 10%);
+  box-shadow: 0px 2px 80px rgb(66 66 66 / 8%);
+  border-radius: 0.5rem;
+  width: 100%;
+  padding: 0.875rem 1.25rem;
+  color: #000;
+  font-size: 1rem;
+  display: block;
+  @media (max-width: 991px) {
+    padding: 0.625rem 1rem;
+    font-size: 0.875rem;
+  }
+  &:focus {
+    border-color: rgb(0 0 0 / 10%);
+    outline: none;
+  }
+  &::placeholder {
+    color: inherit;
+    font-weight: inherit;
+    font-size: inherit;
+  }
+`;
 
 export const Select = styled.select`
   background-color: #fff;

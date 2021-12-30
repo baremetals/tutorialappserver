@@ -1,64 +1,12 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import { useSpring, animated } from "react-spring";
-import { useForm } from "react-hook-form";
-import { useRouter } from "next/router";
 
 import {
   PageContainer,
-  CloseButtonWrap,
-  CardText,
-  InputContainer,
-  FormWrap,
-  MainContainer,
-  TitleInput,
-  Select,
-  CategoryOptions,
-  ButtonContainer,
-  BodyTextWrapper,
-  SubmitButton,
-  CloseButton,
   Background,
 } from "./modal.styles";
-import { AiFillCloseCircle } from "react-icons/ai";
 
-import { useCategoryQuery, useCreatePostMutation } from "generated/graphql";
-import { useAppDispatch, useAppSelector } from "app/hooks";
-import { setCategory } from "features/ui/reducers";
-import { isUser } from 'features/auth';
-import { EditorState, convertToRaw } from "draft-js";
-import draftToHtml from "draftjs-to-html";
-import ModalEditor from "./ModalEditor";
-
-
-type FormInput = {
-  title: string
-  category: string;
-  body: string;
-  upload?: any;
-};
-
-
-export const Modal = ({ closeM, showModal, setShowModal, ...props }: any) => {
-  const router = useRouter();
-  const dispatch = useAppDispatch();
-  const [post] = useCreatePostMutation();
-  const { data } = useCategoryQuery();
-  const { user: user } = useAppSelector(isUser);
-  const [editorState, setEditorState] = useState<EditorState>(
-    EditorState.createEmpty()
-  );
-  const [content, setContent] = useState<string>("");
-  dispatch(setCategory(data?.getAllCategories));
-  // console.log(user?.id);
-  const categories = data?.getAllCategories as any;
-  const {
-    register,
-    handleSubmit,
-    setValue,
-    formState: { errors },
-  } = useForm<FormInput>();
-
-  // let [upload,] = useState({});
+export const Modal = ({ closeM, showModal, setShowModal, children, ...props }: any) => {
 
   const modalRef = useRef();
   const animation = useSpring({
@@ -69,7 +17,7 @@ export const Modal = ({ closeM, showModal, setShowModal, ...props }: any) => {
     transform: showModal ? `translateY(0%)` : `translateY(-100%)`,
   });
 
-  const closeModal = (e: { target: undefined; }) => {
+  const closeModal = (e: { target: undefined }) => {
     if (modalRef.current === e.target) {
       setShowModal(false);
     }
@@ -90,154 +38,19 @@ export const Modal = ({ closeM, showModal, setShowModal, ...props }: any) => {
     return () => document.removeEventListener("keydown", keyPress);
   }, [keyPress]);
 
-
-  // const handleImageChange = (_name: string) => (event: { target: { files: {}[]; }; }) => {
-  //   upload = event.target.files[0];
-  //   setValue("upload", upload as any);
-  // };
-
-
-  const onSubmit = async (info: FormInput) => {
-    setShowModal(false);
-    
-    
-    if (info.upload) {
-      console.log(info.upload);
-      // const testingRef = ref(storage, `testing folder/${info.upload?.name ? info.upload.name : null}`) || null;
-      console.log(info);
-    } else {
-      console.log("lets get started");
-      const response = await post({
-        variables: {
-          userId: user?.id as string,
-          categoryName: info.category,
-          title: info.title,
-          body: info.body,
-          mediaUrl: "",
-        },
-      });
-      const detailpage = response?.data?.createPost?.messages![0] as string
-      // console.log(response?.data?.createPost?.messages);
-      router.push(`/forum/${detailpage}`)
-    }
-    
-    // let url: string;
-    // console.log(info.upload?.name);
-    try {
-      // await uploadBytes(testingRef, info?.upload).then(async () => {
-      //   url = await getDownloadURL(testingRef) || "";
-      //   const response = post({
-      //     variables: {
-      //       userId: user?.id as string,
-      //       categoryName: info.category,
-      //       title: info.title,
-      //       body: info.body || url,
-      //       // postType: "",
-      //     },
-      //   });
-      //   console.log(response.data);
-      // });
-
-
-      // await uploadBytes(testingRef, info?.upload);
-      // const url = (await getDownloadURL(testingRef)) || "";
-      // const response = post({
-      //   variables: {
-      //     userId: user?.id as string,
-      //     categoryName: info.category,
-      //     title: info.title,
-      //     body: info.body || url,
-      //     // postType: "",
-      //   },
-      // });
-      // console.log(response.data);
-    } catch (err) {
-      console.log("");
-    }
-  };
   return (
     <>
-      {showModal ? (
+      {showModal && (
         <Background onClick={closeModal} ref={modalRef} {...props}>
           <animated.div styled={animation} {...props}>
             <PageContainer showModal={showModal} {...props}>
-              <FormWrap onSubmit={handleSubmit(onSubmit)}>
-                <MainContainer>
-                  <CloseButtonWrap>
-                    <AiFillCloseCircle onClick={closeM} />
-                  </CloseButtonWrap>
-                  <CardText>Create Post</CardText>
-                  <InputContainer>
-                    <TitleInput
-                      {...register("title", { required: true })}
-                      placeholder="title"
-                      type="text"
-                      name="title"
-                      {...props}
-                    />
-                    {errors.title && <span>Title is required</span>}
-                    <Select {...register("category", { required: true })}>
-                      <CategoryOptions>
-                        Please select a category
-                      </CategoryOptions>
-                      {categories?.map(
-                        (c: { value: string; name: string; id: string }) => (
-                          <CategoryOptions key={c.id} value={c.value}>
-                            {c.name}
-                          </CategoryOptions>
-                        )
-                      )}
-                    </Select>
-                    {errors.category && <span>Category is required</span>}
-                    {/* <UploadWrapper>
-                      <UploadLabel
-                        {...props}
-                        htmlFor="file-input"
-                        name="body"
-                      ></UploadLabel>
-                      <UploadInput
-                        {...props}
-                        onChange={handleImageChange("upload")}
-                        type="file"
-                        name="upload"
-                      />
-                    </UploadWrapper> */}
-                    <BodyTextWrapper>
-                      {/* <BodyText
-                        {...props}
-                        {...register("body")}
-                        placeholder="write something...."
-                      ></BodyText> */}
-                      <ModalEditor
-                        id={user?.id}
-                        editorState={editorState}
-                        onEditorStateChange={(newState: EditorState) => {
-                          setEditorState(newState);
-                          setContent(
-                            draftToHtml(
-                              convertToRaw(newState.getCurrentContent())
-                            )
-                          );
-                          setValue("body", content);
-                        }}
-                      />
-                    </BodyTextWrapper>
-                  </InputContainer>
-                  <ButtonContainer>
-                    <CloseButton onClick={closeM} {...props} type="button">
-                      close
-                    </CloseButton>
-                    <SubmitButton type="submit">submit</SubmitButton>
-                  </ButtonContainer>
-                </MainContainer>
-              </FormWrap>
+              {children}
             </PageContainer>
           </animated.div>
         </Background>
-      ) : null}
+      )}
     </>
   );
 };
-
 
 export default Modal;

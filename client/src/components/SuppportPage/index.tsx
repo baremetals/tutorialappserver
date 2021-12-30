@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useForm, SubmitHandler } from "react-hook-form";
 import Button from "../Auth/Button";
 import {
   PageHeading,
@@ -17,9 +18,57 @@ import {
   SupportButtonContainer,
   SupportTextArea,
 } from "./support.styles";
+import { ErrorMsg, Error, SuccessMsg } from "../Input";
 import Dashboard from 'components/Dashboard';
+import { useAppSelector } from "app/hooks";
+import { isUser } from "features/auth/selectors";
+import { supportMessage } from 'helpers/support';
 
+
+type formInput = {
+  subject: string
+  body: string
+}
 function SupportPage() {
+
+  const { user: user } = useAppSelector(isUser);
+  const [msg, setMsg] = useState("");
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState(false);
+  // console.log(user)
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitSuccessful },
+  } = useForm<formInput>();
+
+  useEffect(() => {
+    if (isSubmitSuccessful) {
+      reset();
+    }
+  }, [isSubmitSuccessful, reset]);
+
+  const submit: SubmitHandler<formInput> = async(data) => {
+    // console.log(data);
+    const res = await supportMessage({
+      fullName: user?.fullName,
+      email: user?.email,
+      body: data.body,
+      subject: data.subject,
+      username: user?.username
+    });
+    const  {...messages}  = res?.createSupportMessage;
+    // console.log(messages.messages);
+    const msg: string[] | null | undefined = messages?.messages;
+    setMsg(msg![0]);
+    if (msg![0].includes("48 hours.")) {
+      setSuccess(true);
+    } else {
+      setError(true);
+    }
+  };
+
   return (
     <Dashboard>
       <PageHeading>Support</PageHeading>
@@ -42,15 +91,29 @@ function SupportPage() {
         <ContactCardWrap>
           <FAQTitle>Ask A Question</FAQTitle>
           <ContactCard>
-            <FormWrap>
+            {success && (
+              <SuccessMsg>{msg}</SuccessMsg>
+            )}
+            <FormWrap onSubmit={handleSubmit(submit)}>
+              {error && <ErrorMsg>{msg}</ErrorMsg>}
               <SupportMainContainer>
                 <SupportInputContainer>
-                  <SupportInput placeholder="topic" />
-                  <SupportInput placeholder="topic" />
-                  <SupportTextArea placeholder="write something..." />
+                  <SupportInput
+                    placeholder="Subject"
+                    {...register("subject", { required: true })}
+                    name="subject"
+                  />
+                  {errors.subject && <Error>subject required</Error>}
+                  {/* <SupportInput placeholder="topic" /> */}
+                  <SupportTextArea
+                    placeholder="write something..."
+                    {...register("body", { required: true })}
+                    name="body"
+                  />
+                  {errors.body && <Error>Description required</Error>}
                 </SupportInputContainer>
                 <SupportButtonContainer>
-                  <Button content="Submit" />
+                  <Button content="Submit" type="Submit" />
                 </SupportButtonContainer>
               </SupportMainContainer>
             </FormWrap>

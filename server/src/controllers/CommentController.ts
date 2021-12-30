@@ -23,7 +23,7 @@ export class CommentResult {
 
 export const createComment = async (
   userId: string | undefined | null,
-  postId: string,
+  slug: string,
   body: string
 ): Promise<CommentResult> => {
   const userRepository = getRepository(User);
@@ -43,7 +43,7 @@ export const createComment = async (
   });
 
   const post = await Post.findOne({
-    id: postId,
+    slug,
   });
 
   if (!post) {

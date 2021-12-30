@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToMany, JoinTable } from "typeorm"
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToMany, JoinTable, ManyToOne } from "typeorm"
 import { Length } from "class-validator";
 import { Post } from "./Post"
 import { PostPoint } from "./PostPoint";
@@ -12,6 +12,7 @@ import { Group } from "./Group";
 import { SharedEntity } from "./SharedEntity";
 import { Chat } from './Chat';
 import { ChatMsg } from './ChatMsg';
+import { Search } from './Search';
 // import { Group } from "./Group";
 
 @Entity({ name: 'Users' })
@@ -46,7 +47,6 @@ export class User extends SharedEntity {
   @Column('varchar', {
     name: 'FullName',
     length: 60,
-    unique: false,
     nullable: false,
   })
   fullName: string;
@@ -138,4 +138,7 @@ export class User extends SharedEntity {
 
   @OneToMany(() => ChatMsg, (chatMsg) => chatMsg.receiver)
   receiverChats: ChatMsg[];
+
+  @ManyToOne(() => Search, (search) => search.users)
+  search: Search;
 }

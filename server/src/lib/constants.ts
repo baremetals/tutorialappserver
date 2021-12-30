@@ -7,6 +7,9 @@ export const NEW_CHAT = 'NEW_CHAT';
 export const NEW_CHAT_MESSAGE = 'NEW_CHAT_MESSAGE';
 export const NEW_COURSE = 'NEW_COURSE';
 export const COURSE_NOTE = 'COURSE_NOTE';
+export const PASSWORD_RESET = 'PASSWORD_RESET';
+export const IMAGE_CHANGE = 'IMAGE_CHANGE';
+export const PROFILE_INFO_CHANGE = 'PROFILE_INFO_CHANGE';
 
 
 export const profileImage =

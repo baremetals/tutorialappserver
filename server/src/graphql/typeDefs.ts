@@ -41,6 +41,24 @@ const typeDefs = gql`
   }
   union UserArrayResult = UserArray | EntityResult
 
+  type Support {
+    id: ID!
+    fullName: String!
+    username: String!
+    email: String!
+    subject: String!
+    body: String!
+    createdBy: String!
+    createdOn: Date!
+    lastModifiedBy: String!
+    lastModifiedOn: Date!
+  }
+  union SupportResult = Support | EntityResult
+  type SupportArray {
+    supports: [Support!]
+  }
+  union SupportArrayResult = SupportArray | EntityResult
+
   type Group {
     id: ID!
     name: String!
@@ -70,7 +88,6 @@ const typeDefs = gql`
     isDisabled: Boolean!
     title: String!
     body: String!
-    mediaUrl: String!
     creator: User!
     comments: [Comment!]
     postPoints: [PostPoint!]
@@ -335,7 +352,7 @@ const typeDefs = gql`
     searchAllChatsByUserId(username: String): ChatMsgArrayResult!
   }
 
-  # Mutatiob types
+  # Mutation types
   type Mutation {
     # Users Mutation
     register(
@@ -347,17 +364,23 @@ const typeDefs = gql`
     login(usernameOrEmail: String!, password: String!): String!
     logout(username: String!): String!
     changePassword(currentPassword: String!, newPassword: String!): String!
-    activateAccount(token: String!): MsgResult!
+    activateAccount(token: String!): String!
     forgotPassword(usernameOrEmail: String!): String!
     resetPassword(token: String!, newPassword: String!): String!
-    editMe(email: String!, username: String!, fullName: String!): String!
-    editProfileImage(profileImage: String!): String!
-    editBackGroundImage(backgroundImg: String!): String!
+    editMe(
+      email: String!
+      username: String!
+      fullName: String!
+      description: String!
+      location: String!
+    ): String!
+    editProfileImage(file: Upload!): String!
+    editBackGroundImage(file: Upload!): String!
 
     deleteMe: String!
 
     ## Uploads
-    uploadFile(file: Upload! id: ID!): String!
+    uploadFile(file: Upload!, id: ID!): String!
 
     # Post Mutation
     createPost(
@@ -365,19 +388,18 @@ const typeDefs = gql`
       categoryName: String!
       title: String!
       body: String!
-      mediaUrl: String!
     ): EntityResult!
 
     editPost(
       id: ID!
       title: String!
       body: String!
-      categoryId: ID!
+      categoryName: String!
     ): EntityResult!
     deletePost(id: ID!): String!
 
     # Comment Mutation
-    createComment(userId: ID!, postId: ID!, body: String): CommentResult!
+    createComment(userId: ID!, slug: String!, body: String): CommentResult!
     editComment(id: ID!, body: String!): CommentResult!
     deleteComment(id: ID!): String!
 
@@ -458,11 +480,19 @@ const typeDefs = gql`
 
     editNote(id: ID!, body: String!, title: String!): EntityResult!
     deleteNote(id: ID!): String!
+
+    # Support Mutation
+    createSupportMessage(
+      fullName: String!
+      email: String!
+      body: String!
+      subject: String!
+      username: String
+    ): EntityResult!
   }
 
   # Subscription types
   type Subscription {
-    accountActivated: Message!
     newMessage: Message!
     newComment: Comment!
     newChat: Chat!
