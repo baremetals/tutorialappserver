@@ -1,3 +1,0 @@
-mutation UpdatePostPoint($postId: ID!, $increment: Boolean!) {
-  updatePostPoint(postId: $postId, increment: $increment)
-}
