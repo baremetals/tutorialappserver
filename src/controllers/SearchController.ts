@@ -8,8 +8,11 @@ export const searchUsersBySearchTerm = async (
   searchTerm: string
 ): Promise<QueryArrayResult<User>> => {
   const users = await User.createQueryBuilder('user')
-    .where('user.UserName ilike :username', { username: `%${searchTerm}%` })
-    .andWhere('user.FullName ilike :fullName', { fullName: `%${searchTerm}%` })
+    .where('user.UserName ilike :username OR user.FullName ilike :fullName', {
+      username: `%${searchTerm}%`,
+      fullName: `%${searchTerm}%`,
+    })
+    // .where('user.FullName ilike :fullName', { fullName: `%${searchTerm}%` })
     .orderBy('user.createdOn', 'DESC')
     .take(10)
     .getMany();
@@ -31,10 +34,16 @@ export const searchCoursesBySearchTerm = async (
   searchTerm: string
 ): Promise<QueryArrayResult<Course>> => {
   const courses = await Course.createQueryBuilder('course')
-    .where('course.Title ilike :title', { title: `%${searchTerm}%` })
-    .andWhere('course.Description ilike :description', {
-      description: `%${searchTerm}%`,
-    })
+    .where(
+      'course.Title ilike :title OR course.Description ilike :description',
+      {
+        title: `%${searchTerm}%`,
+        description: `%${searchTerm}%`,
+      }
+    )
+    // .andWhere('course.Description ilike :description', {
+    //   description: `%${searchTerm}%`,
+    // })
     .orderBy('course.createdOn', 'DESC')
     .take(10)
     .getMany();
@@ -55,14 +64,17 @@ export const searchPostsBySearchTerm = async (
   searchTerm: string
 ): Promise<QueryArrayResult<Post>> => {
   const posts = await Post.createQueryBuilder('post')
-    .where('post.Title ilike :title', { title: `%${searchTerm}%` })
-    .andWhere('post.Body ilike :body', { body: `%${searchTerm}%` })
+    .where('post.Title ilike :title OR post.Body ilike :body', {
+      title: `%${searchTerm}%`,
+      body: `%${searchTerm}%`,
+    })
+    // .andWhere('post.Body ilike :body', { body: `%${searchTerm}%` })
     .orderBy('post.createdOn', 'DESC')
     .getMany();
 
   if (!posts || posts.length === 0) {
     return {
-      messages: ['Posts of category not found.'],
+      messages: ['Posts not found.'],
     };
   }
   // console.log(posts);

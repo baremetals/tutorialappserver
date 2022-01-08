@@ -1,7 +1,7 @@
 {
-  "name": "tutorialserver",
+  "name": "discuva-server",
   "version": "1.0.0",
-  "description": "The server for my tutorial application.",
+  "description": "Discuver online tutorial application.",
   "main": "index.js",
   "repository": "https://github.com/baremetals/tutorialappserver.git",
   "author": "Daniel Asante",
@@ -9,10 +9,10 @@
   "private": false,
   "scripts": {
     "watch": "tsc -w",
-    "build": "tsc",
+    "build": "cpy dev-config/* dist && tsc",
     "dev": "nodemon dist/index.js",
-    "start": "node dist/index.js",
-    "start2": "ts-node src/index.ts",
+    "start": "ts-node src/index.js",
+    "start2": "NODE_ENV=production ts-node src/index.ts",
     "dev2": "nodemon --exec ts-node src/index.ts"
   },
   "dependencies": {

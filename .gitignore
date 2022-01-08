@@ -1,5 +1,8 @@
 dist
 node_modules
 .env
+.env.dev
+dev-config
 database.ts
 storagedb.json
+Errors.md

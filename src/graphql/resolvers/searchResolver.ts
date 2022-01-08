@@ -176,6 +176,8 @@ const searchResolver = {
       let courses: QueryArrayResult<Course>;
       // let searches = [];
 
+      console.log(args.searchItem)
+
       try {
         users = await searchUsersBySearchTerm(args.searchItem);
         posts = await searchPostsBySearchTerm(args.searchItem);

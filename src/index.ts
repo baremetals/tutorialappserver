@@ -25,8 +25,8 @@ import messageResolver from './graphql/resolvers/msgResolver';
 import chatResolver from './graphql/resolvers/chatResolver';
 import adminResolver from './graphql/resolvers/adminResolvers';
 import searchResolver from './graphql/resolvers/searchResolver';
-
-// import creatGroup from "./controllers/GroupController"
+import { loadEnv } from './envLoader';
+loadEnv();
 
 // This is requied to extend the  express-session type.
 declare module "express-session" {
@@ -37,7 +37,7 @@ declare module "express-session" {
 }
 
 // console.log("stuffs")
-require("dotenv").config();
+// require("dotenv").config();
 
 const main = async () => {
   
@@ -47,7 +47,7 @@ const main = async () => {
   const redis = new Redis({
     port: Number(process.env.REDIS_PORT),
     host: process.env.REDIS_HOST,
-    // password: process.env.REDIS_PASSWORD,
+    password: process.env.REDIS_PASSWORD,
   });
   const RedisStore = connectRedis(session);
   const redisStore = new RedisStore({
@@ -57,7 +57,7 @@ const main = async () => {
   
   app.use(
     cors({
-      origin: 'http://localhost:3000', //"http://localhost:3000",
+      origin: process.env.CORS_ORIGIN,
       credentials: true,
     })
   );
