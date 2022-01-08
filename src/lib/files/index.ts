@@ -42,7 +42,7 @@ createReadStream: FileUpload['createReadStream'],
     createReadStream()
       .pipe(
         storage
-          .bucket(bucketName)
+          .bucket(bucketName as string)
           .file(`testing folder/${filename}`)
           .createWriteStream({
             resumable: false,

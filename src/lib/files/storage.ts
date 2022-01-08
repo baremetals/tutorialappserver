@@ -1,12 +1,11 @@
 import { Storage } from '@google-cloud/storage';
 import path from 'path';
-import config from '../../../database';
 
 export const storage = new Storage({
   keyFilename: path.join(__dirname, '../../../storagedb.json'),
-  projectId: config.project_id,
+  projectId: process.env.PROJECT_ID,
 });
-export const bucketName = config.bucket_name;
+export const bucketName = process.env.BUCKET_NAME;
 
 // async function createBucket() {
 //   // Creates the new bucket
@@ -18,7 +17,7 @@ export const bucketName = config.bucket_name;
 
 
 export async function uploadFile(filePath: any, destFileName: string): Promise<string>{
-  await storage.bucket(bucketName).upload(filePath, {
+  await storage.bucket(bucketName as string).upload(filePath, {
     destination: destFileName,
   });
 
