@@ -9,7 +9,6 @@
   "private": false,
   "scripts": {
     "watch": "tsc -w",
-    "build": "cpy dev-config/* dist && tsc",
     "dev": "nodemon dist/index.js",
     "start": "ts-node src/index.js",
     "start2": "NODE_ENV=production ts-node src/index.ts",
