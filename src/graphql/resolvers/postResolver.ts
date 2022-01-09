@@ -24,7 +24,7 @@ import { GraphQLUpload } from 'graphql-upload';
 import { FileArgs } from '../../lib/files/types';
 // import { checkFileSize, generateUniqueFilename, uploadToGoogleCloud } from '../../lib/files';
 // import { UserInputError } from 'apollo-server-express';
-import { bucketName  } from '../../lib/files/storage';
+// import { bucketName  } from '../../lib/files/storage';
 import { getRepository } from 'typeorm';
 import { User } from '../../entities/User';
 import { upload} from "../../controllers/UploadController"
@@ -307,6 +307,9 @@ const postResolver = {
       _info: any
     ): Promise<string> => {
       const userRepository = getRepository(User);
+      const bucketName = process.env.BUCKET_NAME;
+
+      // console.log(args.file)
 
       const user = await userRepository.findOne({
         id: args.id,

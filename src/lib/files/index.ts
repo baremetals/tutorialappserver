@@ -37,7 +37,9 @@ export const uploadToGoogleCloud = (
 createReadStream: FileUpload['createReadStream'],
   filename: string
 ): Promise<void> => {
+  // const bucketName = process.env.BUCKET_NAME;
   // step 1 - upload the file to Google Cloud Storage
+  // console.log(bucketName);
   return new Promise((resolves, rejects) =>
     createReadStream()
       .pipe(

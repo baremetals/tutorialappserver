@@ -211,7 +211,7 @@ export const logout = async (username: string): Promise<string> => {
 
   user.isOnline = false;
   user.lastModifiedBy = user.username;
-  user.lastModifiedOn = new Date(), 
+  user.lastModifiedOn = new Date();
   user.save();
 
   return "User logged off.";
@@ -471,7 +471,7 @@ export const editProfileImage = async (
     `Hi ${user.username}, \nYour profile image has been changed successfully`,
     'Profile Image Change.'
   );
-  return `Success-${profileImg}`;
+  return `Your profile image has been changed successfully`;
 };
 
 export const editBackGroundImage = async (
@@ -518,7 +518,7 @@ export const editBackGroundImage = async (
     `Hi ${user.username}, \Your background image has been changed successfully`,
     'Background Image Change.'
   );
-  return `Success-${backgroundImage}`;
+  return `Your profile image has been changed successfully`;
 };
 
 export const deleteMe = async (
@@ -583,6 +583,53 @@ function userNotFound(usernameOrEmail: string) {
     : `User with username ${usernameOrEmail} not found.`;
 }
 
+// export const editProfileImage = async (
+//   id: string,
+//   profileImg: string
+// ): Promise<string> => {
+//   const user = await User.findOne({
+//     where: { id },
+//   });
+
+//   if (!user) {
+//     return 'User not found.';
+//   }
+
+//   if (!user.confirmed) {
+//     return 'User has not confirmed their registration email yet.';
+//   }
+
+//   await getConnection()
+//     .createQueryBuilder()
+//     .update(User)
+//     .set({
+//       profileImage: profileImg,
+//       lastModifiedBy: user.username,
+//       lastModifiedOn: new Date(),
+//     })
+//     .where('id = :id', { id: id })
+//     .execute();
+
+//   // notification code goes here
+
+//   const msg = await Message.create({
+//     user,
+//     title: `Profile Image Change`,
+//     body: 'Your profile image has been changed successfully',
+//     type: IMAGE_CHANGE,
+//   }).save();
+
+//   if (!msg) {
+//     return 'Message was not created.';
+//   }
+
+//   await sendEmail(
+//     user.email,
+//     `Hi ${user.username}, \nYour profile image has been changed successfully`,
+//     'Profile Image Change.'
+//   );
+//   return `Success-${profileImg}`;
+// };
 
 // To do 
 // change password.

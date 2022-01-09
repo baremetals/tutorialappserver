@@ -5,7 +5,8 @@ export const storage = new Storage({
   keyFilename: path.join(__dirname, '../../../storagedb.json'),
   projectId: process.env.PROJECT_ID,
 });
-export const bucketName = process.env.BUCKET_NAME;
+export const bucketName = 'baremets_tutor';
+
 
 // async function createBucket() {
 //   // Creates the new bucket

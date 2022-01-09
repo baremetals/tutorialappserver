@@ -368,8 +368,8 @@ const typeDefs = gql`
       description: String!
       location: String!
     ): String!
-    editProfileImage(file: Upload!): String!
-    editBackGroundImage(file: Upload!): String!
+    editProfileImage(imageUrl: String!): String!
+    editBackGroundImage(imageUrl: String!): String!
 
     deleteMe: String!
 

@@ -9,7 +9,7 @@ import { FileArgs } from '../lib/files/types';
 export const upload = async (promise: FileArgs): Promise<string> => {
   const { filename, createReadStream }: FileArgs = promise;
 
-  console.log(filename);
+  // console.log(filename);
   try {
     const oneGb: number = 1000000000;
     await checkFileSize(createReadStream, oneGb);
@@ -21,11 +21,12 @@ export const upload = async (promise: FileArgs): Promise<string> => {
   }
   // generate a scrubbed unique filename
   const uniqueFilename = generateUniqueFilename(filename);
-
+  console.log(uniqueFilename);
   // upload to Google Cloud Storage
   try {
     await uploadToGoogleCloud(createReadStream, uniqueFilename);
   } catch (ex) {
+    console.log(ex)
     throw new UserInputError('Error with uploading to Google Cloud');
   }
 

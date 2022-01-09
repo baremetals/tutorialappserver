@@ -23,6 +23,6 @@
     "resolveJsonModule": true,
     "baseUrl": "server/src"
   },
-  "include": ["./src/**/*.tsx", "./src/**/*.ts", "src/envLoader.ts", "./storagedb.json", "./ormconfig.js"],
+  "include": ["./src/**/*.tsx", "./src/**/*.ts", "src/envLoader.ts", "./ormconfig.js"],
   "exclude": ["node_modules", "Errors.md", "dev-config", "dist"],
 }

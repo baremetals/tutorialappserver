@@ -21,9 +21,9 @@ import { STANDARD_ERROR, EntityResult } from "../resolvers";
 import { ACCOUNT_ACTIVATED } from "../../lib/constants"
 import Redis from "ioredis";
 import { QueryArrayResult } from '../../controllers/QuerryArrayResult';
-import { upload } from '../../controllers/UploadController';
-import { FileArgs } from '../../lib/files/types';
-import { bucketName } from '../../lib/files/storage';
+// import { upload } from '../../controllers/UploadController';
+// import { FileArgs } from '../../lib/files/types';
+// import { bucketName } from '../../lib/files/storage';
 
 
 const userResolver = {
@@ -374,7 +374,7 @@ const userResolver = {
 
     editProfileImage: async (
       _obj: any,
-      args: { parent: any; file: FileArgs },
+      args: { imageUrl: string },
       ctx: GqlContext,
       _info: any
     ): Promise<string> => {
@@ -382,22 +382,11 @@ const userResolver = {
         if (!ctx.req.session || !ctx.req.session!.userId) {
           return 'You must be logged in to make this change.';
         }
-
-        const promise = await args.file.then(
-          async ({ filename, createReadStream }: FileArgs) => {
-            return { filename, createReadStream };
-          }
-        );
-
-        const imageFilename = await upload(promise);
-
-        const imageUrl = `https://storage.googleapis.com/${bucketName}/testing folder/${imageFilename}`;
-
         // const userId = '46';
         return await editProfileImage(
           ctx.req.session!.userId,
           // userId,
-          imageUrl
+          args.imageUrl
         );
       } catch (ex) {
         console.log(ex);
@@ -407,7 +396,7 @@ const userResolver = {
 
     editBackGroundImage: async (
       _obj: any,
-      args: { parent: any; file: FileArgs },
+      args: { imageUrl: string },
       ctx: GqlContext,
       _info: any
     ): Promise<string> => {
@@ -416,23 +405,12 @@ const userResolver = {
           return 'You must be logged in to make changes.';
         }
 
-        const promise = await args.file.then(
-          async ({ filename, createReadStream }: FileArgs) => {
-            return { filename, createReadStream };
-          }
-        );
-
-        const imageFilename = await upload(promise);
-
-        const imageUrl = `https://storage.googleapis.com/${bucketName}/testing folder/${imageFilename}`;
-
         // const userId = '46';
         return await editBackGroundImage(
           ctx.req.session!.userId,
           // userId,
-          imageUrl
+          args.imageUrl
         );
-
       } catch (ex) {
         console.log(ex);
         throw ex;
@@ -460,6 +438,40 @@ const userResolver = {
         throw ex;
       }
     },
+
+    // editProfileImage: async (
+    //   _obj: any,
+    //   args: { parent: any; file: FileArgs },
+    //   ctx: GqlContext,
+    //   _info: any
+    // ): Promise<string> => {
+    //   try {
+    //     if (!ctx.req.session || !ctx.req.session!.userId) {
+    //       return 'You must be logged in to make this change.';
+    //     }
+
+    //     const promise = await args.file.then(
+    //       async ({ filename, createReadStream }: FileArgs) => {
+    //         return { filename, createReadStream };
+    //       }
+    //     );
+
+    //     const imageFilename = await upload(promise);
+    //     console.log(bucketName);
+
+    //     const imageUrl = `https://storage.googleapis.com/${bucketName}/testing folder/${imageFilename}`;
+
+    //     // const userId = '46';
+    //     return await editProfileImage(
+    //       ctx.req.session!.userId,
+    //       // userId,
+    //       imageUrl
+    //     );
+    //   } catch (ex) {
+    //     console.log(ex);
+    //     throw ex;
+    //   }
+    // },
   },
 
   // Notifications/emails

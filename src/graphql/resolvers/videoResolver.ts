@@ -5,7 +5,7 @@ import { GqlContext } from "../GqlContext";
 import { EntityResult, STANDARD_ERROR } from "../resolvers";
 
 
-const NoteResolver = {
+const VideoResolver = {
   VideoResult: {
     __resolveType(obj: any, _context: GqlContext, _info: any) {
       if (obj.messages) {
@@ -129,4 +129,4 @@ const NoteResolver = {
   },
 };
 
-export default NoteResolver;
+export default VideoResolver;
